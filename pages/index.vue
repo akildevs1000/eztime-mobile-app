@@ -1,53 +1,69 @@
 <template>
   <div class="text-center mt-5">
     <v-container>
-      <v-avatar size="150">
-        <img :src="profile_pictrue" alt="Avatar" />
-      </v-avatar>
-      <v-card-text>
-        <div>EID: {{ UserID }}</div>
-        <!-- <div>Device Id: {{ uniqueDeviceId }}</div> -->
-        <v-btn
-          :disabled="disableCheckInButton"
-          small
-          class="indigo"
-          dark
-          outlined
-          @click="generateLog(`in`)"
-        >
-          Check In
-        </v-btn>
-        &nbsp;
-        <v-btn
-          :disabled="disableCheckOutButton"
-          small
-          class="grey"
-          outlined
-          dark
-          @click="generateLog(`out`)"
-        >
-          Check Out
-        </v-btn>
-      </v-card-text>
+      <v-sheet class="text-h4 text-center">
+        {{ currentTime }}
+      </v-sheet>
+      <div class="text-center">{{ formattedDateTime || "Loading..." }}</div>
 
-      <!-- <v-card-text>
-        <v-btn small class="indigo" dark outlined @click="generateLog(`auto`)">
-          Auto (Testing Only)
-        </v-btn>
-      </v-card-text> -->
+      <!-- <div class="text-center">formattedDateTime  EID: {{ UserID }}</div> -->
+
+      <v-card flat>
+        <v-avatar size="150" class="mt-10">
+          <!-- <img :src="profile_pictrue" alt="Avatar" /> -->
+          <img
+            v-if="disableCheckOutButton"
+            src="C-IN.png"
+            alt="Avatar"
+            @click="generateLog(`in`)"
+          />
+          <img
+            v-if="disableCheckInButton"
+            src="C-OUT.png"
+            alt="Avatar"
+            @click="generateLog(`out`)"
+          />
+        </v-avatar>
+
+        <div class="text-center mt-5">
+          <v-icon>mdi-map-marker-radius</v-icon
+          ><span class="mx-1 pt-2">{{
+            (locationData && locationData.name) || "Getting location..."
+          }}</span>
+        </div>
+      </v-card>
     </v-container>
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent>
         <v-card>
           <v-card-title>
-            {{ message }}
+            <!-- {{ message }} -->
             <v-spacer></v-spacer>
             <v-icon @click="dialog = false" color="black">
               mdi-close-circle-outline
             </v-icon>
           </v-card-title>
-          <v-card-text
-            >{{ (locationData && locationData.name) || "Getting location..." }}
+
+          <div class="text-center">
+            <v-avatar size="100">
+              <img
+                style="text-align: center; margin: 0 auto"
+                v-if="isSuccess"
+                src="sucess.png"
+                alt="Avatar"
+                @click="generateLog(`in`)"
+              />
+              <img
+                v-else
+                style="text-align: center; margin: 0 auto"
+                src="fail.png"
+                alt="Avatar"
+                @click="generateLog(`out`)"
+              />
+            </v-avatar>
+          </div>
+          <v-card-text>
+            <!-- {{ (locationData && locationData.name) || "Getting location..." }} -->
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -80,8 +96,10 @@ export default {
 
     disableCheckInButton: false,
     disableCheckOutButton: true,
-    // : true,
-    // : false,
+
+    currentTime: "",
+    formattedDateTime: "",
+    isSuccess: false,
   }),
   computed: {
     locationData() {
@@ -93,7 +111,10 @@ export default {
       return navigator.userAgentData && navigator.userAgentData.brands;
     },
   },
-  mounted() {},
+  mounted() {
+    this.updateDateTime();
+    setInterval(this.updateDateTime, 1000);
+  },
   async created() {
     let employee = this.$auth.user.employee;
 
@@ -131,14 +152,19 @@ export default {
 
           if (!data.status) {
             this.message = data.message;
+            this.isSuccess = false;
           }
 
           this.message = "Success";
+          this.isSuccess = true;
 
           this.ifExist();
           this.getLogs();
         })
-        .catch(({ message }) => message);
+        .catch(({ message }) => {
+          this.message = message;
+          this.isSuccess = false;
+        });
     },
     ifExist() {
       this.$axios
@@ -232,6 +258,52 @@ export default {
         2,
         "0"
       )}-${String(now.getDate()).padStart(2, "0")}`;
+    },
+
+    updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+      this.currentTime = `${hours}:${minutes}:${seconds}`;
+    },
+
+    updateDateTime() {
+      const now = new Date();
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      const dayOfWeek = daysOfWeek[now.getDay()];
+      const month = months[now.getMonth()];
+      const dayOfMonth = now.getDate();
+
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+
+      this.formattedDateTime = `${dayOfWeek}, ${month} ${dayOfMonth}`;
+      this.currentTime = `${hours}:${minutes}:${seconds}`;
     },
   },
 };
