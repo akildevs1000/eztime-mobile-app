@@ -33,46 +33,30 @@
         </div>
       </v-card>
     </v-container>
-    <v-row justify="center">
-      <v-dialog v-model="dialog" persistent>
-        <v-card>
-          <v-card-title>
-            <!-- {{ message }} -->
-            <v-spacer></v-spacer>
-            <v-icon @click="dialog = false" color="black">
-              mdi-close-circle-outline
-            </v-icon>
-          </v-card-title>
-
-          <div class="text-center">
-            <v-avatar size="100">
-              <img
-                style="text-align: center; margin: 0 auto"
-                v-if="isSuccess"
-                src="sucess.png"
-                alt="Avatar"
-                @click="generateLog(`in`)"
-              />
-              <img
-                v-else
-                style="text-align: center; margin: 0 auto"
-                src="fail.png"
-                alt="Avatar"
-                @click="generateLog(`out`)"
-              />
-            </v-avatar>
-          </div>
-          <v-card-text>
-            <!-- {{ (locationData && locationData.name) || "Getting location..." }} -->
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </v-row>
+    <transition name="slide-y-transition">
+      <div class="text-center mt-5">
+        <v-img
+          v-if="isSuccess"
+          src="sucess.png"
+          alt="Avatar"
+          height="50px"
+          width="50px"
+          style="display: inline-block"
+        ></v-img>
+        <v-img
+        v-else-if="isSuccess == false"
+          src="fail.png"
+          alt="Avatar"
+          height="50px"
+          width="50px"
+          style="display: inline-block"
+        ></v-img>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
-import Fingerprint2 from "fingerprintjs2";
 
 export default {
   data: () => ({
@@ -99,7 +83,7 @@ export default {
 
     currentTime: "",
     formattedDateTime: "",
-    isSuccess: false,
+    isSuccess: null,
   }),
   computed: {
     locationData() {
@@ -157,6 +141,8 @@ export default {
 
           this.message = "Success";
           this.isSuccess = true;
+
+          setTimeout(() => (this.isSuccess = null), 2000);
 
           this.ifExist();
           this.getLogs();
@@ -308,3 +294,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+.slide-y-enter-active,
+.slide-y-leave-active {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.slide-y-enter, .slide-y-leave-to /* .slide-y-leave-active below version 2.1.8 */ {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.slide-y-leave-active {
+  position: absolute;
+}
+</style>
+
