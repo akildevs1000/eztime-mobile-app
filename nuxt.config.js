@@ -48,7 +48,8 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'https://backend.eztime.online/api',
+    baseURL: 'https://backend.mytime2cloud.com/api',
+    // baseURL: 'https://backend.eztime.online/api',
     // baseURL: 'http://192.168.2.192:8000/api',
   },
 

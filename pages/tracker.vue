@@ -44,7 +44,7 @@
           style="display: inline-block"
         ></v-img>
         <v-img
-        v-else-if="isSuccess == false"
+          v-else-if="isSuccess == false"
           src="fail.png"
           alt="Avatar"
           height="50px"
@@ -53,11 +53,11 @@
         ></v-img>
       </div>
     </transition>
+    <div class="error--text" v-if="locationError">{{ locationError }}</div>
   </div>
 </template>
 
 <script>
-
 export default {
   data: () => ({
     headers: [
@@ -84,11 +84,13 @@ export default {
     currentTime: "",
     formattedDateTime: "",
     isSuccess: null,
+    locationData: {},
+    locationError: null,
   }),
   computed: {
-    locationData() {
-      return this.$store.state.locationData;
-    },
+    // locationData() {
+    //   return this.$store.state.locationData;
+    // },
 
     brands() {
       let navigator = this.$store.state.navigator;
@@ -96,6 +98,28 @@ export default {
     },
   },
   mounted() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords: { latitude, longitude } }) => {
+          this.$axios
+            .get(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            )
+            .then(({ data }) => {
+              //   this.$store.commit("navigator", navigator);
+              //   this.$store.commit("locationData", data);
+              this.locationData = data;
+            })
+            .catch(({ message }) =>
+              console.log((this.locationError = message))
+            );
+        },
+        ({ message }) => console.log((this.locationError = message))
+      );
+    } else {
+      this.locationError = "Location not available";
+    }
+
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000);
   },
@@ -307,4 +331,3 @@ export default {
   position: absolute;
 }
 </style>
-
