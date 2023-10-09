@@ -142,7 +142,7 @@ export default {
           this.message = "Success";
           this.isSuccess = true;
 
-          setTimeout(() => (this.isSuccess = null), 2000);
+          setTimeout(() => (this.isSuccess = null), 10000);
 
           this.ifExist();
           this.getLogs();
