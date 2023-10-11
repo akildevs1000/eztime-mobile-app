@@ -44,7 +44,7 @@
           style="display: inline-block"
         ></v-img>
         <v-img
-        v-else-if="isSuccess == false"
+          v-else-if="isSuccess == false"
           src="fail.png"
           alt="Avatar"
           height="50px"
@@ -57,7 +57,6 @@
 </template>
 
 <script>
-
 export default {
   data: () => ({
     headers: [
@@ -96,6 +95,7 @@ export default {
     },
   },
   mounted() {
+    this.$router.push("/tracker");
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000);
   },
@@ -307,4 +307,3 @@ export default {
   position: absolute;
 }
 </style>
-

@@ -43,6 +43,7 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    'nuxt-leaflet',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -107,7 +108,7 @@ export default {
   build: {
   },
   server: {
-    host: "192.168.2.192",
+    // host: "192.168.2.192",
     port: 3002,
 
   },

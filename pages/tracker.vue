@@ -85,62 +85,71 @@ export default {
     formattedDateTime: "",
     isSuccess: null,
     locationData: {},
+    coordinates: {},
+    longitude: 0,
+    latitude: 0,
+
     locationError: null,
+    company_id: 0,
+    intervalId: 0,
   }),
-  computed: {
-    // locationData() {
-    //   return this.$store.state.locationData;
-    // },
-
-    brands() {
-      let navigator = this.$store.state.navigator;
-      return navigator.userAgentData && navigator.userAgentData.brands;
-    },
-  },
   mounted() {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async ({ coords: { latitude, longitude } }) => {
-          this.$axios
-            .get(
-              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-            )
-            .then(({ data }) => {
-              //   this.$store.commit("navigator", navigator);
-              //   this.$store.commit("locationData", data);
-              this.locationData = data;
-            })
-            .catch(({ message }) =>
-              console.log((this.locationError = message))
-            );
-        },
-        ({ message }) => console.log((this.locationError = message))
-      );
-    } else {
-      this.locationError = "Location not available";
-    }
-
     this.updateDateTime();
+    this.getLocation();
     setInterval(this.updateDateTime, 1000);
   },
+
   async created() {
     let employee = this.$auth.user.employee;
-
     this.UserID = employee.system_user_id;
     this.profile_pictrue = employee.profile_picture;
     this.shift_type_id = employee.schedule.shift_type_id;
-
-    this.getLogs();
-
-    // try {
-    //   await this.$axios.head(this.$auth.user.employee.profile_picture);
-    // } catch (error) {
-    //   this.profile_pictrue = "no-profile-image.jpg";
-    // }
-
+    this.company_id = this.$auth.user.company_id;
     this.device_id = `Mobile-${this.UserID}`;
+    // this.getLogs();
   },
   methods: {
+    getLocation() {
+      this.company_id = this.$auth.user.company_id;
+      this.device_id = `Mobile-${this.UserID}`;
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          async ({ coords: { latitude, longitude } }) => {
+            this.$axios
+              .get(
+                `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+              )
+              .then(async ({ data }) => {
+                this.locationData = data;
+                await this.insertRealTimeLocation(data, latitude, longitude);
+              })
+              .catch(({ message }) =>
+                console.log((this.locationError = message))
+              );
+          },
+          ({ message }) => console.log((this.locationError = message))
+        );
+      } else {
+        this.locationError = "Location not available";
+      }
+    },
+    async insertRealTimeLocation(locationData, latitude, longitude) {
+      let payload = {
+        company_id: this.company_id,
+        device_id: this.device_id,
+        UserID: this.UserID,
+        latitude,
+        longitude,
+        short_name: locationData.name ?? "---",
+        full_name: locationData.name ?? "---",
+      };
+
+      await this.$axios
+        .post(`/realtime_location`, payload)
+        .then(({ data }) => console.log(data))
+        .catch(({ message }) => console.log(message));
+    },
     generateLog(type) {
       let payload = {
         UserID: this.UserID,
@@ -169,7 +178,18 @@ export default {
           setTimeout(() => (this.isSuccess = null), 3000);
 
           this.ifExist();
-          this.getLogs();
+
+          if (type == "in") {
+            this.disableCheckInButton = true;
+            this.disableCheckOutButton = false;
+            this.intervalId = setInterval(this.getLocation, 60 * 1000);
+            console.log(this.intervalId);
+            return;
+          } else {
+            this.disableCheckInButton = false;
+            this.disableCheckOutButton = true;
+            clearInterval(this.intervalId);
+          }
         })
         .catch(({ message }) => {
           this.message = message;
@@ -206,49 +226,6 @@ export default {
         .post(`/device`, payload)
         .then(({ data }) => console.log(`This device registered successfully`))
         .catch(({ message }) => console.log(message));
-    },
-
-    getLogs() {
-      this.$axios
-        .get(
-          `/attendance_single_list?per_page=1&UserID=${
-            this.UserID
-          }&LogTime=${this.getFormattedDate()}&company_id=${
-            this.$auth.user.company_id
-          }`
-        )
-        .then(({ data }) => {
-          this.logsCount = data.total;
-          if (data && data.total % 2 != 0) {
-            this.disableCheckInButton = true;
-            this.disableCheckOutButton = false;
-            return;
-          }
-
-          this.disableCheckInButton = false;
-          this.disableCheckOutButton = true;
-        })
-        .catch(({ message }) => console.log(message));
-    },
-    lockLogButtons(type) {
-      setTimeout(() => (this.dialog = false), 10000);
-
-      if (type == "in") {
-        this.disableCheckInButton = true;
-
-        setTimeout(() => {
-          this.disableCheckOutButton = false;
-        }, 60000);
-
-        return;
-      }
-
-      this.disableCheckOutButton = true;
-
-      setTimeout(() => {
-        this.disableCheckInButton = false;
-        this.$store.commit("disableCheckInButton", false);
-      }, 60000);
     },
     getFormattedDateTime() {
       const now = new Date();
