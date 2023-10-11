@@ -36,7 +36,7 @@ export default {
       this.UserID = employee.system_user_id;
       await this.$axios
         .get(
-          `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}`
+          `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}&date=2023-10-10`
         )
         .then(({ data }) => {
           let first = data.data[0];
