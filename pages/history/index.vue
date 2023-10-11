@@ -42,36 +42,20 @@ export default {
           let first = data.data[0];
           this.initialLatLon = [first.latitude, first.longitude];
 
-          data.data.forEach(({ latitude, longitude, datetime }) => {
-            const marker = new google.maps.Marker({
-              position: {
-                lat: parseFloat(latitude),
-                lng: parseFloat(longitude),
-              },
-              map: this.map,
-            });
+          const routeCoordinates = data.data.map(({ latitude, longitude }) => ({
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude),
+          }));
 
-            marker.addListener("click", () => {
-              this.geocoder
-                .geocode({
-                  location: {
-                    lat: parseFloat(latitude),
-                    lng: parseFloat(longitude),
-                  },
-                })
-                .then((response) => {
-                  if (response.results[0]) {
-                    this.infowindow.setContent(datetime);
-                    this.infowindow.open(map, marker);
-                  } else {
-                    window.alert("No results found");
-                  }
-                })
-                .catch((e) => window.alert("Geocoder failed due to: " + e));
-            });
-
-            // Add click event for markers here if needed
+          const routePath = new google.maps.Polyline({
+            path: routeCoordinates,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
           });
+
+          routePath.setMap(this.map);
         })
         .catch((error) => {
           console.error("Error fetching data from the API:", error);
@@ -82,6 +66,7 @@ export default {
         zoom: 8,
         center: { lat: 25.276987, lng: 55.296249 },
       });
+      this.geocoder = new google.maps.Geocoder();
       this.geocoder = new google.maps.Geocoder();
       this.infowindow = new google.maps.InfoWindow();
     },
