@@ -42,13 +42,32 @@ export default {
           let first = data.data[0];
           this.initialLatLon = [first.latitude, first.longitude];
 
-          data.data.forEach(({ latitude, longitude }) => {
+          data.data.forEach(({ latitude, longitude, datetime }) => {
             const marker = new google.maps.Marker({
               position: {
                 lat: parseFloat(latitude),
                 lng: parseFloat(longitude),
               },
               map: this.map,
+            });
+
+            marker.addListener("click", () => {
+              this.geocoder
+                .geocode({
+                  location: {
+                    lat: parseFloat(latitude),
+                    lng: parseFloat(longitude),
+                  },
+                })
+                .then((response) => {
+                  if (response.results[0]) {
+                    this.infowindow.setContent(datetime);
+                    this.infowindow.open(map, marker);
+                  } else {
+                    window.alert("No results found");
+                  }
+                })
+                .catch((e) => window.alert("Geocoder failed due to: " + e));
             });
 
             // Add click event for markers here if needed
