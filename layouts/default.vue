@@ -84,11 +84,11 @@ export default {
           title: "Home",
           to: "/",
         },
-        {
-          icon: "mdi-chart-bubble",
-          title: "Tracker",
-          to: "/tracker",
-        },
+        // {
+        //   icon: "mdi-chart-bubble",
+        //   title: "Tracker",
+        //   to: "/tracker",
+        // },
         {
           icon: "mdi-chart-bubble",
           title: "History",

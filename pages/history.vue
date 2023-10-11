@@ -1,5 +1,5 @@
 <template>
-  <div id="map-wrap" style="height: 100vh">
+  <div id="map-wrap" style="height: 1100px">
     <client-only>
       <l-map
         v-if="initialLatLon && initialLatLon.length"
@@ -31,21 +31,27 @@ export default {
       locations: [], // Initialize an empty array to store API data
     };
   },
-  created() {
-    let employee = this.$auth.user.employee;
-    this.UserID = employee.system_user_id;
-    this.$axios
-      .get(
-        `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}`
-      ) // Replace with your API endpoint
-      .then(({ data }) => {
-        this.locations = data.data;
-        let first = data.data[0];
-        this.initialLatLon = [first.longitude, first.latitude];
-      })
-      .catch((error) => {
-        console.error("Error fetching data from the API:", error);
-      });
+  mounted() {
+    this.plotLocations();
+    setInterval(this.plotLocations, 60 * 1000);
+  },
+  methods: {
+    plotLocations() {
+      let employee = this.$auth.user.employee;
+      this.UserID = employee.system_user_id;
+      this.$axios
+        .get(
+          `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}`
+        ) // Replace with your API endpoint
+        .then(({ data }) => {
+          this.locations = data.data;
+          let first = data.data[0];
+          this.initialLatLon = [first.latitude, first.longitude];
+        })
+        .catch((error) => {
+          console.error("Error fetching data from the API:", error);
+        });
+    },
   },
 };
 </script>
