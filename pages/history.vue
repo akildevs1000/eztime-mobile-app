@@ -1,27 +1,6 @@
 <template>
-  <div id="map-wrap" style="height: 100vh">
-    <!-- Set a relative position for the container -->
-    <client-only>
-      <l-map
-        v-if="initialLatLon && initialLatLon.length"
-        :zoom="13"
-        :center="initialLatLon"
-        style="z-index: 1"
-      >
-        <l-tile-layer
-          url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-        ></l-tile-layer>
-        <div v-for="(location, index) in locations" :key="index">
-          <l-marker :lat-lng="[location.latitude, location.longitude]">
-            <l-popup>
-              <div>
-                {{ location.datetime }}
-              </div>
-            </l-popup>
-          </l-marker>
-        </div>
-      </l-map>
-    </client-only>
+  <div>
+    <div id="map" style="height: 100vh"></div>
   </div>
 </template>
 
@@ -29,30 +8,63 @@
 export default {
   data() {
     return {
+      map: null,
+      geocoder: null,
+      infowindow: null,
+      locations: [],
       initialLatLon: [],
-      locations: [], // Initialize an empty array to store API data
     };
   },
   mounted() {
     this.plotLocations();
+    this.loadGoogleMapsScript(this.initMap);
+
     setInterval(this.plotLocations, 60 * 1000);
   },
   methods: {
-    plotLocations() {
+    loadGoogleMapsScript(callback) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gRWcOb3kuzIvykjNeJ8ezm4l5YCpJFw`;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", callback);
+      document.head.appendChild(script);
+    },
+
+    async plotLocations() {
       let employee = this.$auth.user.employee;
       this.UserID = employee.system_user_id;
-      this.$axios
+      await this.$axios
         .get(
           `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}`
-        ) // Replace with your API endpoint
+        )
         .then(({ data }) => {
-          this.locations = data.data;
           let first = data.data[0];
           this.initialLatLon = [first.latitude, first.longitude];
+
+          data.data.forEach(({ latitude, longitude }) => {
+            const marker = new google.maps.Marker({
+              position: {
+                lat: parseFloat(latitude),
+                lng: parseFloat(longitude),
+              },
+              map: this.map,
+            });
+
+            // Add click event for markers here if needed
+          });
         })
         .catch((error) => {
           console.error("Error fetching data from the API:", error);
         });
+    },
+    initMap() {
+      this.map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 8,
+        center: { lat: 25.276987, lng: 55.296249 },
+      });
+      this.geocoder = new google.maps.Geocoder();
+      this.infowindow = new google.maps.InfoWindow();
     },
   },
 };
