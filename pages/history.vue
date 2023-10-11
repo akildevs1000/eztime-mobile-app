@@ -1,10 +1,12 @@
 <template>
-  <div id="map-wrap" style="height: 1100px">
+  <div id="map-wrap" style="height: 100vh">
+    <!-- Set a relative position for the container -->
     <client-only>
       <l-map
         v-if="initialLatLon && initialLatLon.length"
         :zoom="13"
         :center="initialLatLon"
+        style="z-index: 1"
       >
         <l-tile-layer
           url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
