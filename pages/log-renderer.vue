@@ -57,7 +57,7 @@
           @change="getEmployeeIds"
           placeholder="Department"
         ></v-autocomplete>
-        <v-autocomplete
+        <!-- <v-autocomplete
           dense
           multiple
           outlined
@@ -67,10 +67,12 @@
           v-model="employee_ids"
           :items="employees"
           placeholder="Employees"
-        ></v-autocomplete>
+        ></v-autocomplete> -->
       </v-col>
       <v-col cols="12">
-        <v-btn class="indigo" block dark @click="submit">Submit</v-btn>
+        <v-btn :loading="loading" class="indigo" block dark @click="submit"
+          >Submit</v-btn
+        >
       </v-col>
       <v-col cols="12"> {{ response }} </v-col>
     </v-row>
@@ -81,6 +83,7 @@
 export default {
   data() {
     return {
+      loading: false,
       selectedItem: null,
       employeeIds: null,
       employees: [],
@@ -94,8 +97,11 @@ export default {
       shift_type_id: 2,
       department_id: 30,
       employee_ids: [],
-      response: {},
+      response: null,
     };
+  },
+  mounted() {
+    console.log(process.env.MapApiKey);
   },
   async created() {
     let options = {
@@ -105,7 +111,7 @@ export default {
       },
     };
     const { data } = await this.$axios.get(
-      `http://192.168.2.192:8000/api/departments`,
+      `https://backend.eztime.online/api/departments`,
       options
     );
     this.departments = data.data;
@@ -122,11 +128,14 @@ export default {
         },
       };
 
-      this.$axios.get("employeesByDepartment", options).then(({ data }) => {
-        this.employees = data.data;
-      });
+      this.$axios
+        .get("https://backend.eztime.online/api/employeesByDepartment", options)
+        .then(({ data }) => {
+          this.employee_ids = data.data.map((e) => e.system_user_id);
+        });
     },
     submit() {
+      this.loading = true;
       let payload = {
         company_id: this.company_id,
         date: this.date,
@@ -137,6 +146,7 @@ export default {
         .post("https://backend.eztime.online/api/renderMultiRequest", payload)
         .then(({ data }) => {
           this.response = data;
+          this.loading = false;
         });
     },
   },
