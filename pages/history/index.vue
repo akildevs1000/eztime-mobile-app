@@ -16,13 +16,15 @@ export default {
     };
   },
   mounted() {
-    this.plotLocations();
     this.loadGoogleMapsScript(this.initMap);
-
+  },
+  created() {
+    this.plotLocations();
     setInterval(this.plotLocations, 60 * 1000);
   },
   methods: {
     loadGoogleMapsScript(callback) {
+      console.log(process.env.MapApiKey);
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gRWcOb3kuzIvykjNeJ8ezm4l5YCpJFw`;
       script.async = true;
@@ -32,41 +34,76 @@ export default {
     },
 
     async plotLocations() {
-      let employee = this.$auth.user.employee;
-      this.UserID = employee.system_user_id;
-      await this.$axios
-        .get(
-          `/realtime_location?company_id=${this.$auth.user.company_id}&UserID=${this.UserID}&date=2023-10-10`
-        )
-        .then(({ data }) => {
-          let first = data.data[0];
-          this.initialLatLon = [first.latitude, first.longitude];
+      try {
+        const employee = this.$auth.user.employee;
+        this.UserID = employee.system_user_id;
 
-          const routeCoordinates = data.data.map(({ latitude, longitude }) => ({
+        const response = await this.$axios.get(`/realtime_location`, {
+          params: {
+            company_id: this.$auth.user.company_id,
+            UserID: this.UserID,
+            // date: this.$route.params.date,
+          },
+        });
+
+        const data = response.data.data;
+        if (!data || data.length === 0) {
+          console.error("No location data available.");
+          return;
+        }
+
+        const firstLocation = data[0];
+        this.initialLatLon = [firstLocation.latitude, firstLocation.longitude];
+
+        const routeCoordinates = data.map(({ latitude, longitude }) => ({
+          lat: parseFloat(latitude),
+          lng: parseFloat(longitude),
+        }));
+
+        const routePath = new google.maps.Polyline({
+          path: routeCoordinates,
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+        });
+
+        routePath.setMap(this.map);
+
+        const infowindow = new google.maps.InfoWindow();
+
+        data.forEach(({ latitude, longitude, datetime }) => {
+          console.log(datetime);
+          const position = {
             lat: parseFloat(latitude),
             lng: parseFloat(longitude),
-          }));
+          };
+          const marker = new google.maps.Marker({ position, map: this.map });
 
-          const routePath = new google.maps.Polyline({
-            path: routeCoordinates,
-            geodesic: true,
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 2,
+          marker.addListener("click", () => {
+            this.geocoder
+              .geocode({ location: position })
+              .then((response) => {
+                if (response.results[0]) {
+                  infowindow.setContent(datetime);
+                  infowindow.open(this.map, marker);
+                } else {
+                  window.alert("No results found");
+                }
+              })
+              .catch((e) => window.alert("Geocoder failed due to: " + e));
           });
-
-          routePath.setMap(this.map);
-        })
-        .catch((error) => {
-          console.error("Error fetching data from the API:", error);
         });
+      } catch (error) {
+        console.error("Error fetching data from the API:", error);
+      }
     },
+
     initMap() {
       this.map = new google.maps.Map(document.getElementById("map"), {
         zoom: 8,
         center: { lat: 25.276987, lng: 55.296249 },
       });
-      this.geocoder = new google.maps.Geocoder();
       this.geocoder = new google.maps.Geocoder();
       this.infowindow = new google.maps.InfoWindow();
     },

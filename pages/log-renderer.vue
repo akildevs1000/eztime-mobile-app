@@ -2,23 +2,59 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-text-field
-          label="Company Id"
-          v-model="company_id"
+        <v-select
+          dense
           outlined
           hide-details
-          dense
-        ></v-text-field>
+          v-model="company_id"
+          :items="companies"
+          item-text="name"
+          item-value="id"
+          label="Company Id"
+          @change="getDepartments"
+        ></v-select>
       </v-col>
       <v-col cols="12">
         <v-select
           dense
           outlined
           hide-details
-          v-model="shift_type_id"
-          :items="[1, 2, 3, 4, 5, 6]"
+          @change="getShiftTypeId"
+          v-model="shift_type"
+          :items="shift_types"
+          item-text="text"
+          item-value="value"
           label="Select Shift Type"
         ></v-select>
+      </v-col>
+      <v-col cols="12">
+        <v-autocomplete
+          label="Select Department"
+          dense
+          outlined
+          hide-details
+          x-small
+          item-value="id"
+          item-text="name"
+          v-model="department_id"
+          :items="departments"
+          @change="getEmployeeIds"
+          placeholder="Department"
+        ></v-autocomplete>
+      </v-col>
+      <v-col cols="12">
+        <v-autocomplete
+          dense
+          multiple
+          outlined
+          hide-details
+          x-small
+          item-value="system_user_id"
+          item-text="first_name"
+          v-model="employee_ids"
+          :items="employees"
+          placeholder="Employees"
+        ></v-autocomplete>
       </v-col>
       <v-col cols="12">
         <v-menu
@@ -45,36 +81,15 @@
         </v-menu>
       </v-col>
       <v-col cols="12">
-        <v-autocomplete
-          label="Select Department"
-          dense
-          outlined
-          x-small
-          item-value="id"
-          item-text="name"
-          v-model="department_id"
-          :items="departments"
-          @change="getEmployeeIds"
-          placeholder="Department"
-        ></v-autocomplete>
-        <!-- <v-autocomplete
-          dense
-          multiple
-          outlined
-          x-small
-          item-value="system_user_id"
-          item-text="first_name"
-          v-model="employee_ids"
-          :items="employees"
-          placeholder="Employees"
-        ></v-autocomplete> -->
+        <v-btn class="indigo" block dark @click="submit">Submit</v-btn>
       </v-col>
-      <v-col cols="12">
-        <v-btn :loading="loading" class="indigo" block dark @click="submit"
-          >Submit</v-btn
-        >
+      <v-col cols="12" v-if="response">
+        <v-card outlined min-height="100" style="overflow: scroll">
+          <ul class="mt-1">
+            <li>{{ response }}</li>
+          </ul>
+        </v-card>
       </v-col>
-      <v-col cols="12"> {{ response }} </v-col>
     </v-row>
   </v-container>
 </template>
@@ -83,7 +98,6 @@
 export default {
   data() {
     return {
-      loading: false,
       selectedItem: null,
       employeeIds: null,
       employees: [],
@@ -93,32 +107,56 @@ export default {
         .substr(0, 10),
       menu2: false,
       datePicker: false,
-      company_id: 1,
-      shift_type_id: 2,
-      department_id: 30,
+      company_id: 5,
+      shift_type: "renderFiloRequest",
+      department_id: 0,
       employee_ids: [],
+      companies: [],
+      shift_types: [
+        {
+          text: "Filo",
+          value: `renderFiloRequest`,
+        },
+        {
+          text: "Multi",
+          value: `renderMultiRequest`,
+        },
+        {
+          text: "Single",
+          value: `renderSingleRequest`,
+        },
+      ],
+      shift_type_id: 1,
       response: null,
-    };
-  },
-  mounted() {
-    console.log(process.env.MapApiKey);
-  },
-  async created() {
-    let options = {
-      params: {
-        per_page: 1000,
-        company_id: this.company_id,
+      options: {},
+      shift_type_ids: {
+        renderFiloRequest: 1,
+        renderMultiRequest: 2,
+        renderSingleRequest: 6,
       },
     };
-    const { data } = await this.$axios.get(
-      `https://backend.eztime.online/api/departments`,
-      options
-    );
-    this.departments = data.data;
-
-    this.getEmployeeIds();
+  },
+  async created() {
+    this.$axios.get("https://backend.eztime.online/api/company").then(({ data }) => {
+      this.companies = data.data;
+    });
+    await this.getDepartments();
+    await this.getEmployeeIds();
   },
   methods: {
+    getShiftTypeId() {
+      this.shift_type_id = this.shift_type_ids[this.shift_type];
+    },
+    async getDepartments() {
+      this.options = {
+        params: {
+          per_page: 1000,
+          company_id: this.company_id,
+        },
+      };
+      const { data } = await this.$axios.get(`https://backend.eztime.online/api/departments`, this.options);
+      this.departments = data.data;
+    },
     getEmployeeIds() {
       let options = {
         params: {
@@ -128,26 +166,22 @@ export default {
         },
       };
 
-      this.$axios
-        .get("https://backend.eztime.online/api/employeesByDepartment", options)
-        .then(({ data }) => {
-          this.employee_ids = data.data.map((e) => e.system_user_id);
-        });
+      this.$axios.get("https://backend.eztime.online/api/employeesByDepartment", options).then(({ data }) => {
+        this.employees = data.data;
+        this.employee_ids = data.data.map(e => e.system_user_id);
+
+      });
     },
     submit() {
-      this.loading = true;
       let payload = {
         company_id: this.company_id,
         date: this.date,
         shift_type_id: this.shift_type_id,
         UserIds: this.employee_ids,
       };
-      this.$axios
-        .post("https://backend.eztime.online/api/renderMultiRequest", payload)
-        .then(({ data }) => {
-          this.response = data;
-          this.loading = false;
-        });
+      this.$axios.post(`https://backend.eztime.online/api/${this.shift_type}`, payload).then(({ data }) => {
+        this.response = data;
+      });
     },
   },
 };
