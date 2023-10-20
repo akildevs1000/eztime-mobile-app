@@ -13,13 +13,13 @@
           <!-- <img :src="profile_pictrue" alt="Avatar" /> -->
           <img
             v-if="disableCheckOutButton"
-            src="C-IN.png"
+            src="/C-IN.png"
             alt="Avatar"
             @click="generateLog(`in`)"
           />
           <img
             v-if="disableCheckInButton"
-            src="C-OUT.png"
+            src="/C-OUT.png"
             alt="Avatar"
             @click="generateLog(`out`)"
           />
@@ -37,7 +37,7 @@
       <div class="text-center mt-5">
         <v-img
           v-if="isSuccess"
-          src="sucess.png"
+          src="/sucess.png"
           alt="Avatar"
           height="50px"
           width="50px"
@@ -45,7 +45,7 @@
         ></v-img>
         <v-img
           v-else-if="isSuccess == false"
-          src="fail.png"
+          src="/fail.png"
           alt="Avatar"
           height="50px"
           width="50px"
@@ -92,6 +92,7 @@ export default {
     locationError: null,
     company_id: 0,
     intervalId: 0,
+    intervalIdForLatLon: 0,
   }),
   mounted() {
     this.updateDateTime();
@@ -122,7 +123,6 @@ export default {
               )
               .then(async ({ data }) => {
                 this.locationData = data;
-                await this.insertRealTimeLocation(data, latitude, longitude);
               })
               .catch(({ message }) =>
                 console.log((this.locationError = message))
@@ -134,15 +134,15 @@ export default {
         this.locationError = "Location not available";
       }
     },
-    async insertRealTimeLocation(locationData, latitude, longitude) {
+    async insertRealTimeLocation(latitude, longitude) {
       let payload = {
         company_id: this.company_id,
         device_id: this.device_id,
         UserID: this.UserID,
         latitude,
         longitude,
-        short_name: locationData.name ?? "---",
-        full_name: locationData.name ?? "---",
+        // short_name: locationData.name ?? "---",
+        // full_name: locationData.name ?? "---",
       };
 
       await this.$axios
@@ -160,9 +160,7 @@ export default {
         gps_location: this.locationData.name,
       };
 
-      console.log(payload);
-
-      // return;
+      //   return;
 
       this.$axios
         .post(`/generate_log`, payload)
@@ -185,12 +183,15 @@ export default {
             this.disableCheckInButton = true;
             this.disableCheckOutButton = false;
             this.intervalId = setInterval(this.getLocation, 60 * 1000);
-            console.log(this.intervalId);
-            return;
+            this.intervalIdForLatLon = setInterval(
+              this.insertRealTimeLocation(latitude, longitude),
+              60 * 1000
+            );
           } else {
             this.disableCheckInButton = false;
             this.disableCheckOutButton = true;
             clearInterval(this.intervalId);
+            clearInterval(this.intervalIdForLatLon);
           }
         })
         .catch(({ message }) => {
