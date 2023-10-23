@@ -26,18 +26,22 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar class="bg-color" :clipped-left="clipped" fixed app dark>
+    <v-app-bar class="bg-color" :clipped-left="clipped" fixed app >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <!-- <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon> -->
-      </v-btn>
+      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
+        <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
+      </v-btn> -->
       <!-- <v-btn icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
       </v-btn> -->
       <!-- <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
       </v-btn> -->
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <span class="text-overflow">
+        <img title="My Time Cloud " :src="`/logo22.png`" style="width: 150px" />
+
+      </span>
+      <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
       <v-btn icon @click="logout">
         <v-icon>mdi-logout</v-icon>
@@ -90,15 +94,25 @@ export default {
         //   to: "/tracker",
         // },
         {
-          icon: "mdi-chart-bubble",
-          title: "History",
+          icon: "mdi-clock-outline",
+          title: "Clocking",
+          to: "/clocking",
+        },
+        {
+          icon: "mdi-map-marker-radius",
+          title: "GPS History",
           to: "/history",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Logs",
+          to: "/logs",
         },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Eztime",
+      title: "Mytime",
     };
   },
   computed: {
@@ -118,7 +132,7 @@ export default {
 </script>
 <style scoped>
 .bg-color {
-  background-color: #6946dd !important;
+  background-color: rgb(236, 240, 244) !important;
 }
 table {
   font-family: arial, sans-serif;

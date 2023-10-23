@@ -1,166 +1,68 @@
 <template>
-  <div>
-    <!-- <div>
-      <h1>Donut Chart Example</h1>
-      <EmployeeStats />
-    </div> -->
-    <v-row>
-      <v-col cols="5">
-        <img style="width: 100%" :src="profile_pictrue" alt="Avatar" />
-      </v-col>
-      <v-col cols="7">
-        <div class="text-left">
-          <v-btn style="width: 100%" class="info" dark>
-            <b>My Profile</b>
-          </v-btn>
-        </div>
+  <div class="text-center mt-5">
+    <v-container>
+      <v-sheet class="text-h4 text-center">
+        {{ currentTime }}
+      </v-sheet>
+      <!-- <v-sheet class="text-h4 text-center">
+        {{ latitude }} - {{ longitude }}
+      </v-sheet> -->
+      <div class="text-center">{{ formattedDateTime || "Loading..." }}</div>
+
+      <!-- <div class="text-center">formattedDateTime  EID: {{ UserID }}</div> -->
+
+      <v-card flat>
+        <v-avatar size="150" class="mt-10">
+          <!-- <img :src="profile_pictrue" alt="Avatar" /> -->
+          <img
+            v-if="disableCheckOutButton"
+            src="/C-IN.png"
+            alt="Avatar"
+            @click="generateLog(`in`)"
+          />
+          <img
+            v-if="disableCheckInButton"
+            src="/C-OUT.png"
+            alt="Avatar"
+            @click="generateLog(`out`)"
+          />
+        </v-avatar>
+
         <div class="text-center mt-5">
-          {{ formattedDateTime || "Loading..." }}
+          <v-icon>mdi-map-marker-radius</v-icon
+          ><span class="mx-1 pt-2">{{
+            (locationData && locationData.name) || "Getting location..."
+          }}</span>
         </div>
-        <v-sheet class="text-h4 text-center">
-          {{ currentTime }}
-        </v-sheet>
-      </v-col>
-      <v-col cols="12" class="text-center">
-        <div>
-          <span class="blue--text">Self Decipline Indicator</span> (For own
-          reference only)
-        </div>
-      </v-col>
-
-      <v-col
-        cols="4"
-        class="text-center"
-        style="
-          border-top: 1px solid rgb(156, 155, 155);
-          border-bottom: 1px solid rgb(156, 155, 155);
-        "
-      >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
-        <div>Work Time</div>
-      </v-col>
-      <v-col
-        cols="4"
-        class="text-center"
-        style="border: 1px solid rgb(156, 155, 155)"
-      >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
-        <div>Remaing</div>
-      </v-col>
-      <v-col
-        cols="4"
-        class="text-center"
-        style="
-          border-top: 1px solid rgb(156, 155, 155);
-          border-bottom: 1px solid rgb(156, 155, 155);
-        "
-      >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
-        <div>OverTime</div>
-      </v-col>
-
-      <v-col
-        cols="12"
-        class="text-center"
-        style="
-          background-color: rgb(226, 224, 224);
-          border-bottom: 1px solid rgb(199 198 198);
-        "
-      >
-        <div>
-          My Attendance<span class="blue--text"> - Since {{ sinceDate }}</span>
-        </div>
-      </v-col>
-
-      <v-col cols="5" class="text-center">
-        <v-progress-circular
-          :rotate="360"
-          :size="150"
-          :width="10"
-          :value="100"
-          color="success"
-        >
-          10 <br />
-          OnTime
-        </v-progress-circular>
-      </v-col>
-      <v-col cols="7">
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">Late In </span>
-          <span class="px-1 warning white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
-          </span>
-        </div>
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">Early Out </span>
-          <span class="px-1 blue white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
-          </span>
-        </div>
-
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">Short Hours </span>
-          <span class="px-1 red white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
-          </span>
-        </div>
-
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">Absent </span>
-          <span class="px-1 red white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
-          </span>
-        </div>
-
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">On Leave </span>
-          <span class="px-1 indigo white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
-          </span>
-        </div>
-      </v-col>
-
-      <v-col
-        cols="11"
-        style="
-          background-color: rgb(226, 224, 224);
-          border-bottom: 1px solid rgb(199 198 198);
-        "
-      >
-        <div class="text-h5">Last Clocking</div>
-        <span class="">{{lastLog && lastLog.time}} {{ lastLog && lastLog.date }} </span>
-
-        <div class="">
-          <b>{{lastLog && lastLog.device && lastLog.device.location}}</b>
-          <v-icon style="margin-top: -2%" color="green"
-            >mdi-map-marker-radius</v-icon
-          >
-        </div>
-      </v-col>
-      <v-col
-        @click="goToPage(`logs`)"
-        cols="1"
-        class="indigo text-center white--text d-flex align-center justify-center"
-      >
-        <span class="white--text" dark>
-          <v-icon dark>mdi-chevron-right</v-icon>
-        </span>
-      </v-col>
-    </v-row>
+      </v-card>
+    </v-container>
+    <transition name="slide-y-transition">
+      <div class="text-center mt-5">
+        <v-img
+          v-if="isSuccess"
+          src="/sucess.png"
+          alt="Avatar"
+          height="50px"
+          width="50px"
+          style="display: inline-block"
+        ></v-img>
+        <v-img
+          v-else-if="isSuccess == false"
+          src="/fail.png"
+          alt="Avatar"
+          height="50px"
+          width="50px"
+          style="display: inline-block"
+        ></v-img>
+      </div>
+    </transition>
+    <div class="error--text" v-if="locationError">{{ locationError }}</div>
   </div>
 </template>
 
 <script>
-import EmployeeStats from "../components/EmployeeStats.vue";
-
 export default {
-  components: {
-    EmployeeStats,
-  },
-
   data: () => ({
-    sinceDate: null,
-    progress_value: 100,
     headers: [
       { text: "LogTime", value: "LogTime" },
       { text: "Device", value: "DeviceID" },
@@ -196,7 +98,6 @@ export default {
     latitude: null,
     longitude: null,
     currentDate: null,
-    lastLog: null,
   }),
   async mounted() {
     this.updateDateTime();
@@ -211,42 +112,9 @@ export default {
     this.shift_type_id = employee.schedule.shift_type_id;
     this.company_id = this.$auth.user.company_id;
     this.device_id = `Mobile-${this.UserID}`;
-
-    // Create a new Date object
-    let currentDate = new Date();
-    // Get the current day, month, and year
-    let day = 1;
-    let month = currentDate.getMonth() + 1; // Months are 0-based, so we add 1 to get the correct month.
-    let year = currentDate.getFullYear();
-
-    this.sinceDate =
-      (day < 10 ? "0" : "") +
-      day +
-      "/" +
-      (month < 10 ? "0" : "") +
-      month +
-      "/" +
-      year;
-
-    this.getLogs();
+    // this.getLogs();
   },
   methods: {
-    getLogs() {
-      this.$axios
-        .get(`attendance_logs`, {
-          params: {
-            company_id: this.$auth.user.company_id,
-            UserID: this.$auth.user.employee.system_user_id,
-          },
-        })
-        .then(({ data }) => {
-          this.lastLog = data.data[0];
-          console.log(this.lastLog);
-        });
-    },
-    goToPage(page) {
-      this.$router.push(page);
-    },
     async getRealTimeLocation() {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -462,7 +330,7 @@ export default {
   },
 };
 </script>
-<!-- <style scoped>
+<style scoped>
 .slide-y-enter-active,
 .slide-y-leave-active {
   transition: transform 0.5s ease, opacity 0.5s ease;
@@ -474,4 +342,4 @@ export default {
 .slide-y-leave-active {
   position: absolute;
 }
-</style> -->
+</style>
