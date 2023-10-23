@@ -4,6 +4,9 @@
       <v-sheet class="text-h4 text-center">
         {{ currentTime }}
       </v-sheet>
+      <!-- <v-sheet class="text-h4 text-center">
+        {{ latitude }} - {{ longitude }}
+      </v-sheet> -->
       <div class="text-center">{{ formattedDateTime || "Loading..." }}</div>
 
       <!-- <div class="text-center">formattedDateTime  EID: {{ UserID }}</div> -->
@@ -93,10 +96,12 @@ export default {
     company_id: 0,
     intervalId: 0,
     intervalIdForLatLon: 0,
+    latitude: null,
+    longitude: null,
   }),
   mounted() {
     this.updateDateTime();
-    this.getLocation();
+    this.getLatLon(true);
     setInterval(this.updateDateTime, 1000);
   },
 
@@ -108,27 +113,39 @@ export default {
     this.company_id = this.$auth.user.company_id;
     this.device_id = `Mobile-${this.UserID}`;
     // this.getLogs();
+
+    // await this.getLocation(this.latitude, this.longitude);
   },
   methods: {
-    getLocation() {
-      this.company_id = this.$auth.user.company_id;
-      this.device_id = `Mobile-${this.UserID}`;
+    async getLocation(lat, lon) {
+      await this.$axios
+        .get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+        )
+        .then(({ data }) => {
+          this.locationData = data;
+        })
+        .catch(({ message }) => console.log((this.locationError = message)));
+    },
 
+    getLatLon(isLocationDetails) {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
-          async ({ coords: { latitude, longitude } }) => {
-            this.$axios
-              .get(
-                `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-              )
-              .then(async ({ data }) => {
-                this.locationData = data;
-              })
-              .catch(({ message }) =>
-                console.log((this.locationError = message))
-              );
+          ({ coords: { latitude, longitude } }) => {
+            // if (this.latitude === latitude && this.longitude === longitude) {
+            //   console.log("Same location as before");
+            //   return;
+            // }
+
+            if (isLocationDetails) {
+              this.getLocation(latitude, longitude);
+            } else {
+              this.insertRealTimeLocation(latitude, longitude);
+            }
           },
-          ({ message }) => console.log((this.locationError = message))
+          ({ message }) => {
+            this.locationError = message;
+          }
         );
       } else {
         this.locationError = "Location not available";
@@ -141,13 +158,16 @@ export default {
         UserID: this.UserID,
         latitude,
         longitude,
-        // short_name: locationData.name ?? "---",
-        // full_name: locationData.name ?? "---",
+        short_name: locationData.name ?? "---",
+        full_name: locationData.name ?? "---",
       };
 
       await this.$axios
         .post(`/realtime_location`, payload)
-        .then(({ data }) => console.log(data))
+        .then(({ data }) => {
+          this.latitude = latitude;
+          this.longitude = longitude;
+        })
         .catch(({ message }) => console.log(message));
     },
     generateLog(type) {
@@ -159,8 +179,6 @@ export default {
         company_id: this.$auth.user.company_id,
         gps_location: this.locationData.name,
       };
-
-      //   return;
 
       this.$axios
         .post(`/generate_log`, payload)
@@ -182,9 +200,13 @@ export default {
           if (type == "in") {
             this.disableCheckInButton = true;
             this.disableCheckOutButton = false;
-            this.intervalId = setInterval(this.getLocation, 60 * 1000);
+
+            this.intervalId = setInterval(
+              () => this.getLatLon(true),
+              60 * 1000
+            );
             this.intervalIdForLatLon = setInterval(
-              this.insertRealTimeLocation(latitude, longitude),
+              () => this.getLatLon(false),
               60 * 1000
             );
           } else {
@@ -197,6 +219,11 @@ export default {
         .catch(({ message }) => {
           this.message = message;
           this.isSuccess = false;
+          console.log(`catch`);
+          console.log(message);
+          console.log(`catch end`);
+
+          setTimeout(() => (this.isSuccess = null), 1000);
         });
     },
     ifExist() {

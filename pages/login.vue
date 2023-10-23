@@ -186,7 +186,7 @@ export default {
     loading: false,
     snackbar: false,
     email: "francisgill1002@gmail.com",
-    password: "demo@123",
+    password: "secret",
     show_password: false,
     msg: "",
     requiredRules: [(v) => !!v || "Required"],
