@@ -210,11 +210,16 @@ export default {
           this.ifExist();
 
           if (type == "in") {
+            this.insertRealTimeLocation();
             this.disableCheckInButton = true;
             this.disableCheckOutButton = false;
+            this.intervalId = setInterval(() => {
+              this.insertRealTimeLocation();
+            }, 60 * 1000);
           } else {
             this.disableCheckInButton = false;
             this.disableCheckOutButton = true;
+            clearInterval(this.intervalId);
           }
         })
         .catch(({ message }) => {
@@ -223,6 +228,7 @@ export default {
           console.log(`catch`);
           console.log(message);
           console.log(`catch end`);
+
           setTimeout(() => (this.isSuccess = null), 1000);
         });
     },

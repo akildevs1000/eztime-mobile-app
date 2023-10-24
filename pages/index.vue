@@ -1,9 +1,5 @@
 <template>
   <div>
-    <!-- <div>
-      <h1>Donut Chart Example</h1>
-      <EmployeeStats />
-    </div> -->
     <v-row>
       <v-col cols="5">
         <img style="width: 100%" :src="profile_pictrue" alt="Avatar" />
@@ -73,25 +69,37 @@
       </v-col>
 
       <v-col cols="5" class="text-center">
-        <v-progress-circular
-          :rotate="360"
-          :size="150"
-          :width="10"
-          :value="100"
-          color="success"
-        >
-          10 <br />
-          OnTime
-        </v-progress-circular>
+        <div class="mt-10">
+          <!-- <EmployeeStats /> -->
+
+          <v-progress-circular
+            :rotate="360"
+            :size="150"
+            :width="10"
+            :value="100"
+            color="success"
+          >
+            10 <br />
+            OnTime
+          </v-progress-circular>
+        </div>
       </v-col>
       <v-col cols="7">
-        <div class="grey lighten-1 my-1">
-          <span class="px-1">Late In </span>
-          <span class="px-1 warning white--text" dark style="float: right"
-            >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
+        <div
+          v-for="(item, index) in employee_stats"
+          :key="index"
+          class="grey lighten-1 my-1"
+        >
+          <span class="px-1">{{ item.title }} </span>
+          <span
+            :class="item.color"
+            class="px-1 white--text"
+            dark
+            style="float: right"
+            >{{ item.value }} <v-icon x-small dark>mdi-chevron-right</v-icon>
           </span>
         </div>
-        <div class="grey lighten-1 my-1">
+        <!-- <div class="grey lighten-1 my-1">
           <span class="px-1">Early Out </span>
           <span class="px-1 blue white--text" dark style="float: right"
             >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
@@ -117,7 +125,7 @@
           <span class="px-1 indigo white--text" dark style="float: right"
             >1 <v-icon x-small dark>mdi-chevron-right</v-icon>
           </span>
-        </div>
+        </div> -->
       </v-col>
 
       <v-col
@@ -128,10 +136,12 @@
         "
       >
         <div class="text-h5">Last Clocking</div>
-        <span class="">{{lastLog && lastLog.time}} {{ lastLog && lastLog.date }} </span>
+        <span class=""
+          >{{ lastLog && lastLog.time }} {{ lastLog && lastLog.date }}
+        </span>
 
         <div class="">
-          <b>{{lastLog && lastLog.device && lastLog.device.location}}</b>
+          <b>{{ lastLog && lastLog.device && lastLog.device.location }}</b>
           <v-icon style="margin-top: -2%" color="green"
             >mdi-map-marker-radius</v-icon
           >
@@ -197,6 +207,7 @@ export default {
     longitude: null,
     currentDate: null,
     lastLog: null,
+    employee_stats: [],
   }),
   async mounted() {
     this.updateDateTime();
@@ -229,6 +240,7 @@ export default {
       year;
 
     this.getLogs();
+    this.getEmployeeStats();
   },
   methods: {
     getLogs() {
@@ -241,7 +253,18 @@ export default {
         })
         .then(({ data }) => {
           this.lastLog = data.data[0];
-          console.log(this.lastLog);
+        });
+    },
+    getEmployeeStats() {
+      this.$axios
+        .get(`employee-statistics`, {
+          params: {
+            company_id: this.$auth.user.company_id,
+            employee_id: this.$auth.user.employee.system_user_id,
+          },
+        })
+        .then(({ data }) => {
+          this.employee_stats = data;
         });
     },
     goToPage(page) {

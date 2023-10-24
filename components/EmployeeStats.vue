@@ -10,36 +10,30 @@
         data: [],
         chartOptions: {
           title: {
-            align: "center",
+            align: "s",
             margin: 0,
           },
-          colors: ["#23bdb8"],
+          colors: ["#4caf50","#fb8c00","#fb8c00","#fb8c00","#3f51b5","#9e9e9e","#F44336","#F44336","#9e9e9e"],
   
           series: [],
           chart: {
-            width: 350, //200 //275
+            width: 175, //200 //275
             type: "donut",
           },
           labels: [],
-          // plotOptions: {
-          //   pie: {
-          //     startAngle: -90,
-          //     endAngle: 270,
-          //   },
-          // },
           dataLabels: {
-            enabled: true,
+            enabled: false,
             style: {
               fontSize: "10px",
             },
           },
           legend: {
-            show: true,
+            show: false,
             fontSize: "10px",
           },
           responsive: [
             {
-              breakpoint: 480,
+              breakpoint: 100,
               options: {
                 chart: {},
                 legend: {
