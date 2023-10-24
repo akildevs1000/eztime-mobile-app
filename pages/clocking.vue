@@ -13,19 +13,7 @@
 
       <v-card flat>
         <v-avatar size="150" class="mt-10">
-          <!-- <img :src="profile_pictrue" alt="Avatar" /> -->
-          <img
-            v-if="disableCheckOutButton"
-            src="/C-IN.png"
-            alt="Avatar"
-            @click="generateLog(`in`)"
-          />
-          <img
-            v-if="disableCheckInButton"
-            src="/C-OUT.png"
-            alt="Avatar"
-            @click="generateLog(`out`)"
-          />
+          <img :src="puching_image" alt="Avatar" @click="generateLog(`in`)" />
         </v-avatar>
 
         <div class="text-center mt-5">
@@ -93,6 +81,8 @@ export default {
     UserID: null,
     attendanceLogs: [],
     profile_pictrue: "no-profile-image.jpg",
+    puching_image: "/C-IN.png",
+
     uniqueDeviceId: null,
     device_id: null,
     isButtonDisabled: false,
@@ -108,6 +98,7 @@ export default {
     formattedDateTime: "",
     isSuccess: null,
     dialog: false,
+    nextPunchAllowed: true,
     locationData: {},
     coordinates: {},
     longitude: 0,
@@ -204,6 +195,10 @@ export default {
       }
     },
     generateLog(type) {
+      if (!this.nextPunchAllowed) {
+        alert("Next Clock In allowed after 1 minute");
+        return;
+      }
       let payload = {
         UserID: this.UserID,
         LogTime: `${this.getFormattedDate()} ${this.getFormattedTime()}`,
@@ -216,29 +211,38 @@ export default {
       this.$axios
         .post(`/generate_log`, payload)
         .then(({ data }) => {
+          this.nextPunchAllowed = false;
+          this.dialog = true;
+
           if (!data.status) {
             this.message = data.message;
             this.isSuccess = false;
+            setTimeout(() => (this.dialog = false), 3000);
+            return;
           }
 
           this.message = "Success";
           this.isSuccess = true;
-          this.dialog = true;
 
           this.ifExist();
+
+          this.puching_image = "";
 
           if (type == "in") {
             this.insertRealTimeLocation();
             this.disableCheckInButton = true;
-            this.disableCheckOutButton = false;
+            this.puching_image = "/C-OUT.PNG";
+
             this.intervalId = setInterval(() => {
               this.insertRealTimeLocation();
             }, 60 * 1000);
           } else {
-            this.disableCheckInButton = false;
+            this.puching_image = "/C-IN.png";
             this.disableCheckOutButton = true;
             clearInterval(this.intervalId);
           }
+
+          setTimeout(() => (this.nextPunchAllowed = true), 60 * 1000);
         })
         .catch(({ message }) => {
           this.message = message;
