@@ -30,32 +30,53 @@
 
         <div class="text-center mt-5">
           <v-icon>mdi-map-marker-radius</v-icon
-          ><span class="mx-1 pt-2">{{
-            (locationData && locationData.display_name) || "Getting location..."
-          }}</span>
+          ><span class="mx-1 pt-2">
+            <!-- {{
+              (locationData && locationData.display_name) ||
+              "Getting location..."
+            }} -->
+            Sheikh Zayed Road (north), Sheikh Zayed Road, Trade Centre, Dubai,
+            United Arab Emirates
+          </span>
         </div>
       </v-card>
     </v-container>
-    <transition name="slide-y-transition">
-      <div class="text-center mt-5">
-        <v-img
-          v-if="isSuccess"
-          src="/sucess.png"
-          alt="Avatar"
-          height="50px"
-          width="50px"
-          style="display: inline-block"
-        ></v-img>
-        <v-img
-          v-else-if="isSuccess == false"
-          src="/fail.png"
-          alt="Avatar"
-          height="50px"
-          width="50px"
-          style="display: inline-block"
-        ></v-img>
-      </div>
-    </transition>
+
+    <div class="text-center">
+      <v-dialog v-model="dialog" width="500">
+        <v-card>
+          <v-toolbar flat dense>
+            <v-spacer></v-spacer>
+            <v-icon @click="dialog = false">mdi-close</v-icon>
+          </v-toolbar>
+
+          <v-card-text>
+            <p class="text-center">
+              <v-img
+                v-if="isSuccess"
+                src="/sucess.png"
+                alt="Avatar"
+                height="50px"
+                width="50px"
+                style="display: inline-block"
+              ></v-img>
+              <v-img
+                v-else-if="isSuccess == false"
+                src="/fail.png"
+                alt="Avatar"
+                height="50px"
+                width="50px"
+                style="display: inline-block"
+              ></v-img>
+            </p>
+            <p class="text-center">
+              Your clocking has been recorded successfully
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </div>
+
     <div class="error--text" v-if="locationError">{{ locationError }}</div>
   </div>
 </template>
@@ -75,7 +96,6 @@ export default {
     uniqueDeviceId: null,
     device_id: null,
     isButtonDisabled: false,
-    dialog: false,
     message: "",
     response: "",
     shift_type_id: "",
@@ -87,6 +107,7 @@ export default {
     currentTime: "",
     formattedDateTime: "",
     isSuccess: null,
+    dialog: false,
     locationData: {},
     coordinates: {},
     longitude: 0,
@@ -102,7 +123,7 @@ export default {
   async mounted() {
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000);
-    await this.getRealTimeLocation();
+    // await this.getRealTimeLocation();
   },
 
   async created() {
@@ -195,8 +216,6 @@ export default {
       this.$axios
         .post(`/generate_log`, payload)
         .then(({ data }) => {
-          this.dialog = true;
-
           if (!data.status) {
             this.message = data.message;
             this.isSuccess = false;
@@ -204,8 +223,7 @@ export default {
 
           this.message = "Success";
           this.isSuccess = true;
-
-          setTimeout(() => (this.isSuccess = null), 3000);
+          this.dialog = true;
 
           this.ifExist();
 
@@ -228,9 +246,9 @@ export default {
           console.log(`catch`);
           console.log(message);
           console.log(`catch end`);
-
-          setTimeout(() => (this.isSuccess = null), 1000);
         });
+
+      setTimeout(() => (this.dialog = false), 3000);
     },
     ifExist() {
       this.$axios
