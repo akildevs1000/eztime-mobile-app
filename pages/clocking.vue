@@ -4,9 +4,7 @@
       <v-sheet class="text-h4 text-center">
         {{ currentTime }}
       </v-sheet>
-      <!-- <v-sheet class="text-h4 text-center">
-        {{ latitude }} - {{ longitude }}
-      </v-sheet> -->
+
       <div class="text-center">{{ formattedDateTime || "Loading..." }}</div>
 
       <!-- <div class="text-center">formattedDateTime  EID: {{ UserID }}</div> -->
@@ -19,12 +17,12 @@
         <div class="text-center mt-5">
           <v-icon>mdi-map-marker-radius</v-icon
           ><span class="mx-1 pt-2">
-            <!-- {{
+            {{
               (locationData && locationData.display_name) ||
               "Getting location..."
-            }} -->
-            Sheikh Zayed Road (north), Sheikh Zayed Road, Trade Centre, Dubai,
-            United Arab Emirates
+            }}
+            <!-- Sheikh Zayed Road (north), Sheikh Zayed Road, Trade Centre, Dubai,
+            United Arab Emirates -->
           </span>
         </div>
       </v-card>
@@ -58,7 +56,7 @@
               ></v-img>
             </p>
             <p class="text-center">
-              Your clocking has been recorded successfully
+              {{ message }}
             </p>
           </v-card-text>
         </v-card>
@@ -99,22 +97,33 @@ export default {
     isSuccess: null,
     dialog: false,
     nextPunchAllowed: true,
-    locationData: {},
     coordinates: {},
-    longitude: 0,
-    latitude: 0,
 
     locationError: null,
     company_id: 0,
     intervalId: 0,
-    latitude: null,
-    longitude: null,
-    currentDate: null,
   }),
   async mounted() {
     this.updateDateTime();
     setInterval(this.updateDateTime, 1000);
-    // await this.getRealTimeLocation();
+  },
+
+  computed: {
+    locationData() {
+      return this.$store.state.locationData;
+    },
+    latitude() {
+      return this.$store.state.latitude;
+    },
+    longitude() {
+      return this.$store.state.longitude;
+    },
+    currentDate() {
+      return this.$store.state.currentDate;
+    },
+    initialPunch() {
+      return this.$store.state.initialPunch;
+    },
   },
 
   async created() {
@@ -127,76 +136,12 @@ export default {
     // this.getLogs();
   },
   methods: {
-    async getRealTimeLocation() {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          ({ coords: { latitude, longitude } }) => {
-            this.$axios
-              .get(
-                `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-              )
-              .then(({ data }) => {
-                this.locationData = data;
-              })
-              .catch(({ message }) =>
-                console.log((this.locationError = message))
-              );
-          },
-          ({ message }) => {
-            this.locationError = message;
-          }
-        );
-      } else {
-        this.locationError = "Location not available";
-      }
-    },
-
-    async insertRealTimeLocation() {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          ({ coords: { latitude, longitude } }) => {
-            if (
-              this.latitude == latitude &&
-              this.longitude == longitude &&
-              this.currentDate == this.getFormattedDate()
-            ) {
-              console.log(`same location found on ${this.currentDate} date.`);
-              return;
-            }
-
-            let payload = {
-              company_id: this.company_id,
-              device_id: this.device_id,
-              UserID: this.UserID,
-              latitude,
-              longitude,
-              short_name: "---",
-              full_name: "---",
-            };
-
-            this.$axios
-              .post(`/realtime_location`, payload)
-              .then(({ data }) => {
-                this.latitude = latitude;
-                this.longitude = longitude;
-                this.currentDate = this.getFormattedDate();
-                console.log(`RealTimeLocation response start`);
-                console.log(data);
-                console.log(`RealTimeLocation response end`);
-              })
-              .catch(({ message }) => console.log(message));
-          },
-          ({ message }) => {
-            this.locationError = message;
-          }
-        );
-      } else {
-        this.locationError = "Location not available";
-      }
-    },
     generateLog(type) {
       if (!this.nextPunchAllowed) {
-        alert("Next Clock In allowed after 1 minute");
+        this.dialog = true;
+        this.message = "Next Clocking allowed after 1 minute only";
+        this.isSuccess = false;
+        setTimeout(() => (this.dialog = false), 3000);
         return;
       }
       let payload = {
@@ -221,7 +166,7 @@ export default {
             return;
           }
 
-          this.message = "Success";
+          this.message = "Your clocking has been recorded successfully";
           this.isSuccess = true;
 
           this.ifExist();
@@ -241,8 +186,6 @@ export default {
             this.disableCheckOutButton = true;
             clearInterval(this.intervalId);
           }
-
-          setTimeout(() => (this.nextPunchAllowed = true), 60 * 1000);
         })
         .catch(({ message }) => {
           this.message = message;
@@ -253,6 +196,47 @@ export default {
         });
 
       setTimeout(() => (this.dialog = false), 3000);
+      setTimeout(() => (this.nextPunchAllowed = true), 60 * 1000);
+    },
+
+    async insertRealTimeLocation() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          ({ coords: { latitude, longitude } }) => {
+            if (
+              this.initialPunch == false &&
+              this.latitude == latitude &&
+              this.longitude == longitude &&
+              this.currentDate == this.getFormattedDate()
+            ) {
+              console.log(`same location found on ${this.currentDate} date.`);
+              return;
+            }
+
+            let payload = {
+              company_id: this.company_id,
+              device_id: this.device_id,
+              UserID: this.UserID,
+              latitude,
+              longitude,
+              short_name: "---",
+              full_name: "---",
+            };
+
+            this.$axios
+              .post(`/realtime_location`, payload)
+              .then(({ data }) => {
+                this.setRealTimeLocation(latitude, longitude);
+              })
+              .catch(({ message }) => console.log(message));
+          },
+          ({ message }) => {
+            this.locationError = message;
+          }
+        );
+      } else {
+        this.locationError = "Location not available";
+      }
     },
     ifExist() {
       this.$axios
@@ -272,7 +256,7 @@ export default {
         name: "Mobile",
         short_name: "Mobile",
         model_number: this.device_id,
-        location: this.locationData.name ?? "---",
+        location: this.locationData.display_name ?? "---",
         company_id: this.$auth.user.company_id,
         branch_id: this.$auth.user.branch_id,
         status_id: 1,
@@ -349,10 +333,25 @@ export default {
       this.formattedDateTime = `${dayOfWeek}, ${month} ${dayOfMonth}`;
       this.currentTime = `${hours}:${minutes}:${seconds}`;
     },
+
+    setRealTimeLocation(latitude, longitude) {
+      this.$axios
+        .get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+        )
+        .then(({ data }) => {
+          this.$store.commit("initialPunch", false);
+          this.$store.commit("locationData", data);
+          this.$store.commit("latitude", latitude);
+          this.$store.commit("longitude", longitude);
+          this.$store.commit("currentDate", this.getFormattedDate());
+        })
+        .catch(({ message }) => console.log((this.locationError = message)));
+    },
   },
 };
 </script>
-<style scoped>
+<!-- <style scoped>
 .slide-y-enter-active,
 .slide-y-leave-active {
   transition: transform 0.5s ease, opacity 0.5s ease;
@@ -364,4 +363,4 @@ export default {
 .slide-y-leave-active {
   position: absolute;
 }
-</style>
+</style> -->

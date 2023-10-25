@@ -26,7 +26,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar class="bg-color" :clipped-left="clipped" fixed app >
+    <v-app-bar class="bg-color" :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
@@ -39,7 +39,6 @@
       </v-btn> -->
       <span class="text-overflow">
         <img title="My Time Cloud " :src="`/logo22.png`" style="width: 150px" />
-
       </span>
       <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
@@ -63,18 +62,18 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer :absolute="!fixed" app>
-      {{ (locationData && locationData.name) || "Getting location..." }}
-      <Location @location="(e) => (locationData = e)" />
-      <!-- <span>&copy; {{ new Date().getFullYear() }}</span> -->
+      <!-- {{ (locationData && locationData.name) || "Getting location..." }}
+      <Location @location="(e) => (locationData = e)" /> -->
+      <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-import Location from "@/components/Snippets/Location.vue";
+// import Location from "@/components/Snippets/Location.vue";
 
 export default {
-  components: { Location },
+  // components: { Location },
 
   name: "DefaultLayout",
   data() {

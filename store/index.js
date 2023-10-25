@@ -5,6 +5,11 @@ export const state = () => ({
     navigator: {},
     disableCheckInButton: false,
     disableCheckOutButton: true,
+
+    latitude: null,
+    longitude: null,
+    currentDate: null,
+    initialPunch: true,
 });
 
 // contains your mutations
@@ -23,5 +28,18 @@ export const mutations = {
     },
     disableCheckOutButton(state, value) {
         state.disableCheckOutButton = value;
+    },
+
+    latitude(state, value) {
+        state.latitude = value;
+    },
+    longitude(state, value) {
+        state.longitude = value;
+    },
+    currentDate(state, value) {
+        state.currentDate = value;
+    },
+    initialPunch(state, value) {
+        state.initialPunch = value;
     },
 };
