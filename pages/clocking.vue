@@ -11,7 +11,7 @@
 
       <v-card flat>
         <v-avatar size="150" class="mt-10">
-          <img :src="puching_image" alt="Avatar" @click="generateLog(`in`)" />
+          <img :src="puching_image" alt="Avatar" @click="generateLog" />
         </v-avatar>
 
         <div class="text-center mt-5">
@@ -39,16 +39,7 @@
           <v-card-text>
             <p class="text-center">
               <v-img
-                v-if="isSuccess"
-                src="/sucess.png"
-                alt="Avatar"
-                height="50px"
-                width="50px"
-                style="display: inline-block"
-              ></v-img>
-              <v-img
-                v-else-if="isSuccess == false"
-                src="/fail.png"
+                :src="response_image"
                 alt="Avatar"
                 height="50px"
                 width="50px"
@@ -81,6 +72,8 @@ export default {
     profile_pictrue: "no-profile-image.jpg",
     puching_image: "/C-IN.png",
 
+    response_image: "/sucess.png",
+
     uniqueDeviceId: null,
     device_id: null,
     isButtonDisabled: false,
@@ -94,7 +87,6 @@ export default {
 
     currentTime: "",
     formattedDateTime: "",
-    isSuccess: null,
     dialog: false,
     nextPunchAllowed: true,
     coordinates: {},
@@ -102,6 +94,8 @@ export default {
     locationError: null,
     company_id: 0,
     intervalId: 0,
+
+    log_type: "in",
   }),
   async mounted() {
     this.updateDateTime();
@@ -136,18 +130,18 @@ export default {
     // this.getLogs();
   },
   methods: {
-    generateLog(type) {
+    generateLog() {
       if (!this.nextPunchAllowed) {
         this.dialog = true;
         this.message = "Next Clocking allowed after 1 minute only";
-        this.isSuccess = false;
+        this.response_image = "/fail.png";
         setTimeout(() => (this.dialog = false), 3000);
         return;
       }
       let payload = {
         UserID: this.UserID,
         LogTime: `${this.getFormattedDate()} ${this.getFormattedTime()}`,
-        log_type: type,
+        log_type: this.log_type,
         DeviceID: this.device_id,
         company_id: this.$auth.user.company_id,
         gps_location: this.locationData.display_name || "location not found",
@@ -161,19 +155,20 @@ export default {
 
           if (!data.status) {
             this.message = data.message;
-            this.isSuccess = false;
+            this.response_image = "/fail.png";
             setTimeout(() => (this.dialog = false), 3000);
             return;
           }
 
           this.message = "Your clocking has been recorded successfully";
-          this.isSuccess = true;
+          this.response_image = "/success.png";
 
           this.ifExist();
 
           this.puching_image = "";
 
-          if (type == "in") {
+          if (this.log_type == "in") {
+            this.log_type = "out";
             this.insertRealTimeLocation();
             this.disableCheckInButton = true;
             this.puching_image = "/C-OUT.PNG";
@@ -182,17 +177,16 @@ export default {
               this.insertRealTimeLocation();
             }, 60 * 1000);
           } else {
+            this.log_type = "in";
             this.puching_image = "/C-IN.png";
+            console.log(this.puching_image);
             this.disableCheckOutButton = true;
             clearInterval(this.intervalId);
           }
         })
         .catch(({ message }) => {
           this.message = message;
-          this.isSuccess = false;
-          console.log(`catch`);
-          console.log(message);
-          console.log(`catch end`);
+          this.response_image = "/fail.png";
         });
 
       setTimeout(() => (this.dialog = false), 3000);

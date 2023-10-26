@@ -20,7 +20,6 @@ export default {
   },
   created() {
     this.plotLocations();
-    setInterval(this.plotLocations, 60 * 1000);
   },
   methods: {
     loadGoogleMapsScript(callback) {

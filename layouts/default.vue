@@ -103,6 +103,11 @@ export default {
           to: "/history",
         },
         {
+          icon: "mdi-clipboard-text",
+          title: "Change Requests",
+          to: "/change_requests",
+        },
+        {
           icon: "mdi-clipboard-text-clock",
           title: "Logs",
           to: "/logs",
