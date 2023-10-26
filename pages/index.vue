@@ -79,7 +79,8 @@
             :value="100"
             color="success"
           >
-            10 <br />
+            {{ totalPresent }}
+            <br />
             OnTime
           </v-progress-circular>
         </div>
@@ -151,6 +152,7 @@ export default {
     currentTime: "",
     formattedDateTime: "",
     company_id: 0,
+    totalPresent: 0,
     lastLog: null,
     employee_stats: [],
   }),
@@ -213,6 +215,7 @@ export default {
           },
         })
         .then(({ data }) => {
+          this.totalPresent = data.find((e) => e.Key == "P").value || 0;
           this.employee_stats = data;
         });
     },
