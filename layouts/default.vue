@@ -11,6 +11,7 @@
     >
       <v-list>
         <v-list-item
+          class=""
           v-for="(item, i) in items"
           :key="i"
           :to="item.to"
