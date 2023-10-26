@@ -100,7 +100,7 @@ export default {
       menu2: false,
       request_types: [],
       response: null,
-      endpoint: `http://192.168.2.192:8000/api/change_request`,
+      endpoint: `change_request`,
       editedItem: {
         company_id: null,
         branch_id: 0,
