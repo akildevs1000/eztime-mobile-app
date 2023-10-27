@@ -150,7 +150,7 @@
           </v-row>
 
           <div class="text-center pt-1 mb-5 pb-1">
-            <span v-if="msg" class="error--text">
+            <span v-if="msg" class="error--text" style="color: #ff9e86">
               {{ msg }}
             </span>
             <v-btn
@@ -305,7 +305,6 @@ export default {
         this.$auth
           .loginWith("local", { data: credentials })
           .then(({ data }) => {
-          
             this.$router.push(`/`);
           })
           .catch(({ response }) => {

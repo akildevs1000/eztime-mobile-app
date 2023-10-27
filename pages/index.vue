@@ -169,29 +169,37 @@ export default {
     },
   },
   async created() {
-    let employee = this.$auth.user.employee;
-    this.profile_pictrue = employee.profile_picture;
-    this.UserID = employee.system_user_id;
-    this.company_id = this.$auth.user.company_id;
+    try {
+      let employee = this.$auth.user.employee;
+      if (employee) {
+        this.profile_pictrue = employee.profile_picture;
+        this.UserID = employee.system_user_id;
+      } else {
+        this.$router.push("/login");
+      }
+      this.company_id = this.$auth.user.company_id;
 
-    let currentDate = new Date();
-    let day = 1;
-    let month = currentDate.getMonth() + 1; // Months are 0-based, so we add 1 to get the correct month.
-    let year = currentDate.getFullYear();
+      let currentDate = new Date();
+      let day = 1;
+      let month = currentDate.getMonth() + 1; // Months are 0-based, so we add 1 to get the correct month.
+      let year = currentDate.getFullYear();
 
-    this.sinceDate =
-      (day < 10 ? "0" : "") +
-      day +
-      "/" +
-      (month < 10 ? "0" : "") +
-      month +
-      "/" +
-      year;
+      this.sinceDate =
+        (day < 10 ? "0" : "") +
+        day +
+        "/" +
+        (month < 10 ? "0" : "") +
+        month +
+        "/" +
+        year;
 
-    this.getLogs();
-    this.getEmployeeStats();
+      this.getLogs();
+      this.getEmployeeStats();
 
-    await this.getRealTimeLocation();
+      await this.getRealTimeLocation();
+    } catch (e) {
+      this.$router.push("/login");
+    }
   },
   methods: {
     getLogs() {

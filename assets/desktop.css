@@ -1,0 +1,10 @@
+
+  @media (min-width: 500px) {
+     
+ 
+  .v-application .elevation-1
+  {
+    box-shadow:none!important; 
+  }
+
+}

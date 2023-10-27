@@ -247,8 +247,8 @@ export default {
     registerDevice() {
       let payload = {
         device_id: this.device_id,
-        name: "Mobile",
-        short_name: "Mobile",
+        name: this.device_id,
+        short_name: this.device_id,
         model_number: this.device_id,
         location: this.locationData.display_name ?? "---",
         company_id: this.$auth.user.company_id,

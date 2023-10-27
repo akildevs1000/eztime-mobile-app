@@ -43,9 +43,47 @@
       </span>
       <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
-      <v-btn icon @click="logout">
+      <v-menu
+        class="avatar-menu"
+        nudge-bottom="50"
+        transition="scale-transition"
+        origin="center center"
+        bottom
+        right
+        min-width="20"
+        nudge-right="0"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <label class="px-2 text-overflow" v-bind="attrs" v-on="on">
+            <!-- {{ getUser }} -->
+          </label>
+
+          <v-btn icon color="red" v-bind="attrs" v-on="on">
+            <!-- {{ getUser }} -->
+            <v-avatar size="35" style="border: 1px solid #6946dd">
+              <v-img :src="profile_picture"></v-img>
+            </v-avatar>
+          </v-btn>
+        </template>
+
+        <v-list class="avatar-menu">
+          <v-list-item-group color="primary">
+            <v-list-item @click="logout">
+              <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="black--text"
+                  >Logout</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+      <!-- <v-btn icon @click="logout">
         <v-icon>mdi-logout</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-app-bar>
     <v-main>
       <v-container>
@@ -79,6 +117,7 @@ export default {
   name: "DefaultLayout",
   data() {
     return {
+      profile_picture: "",
       clipped: false,
       drawer: false,
       fixed: false,
@@ -113,6 +152,47 @@ export default {
           title: "Logs",
           to: "/logs",
         },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Attendance",
+          to: "/attendance",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Leaves",
+          to: "/leaves",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Payslips",
+          to: "/payslips",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Schedules",
+          to: "/schedules",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Leave Quota",
+          to: "/leave_quota",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Announcements",
+          to: "/announcements",
+        },
+
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Holidays",
+          to: "/holidays",
+        },
+        {
+          icon: "mdi-clipboard-text-clock",
+          title: "Profile",
+          to: "/profile",
+        },
       ],
       miniVariant: false,
       right: true,
@@ -120,12 +200,31 @@ export default {
       title: "Mytime",
     };
   },
+  created() {
+    try {
+      setTimeout(() => {
+        if (this.$auth.user.employee)
+          this.profile_picture = this.$auth.user.employee.profile_picture;
+        else this.$router.push("/login");
+      }, 2000);
+    } catch (e) {
+      this.$router.push("/login");
+    }
+  },
   computed: {
     locationData() {
       return this.$store.state.locationData;
     },
   },
   methods: {
+    // getPhoto() {
+    //   setTimeout(() => {
+    //     console.log(this);
+    //     if (this.$auth) {
+    //       this.profile_picture = this.$auth.user.employee.profile_picture;
+    //     }
+    //   }, 2000);
+    // },
     logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
@@ -156,3 +255,6 @@ tr:nth-child(even) {
   background-color: #dddddd;
 }
 </style>
+<style src="@/assets/common.css"></style>
+<style src="@/assets/mobile.css"></style>
+<style src="@/assets/desktop.css"></style>
