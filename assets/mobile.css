@@ -7,6 +7,11 @@
       border-bottom: 1px solid #f7e3e3;
       min-height: 35px;;
     }
+    tr:last-child  td:last-child
+    {
+      border-bottom: 1px solid #FFF;
+      min-height: 35px;;
+    }
     .v-data-footer div
     {
       margin:2px!important;

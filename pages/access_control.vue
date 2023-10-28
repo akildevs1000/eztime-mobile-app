@@ -10,22 +10,32 @@
         <h2>
           <span> Access Devices ({{ data.length }}) </span>
         </h2>
-        <v-card class="mb-5 pa-3">
-          <v-row v-for="device in data">
-            <v-col cols="12">
-              <h4>{{ device.timezone.timezone_name }}</h4>
-            </v-col>
-            <table style="width: 100%">
-              <tr v-for="(subitem, index2) in device.device_id">
-                <td>
-                  <v-col cols="12"
-                    >{{ ++index2 }} : {{ caps(subitem.name) }} in
-                    {{ caps(subitem.location) }}</v-col
+        <v-card v-for="device in data" class="mx-auto mb-5">
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" class="text-left">
+                <div style="font-weight: bold">
+                  {{ device.timezone.timezone_name }}
+                </div>
+              </v-col>
+
+              <v-col md="10" sm="10" xs="10" cols="12">
+                <table style="width: 100%">
+                  <tr
+                    v-for="(subitem, index2) in device.device_id"
+                    :key="'b' + index2"
                   >
-                </td>
-              </tr>
-            </table>
-          </v-row>
+                    <td>
+                      <v-col cols="12" class="pa-0"
+                        >{{ ++index2 }} : {{ caps(subitem.name) }} in
+                        {{ caps(subitem.location) }}</v-col
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>

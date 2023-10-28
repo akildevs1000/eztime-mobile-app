@@ -30,6 +30,7 @@
           </v-toolbar>
 
           <v-data-table
+            :mobile-breakpoint="2000"
             v-model="ids"
             item-key="id"
             :headers="headers"

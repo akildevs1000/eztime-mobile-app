@@ -17,6 +17,7 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
+            :mobile-breakpoint="2000"
             v-model="ids"
             item-key="id"
             :headers="headersGroupInfo"
@@ -663,6 +664,7 @@
             </template>
           </v-snackbar>
           <v-data-table
+            :mobile-breakpoint="2000"
             v-model="ids"
             item-key="id"
             :headers="headers"

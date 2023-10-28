@@ -2,8 +2,8 @@
   <div v-if="employeeObject">
     <v-row class="pt-5">
       <v-col cols="12" class="table-second-cell-right-align">
-        <v-expansion-panels>
-          <v-expansion-panel>
+        <v-expansion-panels v-model="panel">
+          <v-expansion-panel expand>
             <v-expansion-panel-header>
               <h5><v-icon>mdi-contacts</v-icon> Contact Details</h5>
             </v-expansion-panel-header>
@@ -823,6 +823,8 @@
 <script>
 export default {
   data: () => ({
+    panel: [0],
+
     employeeObject: null,
     switchValue: true,
     image: "",

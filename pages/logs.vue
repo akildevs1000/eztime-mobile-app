@@ -91,6 +91,7 @@
           </v-snackbar>
 
           <v-data-table
+            :mobile-breakpoint="2000"
             dense
             :headers="headers_table"
             :items="data"

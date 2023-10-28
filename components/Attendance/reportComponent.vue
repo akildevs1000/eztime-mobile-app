@@ -82,6 +82,7 @@
       </v-toolbar>
 
       <v-data-table
+        :mobile-breakpoint="2000"
         dense
         :headers="headers"
         :items="data"

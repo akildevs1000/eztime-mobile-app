@@ -6,7 +6,12 @@
       </v-col>
       <v-col cols="7">
         <div class="text-left">
-          <v-btn style="width: 100%" class="info" dark>
+          <v-btn
+            @click="goToPage('/profile')"
+            style="width: 100%"
+            class="info"
+            dark
+          >
             <b>My Profile</b>
           </v-btn>
         </div>
