@@ -617,8 +617,8 @@
     </v-dialog>
     <v-row>
       <v-col md="12">
-        <v-card class="mb-5 rounded-md" elevation="0">
-          <v-toolbar class="rounded-md" dense flat>
+        <v-card class="mb-5">
+          <v-toolbar class="rounded-md" color="popup_background" dense flat>
             <v-toolbar-title>
               Leave Group:
 

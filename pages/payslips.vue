@@ -6,19 +6,17 @@
       </v-snackbar>
     </div>
 
-    <div>
-      <v-row>
-        <v-col>
-          <!-- <Back class="primary white--text" /> -->
-
-          <v-card class="mb-5 mt-2" elevation="0">
+    <v-card class="mb-5 mt-2">
+      <v-toolbar class="rounded-md" color="popup_background" dense flat>
+        <v-col cols="12">
+          <v-toolbar-title>
             <v-row class=" ">
-              <v-col md="3"> <h2>Payslips</h2></v-col>
+              <v-col md="3"> Payslips </v-col>
               <v-col md="1" sm="1" class="text-right">
                 <v-icon
                   size="20"
                   @click="getDataFromApi(--year_display)"
-                  style="cursor: pointer; padding-top: 7px"
+                  style="cursor: pointer"
                 >
                   mdi-less-than</v-icon
                 ></v-col
@@ -31,97 +29,80 @@
                 <v-icon
                   size="20"
                   @click="getDataFromApi(++year_display)"
-                  style="cursor: pointer; padding-top: 7px"
+                  style="cursor: pointer"
                 >
                   mdi-greater-than</v-icon
                 ></v-col
               >
-            </v-row>
+            </v-row></v-toolbar-title
+          >
+        </v-col>
+      </v-toolbar>
 
-            <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-              {{ snackText }}
+      <v-data-table
+        :mobile-breakpoint="0"
+        dense
+        v-model="selectedItems"
+        :headers="headers_table"
+        :items="data"
+        model-value="data.id"
+        :loading="loading"
+        class="elevation-1"
+        hide-default-footer
+        disable-pagination
+      >
+        <template v-slot:item.sno="{ item, index }">
+          {{
+            currentPage
+              ? (currentPage - 1) * perPage +
+                (cumulativeIndex + data.indexOf(item))
+              : ""
+          }}
+        </template>
+        <template v-slot:item.year_month="{ item }">
+          {{ monthNames[item.payroll_month].label }}
+          {{ item.payroll_year }}
+        </template>
 
-              <template v-slot:action="{ attrs }">
-                <v-btn v-bind="attrs" text @click="snack = false">
-                  Close
-                </v-btn>
-              </template>
-            </v-snackbar>
+        <template v-slot:item.basic_salary="{ item }">
+          {{ item.basic_salary }}
+        </template>
 
-            <v-data-table
-              :mobile-breakpoint="0"
-              dense
-              v-model="selectedItems"
-              :headers="headers_table"
-              :items="data"
-              model-value="data.id"
-              :loading="loading"
-              class="elevation-1"
-              hide-default-footer
-              disable-pagination
-            >
-              <template v-slot:item.sno="{ item, index }">
-                {{
-                  currentPage
-                    ? (currentPage - 1) * perPage +
-                      (cumulativeIndex + data.indexOf(item))
-                    : ""
-                }}
-              </template>
-              <template v-slot:item.year_month="{ item }">
-                {{ monthNames[item.payroll_month].label }}
-                {{ item.payroll_year }}
-              </template>
+        <template v-slot:item.net_salary="{ item }">
+          {{ item.net_salary }}
+        </template>
+        <template v-slot:item.payslip="{ item }">
+          <span
+            v-if="item?.payslip_status"
+            @click="navigateToViewPDF(item.id)"
+            style="font-size: 25px; vertical-align: inherit; cursor: pointer"
+          >
+            <v-icon small class="primary--text">mdi-eye</v-icon>
+          </span>
+          <a
+            v-if="item?.payslip_status"
+            :href="getdownloadLink(item.employee_table_id)"
+            style="font-size: 25px; vertical-align: inherit; cursor: pointer"
+          >
+            <v-icon small class="primary--text">mdi-download</v-icon>
+          </a>
+        </template>
 
-              <template v-slot:item.basic_salary="{ item }">
-                {{ item.basic_salary }}
-              </template>
-
-              <template v-slot:item.net_salary="{ item }">
-                {{ item.net_salary }}
-              </template>
-              <template v-slot:item.payslip="{ item }">
-                <span
-                  v-if="item?.payslip_status"
-                  @click="navigateToViewPDF(item.id)"
-                  style="
-                    font-size: 25px;
-                    vertical-align: inherit;
-                    cursor: pointer;
-                  "
-                >
-                  <v-icon small class="primary--text">mdi-eye</v-icon>
-                </span>
-                <a
-                  v-if="item?.payslip_status"
-                  :href="getdownloadLink(item.employee_table_id)"
-                  style="
-                    font-size: 25px;
-                    vertical-align: inherit;
-                    cursor: pointer;
-                  "
-                >
-                  <v-icon small class="primary--text">mdi-download</v-icon>
-                </a>
-              </template>
-
-              <template v-slot:item.actions="{ item }">
-                <v-menu bottom left>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list width="120" dense>
-                    <v-list-item @click="editItem(item)">
-                      <v-list-item-title style="cursor: pointer">
-                        <v-icon color="secondary" small>
-                          mdi-information
-                        </v-icon>
-                        View
-                      </v-list-item-title>
-                    </v-list-item>
-                    <!-- <v-list-item @click="res(item.id)">
+        <template v-slot:item.actions="{ item }">
+          <v-menu bottom left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list width="120" dense>
+              <v-list-item @click="editItem(item)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon color="secondary" small> mdi-information </v-icon>
+                  View
+                </v-list-item-title>
+              </v-list-item>
+              <!-- <v-list-item @click="res(item.id)">
                             <v-list-item-title style="cursor:pointer">
                               <v-icon color="primary" small>
                                 mdi-eye
@@ -129,15 +110,11 @@
                               Select
                             </v-list-item-title>
                           </v-list-item> -->
-                  </v-list>
-                </v-menu>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-      </v-row>
-      <div></div>
-    </div>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 <script>

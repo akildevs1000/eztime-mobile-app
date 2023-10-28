@@ -448,6 +448,8 @@
                 <tr>
                   <td>
                     <h4>Note</h4>
+                  </td>
+                  <td>
                     :
                     {{ employeeObject.visa ? employeeObject.visa.note : "---" }}
                   </td>

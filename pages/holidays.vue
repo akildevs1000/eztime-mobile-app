@@ -8,7 +8,7 @@
 
     <v-row>
       <v-col md="12">
-        <v-card class="mb-5 rounded-md" elevation="0">
+        <v-card class="mb-5">
           <v-toolbar class="rounded-md" color="popup_background" dense flat>
             <v-col cols="6"
               ><v-toolbar-title><span>Holidays</span></v-toolbar-title></v-col

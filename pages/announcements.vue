@@ -228,10 +228,12 @@
 
     <v-row>
       <v-col md="12">
+        <h2>Announcements</h2>
         <v-card
-          v-for="announcement in data"
+          v-for="announcement in (index) => data"
           class="mx-auto mb-5"
           max-width="344"
+          :key="'a' + index"
         >
           <v-card-text>
             <v-row>

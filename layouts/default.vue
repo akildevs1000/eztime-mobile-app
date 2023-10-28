@@ -86,7 +86,7 @@
       </v-btn> -->
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container style="background-color: #f4f5fa !important">
         <Nuxt />
       </v-container>
     </v-main>
@@ -153,43 +153,48 @@ export default {
           to: "/logs",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-calendar-account",
           title: "Attendance",
           to: "/attendance",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-calendar-minus",
           title: "Leaves",
           to: "/leaves",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-cash",
           title: "Payslips",
           to: "/payslips",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-timetable",
           title: "Schedules",
           to: "/schedules",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-account-tie",
+          title: "Access Control",
+          to: "/access_control",
+        },
+        {
+          icon: "mdi-calendar-badge-outline",
           title: "Leave Quota",
           to: "/leave_quota",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-bell-badge",
           title: "Announcements",
           to: "/announcements",
         },
 
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-calendar-star",
           title: "Holidays",
           to: "/holidays",
         },
         {
-          icon: "mdi-clipboard-text-clock",
+          icon: "mdi-account-tie",
           title: "Profile",
           to: "/profile",
         },

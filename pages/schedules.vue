@@ -7,68 +7,64 @@
     </div>
 
     <v-card>
-      <v-card-title dense dark class="popup_background">
-        Schedule(s)
-        <v-spacer></v-spacer>
-      </v-card-title>
+      <v-toolbar class="rounded-md" color="popup_background" dense flat>
+        <v-col cols="12">
+          <v-toolbar-title><span>Schedule(s)</span></v-toolbar-title>
+        </v-col>
+      </v-toolbar>
 
-      <v-card-text>
-        <v-data-table
-          dense
-          :headers="headers_table"
-          :items="schdulesList"
-          model-value="data.id"
-          :loading="loading"
-          :options.sync="options"
-          :footer-props="{
-            itemsPerPageOptions: [10, 50, 100, 500, 1000],
-          }"
-          class="elevation-1 alternate-rows"
-          :server-items-length="totalRowsCount"
-        >
-          <template v-slot:item.sno="{ item, index }">
-            {{
-              currentPage
-                ? (currentPage - 1) * perPage +
-                  (cumulativeIndex + schdulesList.indexOf(item))
-                : "-"
-            }}
-          </template>
+      <v-data-table
+        dense
+        :headers="headers_table"
+        :items="schdulesList"
+        model-value="data.id"
+        :loading="loading"
+        :options.sync="options"
+        :footer-props="{
+          itemsPerPageOptions: [10, 50, 100, 500, 1000],
+        }"
+        class="elevation-1 alternate-rows"
+        :server-items-length="totalRowsCount"
+      >
+        <template v-slot:item.sno="{ item, index }">
+          {{
+            currentPage
+              ? (currentPage - 1) * perPage +
+                (cumulativeIndex + schdulesList.indexOf(item))
+              : "-"
+          }}
+        </template>
 
-          <template v-slot:item.shift_name="{ item }"
-            >{{ item.shift && item.shift.name }}
-          </template>
-          <template v-slot:item.on_duty_time="{ item }"
-            >{{ item.shift && item.shift.on_duty_time }} to
-            {{ item.shift && item.shift.off_duty_time }}
-          </template>
-          <template v-slot:item.working_hours="{ item }">
-            {{ item.shift && item.shift.working_hours }}h
-          </template>
-          <template v-slot:item.from_date="{ item }"
-            >{{ $dateFormat.format1(item.from_date) }} <br />
-            {{ $dateFormat.format1(item.to_date) }}
-          </template>
-          <template v-slot:item.days="{ item, index }">
-            <span
-              v-for="(day, index2) in item.shift.days"
-              class="secondary-value"
-              >{{ day
-              }}<span v-if="index2 < item.shift.days.length - 1"> ,</span>
-            </span>
-          </template>
-          <template v-slot:item.isOverTime="{ item }">
-            <v-switch
-              disabled
-              v-model="item.isOverTime"
-              lable="item.isOverTime"
-            ></v-switch>
-          </template>
-          <template v-slot:item.shift_type="{ item }"
-            >{{ item.shift_type.name }}
-          </template>
-        </v-data-table>
-      </v-card-text>
+        <template v-slot:item.shift_name="{ item }"
+          >{{ item.shift && item.shift.name }}
+        </template>
+        <template v-slot:item.on_duty_time="{ item }"
+          >{{ item.shift && item.shift.on_duty_time }} to
+          {{ item.shift && item.shift.off_duty_time }}
+        </template>
+        <template v-slot:item.working_hours="{ item }">
+          {{ item.shift && item.shift.working_hours }}h
+        </template>
+        <template v-slot:item.from_date="{ item }"
+          >{{ $dateFormat.format1(item.from_date) }} <br />
+          {{ $dateFormat.format1(item.to_date) }}
+        </template>
+        <template v-slot:item.days="{ item, index }">
+          <span v-for="(day, index2) in item.shift.days" class="secondary-value"
+            >{{ day }}<span v-if="index2 < item.shift.days.length - 1"> ,</span>
+          </span>
+        </template>
+        <template v-slot:item.isOverTime="{ item }">
+          <v-switch
+            disabled
+            v-model="item.isOverTime"
+            lable="item.isOverTime"
+          ></v-switch>
+        </template>
+        <template v-slot:item.shift_type="{ item }"
+          >{{ item.shift_type.name }}
+        </template>
+      </v-data-table>
     </v-card>
   </div>
 </template>
