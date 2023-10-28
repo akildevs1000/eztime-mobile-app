@@ -7,8 +7,6 @@
 
       <div class="text-center">{{ formattedDateTime || "Loading..." }}</div>
 
-      <!-- <div class="text-center">formattedDateTime  EID: {{ UserID }}</div> -->
-
       <v-card flat>
         <v-avatar size="150" class="mt-10">
           <img :src="puching_image" alt="Avatar" @click="generateLog" />
@@ -21,8 +19,6 @@
               (locationData && locationData.display_name) ||
               "Getting location..."
             }}
-            <!-- Sheikh Zayed Road (north), Sheikh Zayed Road, Trade Centre, Dubai,
-            United Arab Emirates -->
           </span>
         </div>
       </v-card>
@@ -64,7 +60,6 @@ export default {
     headers: [
       { text: "LogTime", value: "LogTime" },
       { text: "Device", value: "DeviceID" },
-      // { text: "location", value: "location" },
     ],
     formattedDateTime: null,
     UserID: null,
@@ -127,7 +122,6 @@ export default {
     this.shift_type_id = employee.schedule.shift_type_id;
     this.company_id = this.$auth.user.company_id;
     this.device_id = `Mobile-${this.UserID}`;
-    // this.getLogs();
   },
   methods: {
     generateLog() {
@@ -346,16 +340,3 @@ export default {
   },
 };
 </script>
-<!-- <style scoped>
-.slide-y-enter-active,
-.slide-y-leave-active {
-  transition: transform 0.5s ease, opacity 0.5s ease;
-}
-.slide-y-enter, .slide-y-leave-to /* .slide-y-leave-active below version 2.1.8 */ {
-  transform: translateY(100%);
-  opacity: 0;
-}
-.slide-y-leave-active {
-  position: absolute;
-}
-</style> -->
