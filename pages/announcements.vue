@@ -232,7 +232,6 @@
         <v-card
           v-for="(announcement, index) in data"
           class="mx-auto mb-5"
-          max-width="344"
           :key="'a' + index"
         >
           <v-card-text>
