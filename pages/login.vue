@@ -78,7 +78,7 @@
       </v-card>
     </v-dialog>
     <div
-      class="col-lg-6 col-md-12 col-sm-12 col-lg-6"
+      class="col-lg-12 col-md-12 col-sm-12 col-lg-12"
       style="background-color: #6946dd; height: 100%"
     >
       <div class="text-center" style="height: 100px">
