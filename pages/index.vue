@@ -90,9 +90,10 @@
         >
           <span class="px-1">{{ item.title }} </span>
          
-          <span class="grey" style="float: right;"> <v-icon right x-small dark>mdi-chevron-right</v-icon></span>
+          <span :class="item.color" style="float: right;"> <v-icon right x-small dark>mdi-chevron-right</v-icon></span>
           <span
-            class="grey px-1 white--text"
+            :class="item.color"
+            class=" px-1 white--text"
             dark
             style="float: right; width:10px"
             >{{ item.value }}
