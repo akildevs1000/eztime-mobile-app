@@ -37,7 +37,9 @@
           border-bottom: 1px solid rgb(156, 155, 155);
         "
       >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
+        <v-sheet class="text-h6">
+          {{ todayAttendance && todayAttendance.total_hrs }}
+        </v-sheet>
         <div>Work Time</div>
       </v-col>
       <v-col
@@ -45,8 +47,10 @@
         class="text-center"
         style="border: 1px solid rgb(156, 155, 155)"
       >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
-        <div>Remaing</div>
+        <v-sheet class="text-h6">
+          {{ remainingTime }}
+        </v-sheet>
+        <div>Remaing Hours</div>
       </v-col>
       <v-col
         cols="4"
@@ -56,7 +60,9 @@
           border-bottom: 1px solid rgb(156, 155, 155);
         "
       >
-        <v-sheet class="text-h6"> 00:00 </v-sheet>
+        <v-sheet class="text-h6">
+          {{ todayAttendance && todayAttendance.ot }}
+        </v-sheet>
         <div>OverTime</div>
       </v-col>
 
@@ -160,6 +166,8 @@ export default {
     totalPresent: 0,
     lastLog: null,
     employee_stats: [],
+    todayAttendance: null,
+    remainingTime: "00:00",
   }),
   mounted() {
     this.updateDateTime();
@@ -200,13 +208,32 @@ export default {
 
       this.getLogs();
       this.getEmployeeStats();
-
+      this.getTodayAttendance();
       await this.getRealTimeLocation();
     } catch (e) {
       this.$router.push("/login");
     }
   },
   methods: {
+    getTodayAttendance() {
+      this.$axios
+        .get(`report`, {
+          params: {
+            company_id: this.company_id,
+            employee_id: this.UserID,
+            from_date: this.getFormattedDate(),
+            to_date: this.getFormattedDate(),
+          },
+        })
+        .then(({ data }) => {
+          this.todayAttendance = data.data[0];
+
+          this.getRemainingTime(
+            data.data[0].total_hrs,
+            data.data[0].shift.working_hours || "00:00"
+          );
+        });
+    },
     getLogs() {
       this.$axios
         .get(`attendance_logs`, {
@@ -311,6 +338,28 @@ export default {
         2,
         "0"
       )}-${String(now.getDate()).padStart(2, "0")}`;
+    },
+    getRemainingTime(totalHours, performedHours) {
+      const [totalHoursStr, totalMinutesStr] = totalHours
+        .split(":")
+        .map(Number);
+      const [performedHoursStr, performedMinutesStr] = performedHours
+        .split(":")
+        .map(Number);
+
+      const totalMinutes = totalHoursStr * 60 + totalMinutesStr;
+      const performedMinutes = performedHoursStr * 60 + performedMinutesStr;
+
+      const remainingMinutes = totalMinutes - performedMinutes;
+
+      if (remainingMinutes < 0) {
+        const remainingHours = Math.abs(Math.ceil(remainingMinutes / 60));
+        const remainingMinutesPart = Math.abs(remainingMinutes % 60);
+        this.remainingTime = `${String(remainingHours).padStart(
+          2,
+          "0"
+        )}:${String(remainingMinutesPart).padStart(2, "0")}`;
+      }
     },
   },
 };
