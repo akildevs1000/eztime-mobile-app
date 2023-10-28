@@ -80,21 +80,7 @@
       </v-col>
 
       <v-col cols="5" class="text-center">
-        <div class="mt-10">
-          <!-- <EmployeeStats /> -->
-
-          <v-progress-circular
-            :rotate="360"
-            :size="150"
-            :width="10"
-            :value="100"
-            color="success"
-          >
-            {{ totalPresent }}
-            <br />
-            OnTime
-          </v-progress-circular>
-        </div>
+        <Clocking />
       </v-col>
       <v-col cols="7">
         <div
@@ -103,12 +89,14 @@
           class="grey lighten-1 my-1"
         >
           <span class="px-1">{{ item.title }} </span>
+         
+          <span :class="item.color" style="float: right;"> <v-icon right x-small dark>mdi-chevron-right</v-icon></span>
           <span
             :class="item.color"
             class="px-1 white--text"
             dark
-            style="float: right"
-            >{{ item.value }} <v-icon x-small dark>mdi-chevron-right</v-icon>
+            style="float: right; width:10px"
+            >{{ item.value }}
           </span>
         </div>
       </v-col>
@@ -148,10 +136,12 @@
 
 <script>
 import EmployeeStats from "../components/EmployeeStats.vue";
+import Clocking from "../components/Clocking.vue";
 
 export default {
   components: {
     EmployeeStats,
+    Clocking,
   },
 
   data: () => ({
