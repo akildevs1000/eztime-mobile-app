@@ -1,13 +1,14 @@
 <template>
   <v-app dark>
     <v-navigation-drawer
-      class="indigo"
       dark
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
       fixed
       app
+      class="theme--dark background"
+      style="width: 215px"
     >
       <v-list>
         <v-list-item
@@ -126,6 +127,7 @@ export default {
           icon: "mdi-apps",
           title: "Home",
           to: "/",
+          color: "#9aa9b9",
         },
         // {
         //   icon: "mdi-chart-bubble",
@@ -136,67 +138,80 @@ export default {
           icon: "mdi-clock-outline",
           title: "Clocking",
           to: "/clocking",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-map-marker-radius",
           title: "GPS History",
           to: "/history",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-clipboard-text",
           title: "Change Requests",
           to: "/change_requests",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-clipboard-text-clock",
           title: "Logs",
           to: "/logs",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-calendar-account",
           title: "Attendance",
           to: "/attendance",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-calendar-minus",
           title: "Leaves",
           to: "/leaves",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-cash",
           title: "Payslips",
           to: "/payslips",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-timetable",
           title: "Schedules",
           to: "/schedules",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-account-tie",
           title: "Access Control",
           to: "/access_control",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-calendar-badge-outline",
           title: "Leave Quota",
           to: "/leave_quota",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-bell-badge",
           title: "Announcements",
           to: "/announcements",
+          color: "#9aa9b9",
         },
 
         {
           icon: "mdi-calendar-star",
           title: "Holidays",
           to: "/holidays",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-account-tie",
           title: "Profile",
           to: "/profile",
+          color: "#9aa9b9",
         },
         {
           icon: "mdi-logout",
