@@ -26,8 +26,8 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-card elevation="0" class="mt-2">
-          <v-toolbar class="mb-2 white--text" color="white" dense flat>
+        <v-card>
+          <v-toolbar class="rounded-md" color="popup_background" dense flat>
             <v-toolbar-title>
               <span style="color: black">
                 Attendances Logs</span
@@ -35,7 +35,7 @@
             >
             <!-- <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }"> -->
-            <v-btn
+            <!-- <v-btn
               title="Reload"
               dense
               class="ma-0 px-0"
@@ -45,7 +45,7 @@
               text
             >
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-            </v-btn>
+            </v-btn> -->
             <!-- </template>
               <span>Reload</span>
             </v-tooltip> -->

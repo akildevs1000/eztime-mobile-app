@@ -84,7 +84,7 @@
       <div class="text-center" style="height: 100px">
         <!-- <img width="35%" :src="logo" alt="logo" /> -->
       </div>
-      <div class="card-body p-md-5 mx-md-4" style="color: #fff">
+      <div class="card-body p-md-5 mx-md-12" style="color: #fff">
         <h2 class="pb-7">Welcome To EzTime</h2>
 
         <v-form
@@ -134,15 +134,15 @@
             ></v-text-field>
           </div>
 
-          <v-row>
-            <v-col md="6">
+          <v-row style="width: 100%">
+            <v-col md="12" cols="12">
               <v-checkbox color="white--text" value="red" dark>
                 <template v-slot:label>
                   <label style="color: #fff">Remember Password</label>
                 </template>
               </v-checkbox>
             </v-col>
-            <v-col md="6" class="text-right pt-8">
+            <v-col md="12" class="text-right pt-8">
               <!-- <nuxt-link class="text-white" to="/reset-password"
                 >Forgot password?</nuxt-link
               > -->

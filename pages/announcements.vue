@@ -230,7 +230,7 @@
       <v-col md="12">
         <h2>Announcements</h2>
         <v-card
-          v-for="announcement in (index) => data"
+          v-for="(announcement, index) in data"
           class="mx-auto mb-5"
           max-width="344"
           :key="'a' + index"
@@ -546,7 +546,7 @@ export default {
 
       const { page, itemsPerPage } = this.options;
       const company_id = this.$auth.user.company_id;
-      const per_page = itemsPerPage;
+      const per_page = 100; //itemsPerPage;
 
       if (filter_column != "") {
         options.params[filter_column] = filter_value;

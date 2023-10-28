@@ -11,15 +11,15 @@
     >
       <v-list>
         <v-list-item
-          class=""
           v-for="(item, i) in items"
           :key="i"
           :to="item.to"
+          :style="'color:' + item.color"
           router
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -198,6 +198,12 @@ export default {
           title: "Profile",
           to: "/profile",
         },
+        {
+          icon: "mdi-logout",
+          title: "Logout",
+          to: "/logout",
+          color: "#f36c6c",
+        },
       ],
       miniVariant: false,
       right: true,
@@ -208,12 +214,19 @@ export default {
   created() {
     try {
       setTimeout(() => {
+        console.log("login-verification", this.$auth.user.employee);
         if (this.$auth.user.employee)
           this.profile_picture = this.$auth.user.employee.profile_picture;
-        else this.$router.push("/login");
-      }, 2000);
+        else if (
+          this.$auth.user.employee == "undefined" ||
+          !this.$auth.user.employee
+        ) {
+          console.log("login-verification", this.$auth.user.employee);
+          this.logout();
+        }
+      }, 500);
     } catch (e) {
-      this.$router.push("/login");
+      this.logout();
     }
   },
   computed: {

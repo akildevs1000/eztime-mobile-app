@@ -1,10 +1,11 @@
 
   @media (max-width: 500px) {
+  
      
-    .v-data-table > .v-data-table__wrapper .v-data-table__mobile-row
+    .v-data-table > .v-data-table__wrapper .v-data-table__mobile-row ,table tr td
     {
       border-bottom: 1px solid #f7e3e3;
-      
+      min-height: 35px;;
     }
     .v-data-footer div
     {
