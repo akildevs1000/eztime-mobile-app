@@ -254,7 +254,7 @@
                 <div style="font-weight: bold">{{ announcement.title }}</div>
               </v-col>
 
-              <v-col md="10" sm="10" xs="10" cols="12">
+              <v-col md="12" sm="12" xs="12" cols="12">
                 <div
                   class="breakthewords11111"
                   v-html="announcement.description.replace(/<[^>]*>/g, '')"
