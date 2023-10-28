@@ -168,14 +168,15 @@ export default {
           this.puching_image = "";
 
           if (this.log_type == "in") {
+            if (this.$auth.user.tracking_status) {
+              this.insertRealTimeLocation();
+              this.intervalId = setInterval(() => {
+                this.insertRealTimeLocation();
+              }, 60 * 1000);
+            }
             this.log_type = "out";
-            this.insertRealTimeLocation();
             this.disableCheckInButton = true;
             this.puching_image = "/C-OUT.PNG";
-
-            this.intervalId = setInterval(() => {
-              this.insertRealTimeLocation();
-            }, 60 * 1000);
           } else {
             this.log_type = "in";
             this.puching_image = "/C-IN.png";
