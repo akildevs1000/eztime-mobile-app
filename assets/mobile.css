@@ -1,6 +1,9 @@
 
   @media (max-width: 500px) {
-  
+    .v-application--is-ltr .v-text-field .v-label
+  {
+font-size: 12px;;
+  }
      
     .v-data-table > .v-data-table__wrapper .v-data-table__mobile-row ,table tr td
     {

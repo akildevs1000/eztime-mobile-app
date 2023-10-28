@@ -737,6 +737,22 @@
                     </div>
                   </td>
                 </tr>
+
+                <tr>
+                  <td>
+                    <h4>Live Tracking</h4>
+                  </td>
+                  <td>
+                    <div class="text-overline mb-1" style="float: right">
+                      <v-switch
+                        disabled
+                        color="success"
+                        class="mt-0 ml-2"
+                        v-model="employeeObject.user.tracking_status"
+                      ></v-switch>
+                    </div>
+                  </td>
+                </tr>
                 <tr>
                   <td>
                     <h4>Leave Group</h4>

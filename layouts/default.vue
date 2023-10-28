@@ -244,10 +244,12 @@ export default {
     //   }, 2000);
     // },
     logout() {
-      this.$axios.get(`/logout`).then(({ res }) => {
-        this.$auth.logout();
-        this.$router.push(`/login`);
-      });
+      if (confirm("Are you sure want to logout?")) {
+        this.$axios.get(`/logout`).then(({ res }) => {
+          this.$auth.logout();
+          this.$router.push(`/login`);
+        });
+      }
     },
   },
 };

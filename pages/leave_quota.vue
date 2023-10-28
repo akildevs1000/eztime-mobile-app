@@ -9,7 +9,7 @@
       <v-col md="12">
         <v-card>
           <v-toolbar class="rounded-md" color="popup_background" dense flat>
-            <v-col cols="6">
+            <v-col cols="12">
               <v-toolbar-title
                 ><span
                   >Leave Group : {{ leave_group_name }}</span

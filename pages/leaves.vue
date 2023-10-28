@@ -405,221 +405,225 @@
     </v-dialog>
     <v-dialog persistent v-model="dialogView" width="1000px">
       <v-card>
-        <v-card-title dense class="primary white--text background">
+        <v-card-title dense class="popup_background">
           Leave Information
           <v-spacer></v-spacer>
-          <v-icon @click="dialogView = false" outlined dark color="white">
+          <v-icon @click="dialogView = false" outlined dark color="black">
             mdi mdi-close-circle
           </v-icon>
         </v-card-title>
         <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="5">
-                <v-row>
-                  <v-col cols="4">
-                    <label for="">
-                      <strong>Employee Name</strong>
-                    </label>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for="">: {{ dialogViewObject.employee_name }}</label>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>Group Name</strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for=""
-                      >: {{ dialogViewObject.leave_group_name }}</label
+          <v-row>
+            <v-col cols="12">
+              <v-row>
+                <v-col cols="4">
+                  <label for="">
+                    <strong> Name</strong>
+                  </label>
+                </v-col>
+                <v-col cols="8">
+                  <label for="">: {{ dialogViewObject.employee_name }}</label>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong>Group </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for=""
+                    >: {{ dialogViewObject.leave_group_name }}</label
+                  >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong> Type</strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for="">: {{ dialogViewObject.leave_type }}</label>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong>From </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for="">: {{ dialogViewObject.from_date }}</label>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong>To </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for="">: {{ dialogViewObject.to_date }}</label>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col col="7">
+              <v-row>
+                <v-col cols="4">
+                  <strong>Applied on </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for="">: {{ dialogViewObject.applied_date }}</label>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong> Manager </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for=""
+                    >: {{ dialogViewObject.reporting_manager }}</label
+                  >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <strong>Status </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for=""
+                    >:
+                    <v-chip
+                      v-if="dialogViewObject.status == 1"
+                      small
+                      class="p-2 mx-1"
+                      color="primary"
                     >
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>Application Type</strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for="">: {{ dialogViewObject.leave_type }}</label>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>From Date</strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for="">: {{ dialogViewObject.from_date }}</label>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>To Date</strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for="">: {{ dialogViewObject.to_date }}</label>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col col="7">
-                <v-row>
-                  <v-col cols="4">
-                    <strong>Applied Date </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for="">: {{ dialogViewObject.applied_date }}</label>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>Reporting Manager </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for=""
-                      >: {{ dialogViewObject.reporting_manager }}</label
+                      Approved
+                    </v-chip>
+                    <v-chip
+                      v-if="dialogViewObject.status == 2"
+                      small
+                      class="p-2 mx-1"
+                      color="error"
                     >
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="4">
-                    <strong>Status </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for=""
-                      >:
-                      <v-chip
-                        v-if="dialogViewObject.status == 1"
-                        small
-                        class="p-2 mx-1"
-                        color="primary"
-                      >
-                        Approved
-                      </v-chip>
-                      <v-chip
-                        v-if="dialogViewObject.status == 2"
-                        small
-                        class="p-2 mx-1"
-                        color="error"
-                      >
-                        Rejected
-                      </v-chip>
-                      <v-chip
-                        v-if="dialogViewObject.status == 0"
-                        small
-                        class="p-2 mx-1"
-                        color="secondary"
-                      >
-                        Pending
-                      </v-chip></label
+                      Rejected
+                    </v-chip>
+                    <v-chip
+                      v-if="dialogViewObject.status == 0"
+                      small
+                      class="p-2 mx-1"
+                      color="secondary"
                     >
-                  </v-col>
-                </v-row>
-                <v-row v-if="dialogViewObject.status == 1">
-                  <v-col cols="4">
-                    <strong>Approved Date </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for=""
-                      >: {{ dialogViewObject.approved_datetime }}</label
-                    >
-                  </v-col>
-                </v-row>
-                <v-row v-else-if="dialogViewObject.status == 2">
-                  <v-col cols="4">
-                    <strong>Rejected Date </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    <label for=""
-                      >: {{ dialogViewObject.approved_datetime }}</label
-                    >
-                  </v-col>
-                </v-row>
+                      Pending
+                    </v-chip></label
+                  >
+                </v-col>
+              </v-row>
+              <v-row v-if="dialogViewObject.status == 1">
+                <v-col cols="4">
+                  <strong>Approved Date </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for=""
+                    >: {{ dialogViewObject.approved_datetime }}</label
+                  >
+                </v-col>
+              </v-row>
+              <v-row v-else-if="dialogViewObject.status == 2">
+                <v-col cols="4">
+                  <strong>Rejected Date </strong>
+                </v-col>
+                <v-col cols="8">
+                  <label for=""
+                    >: {{ dialogViewObject.approved_datetime }}</label
+                  >
+                </v-col>
+              </v-row>
 
-                <v-row v-if="dialogViewObject.status != 0">
-                  <v-col cols="4">
-                    <strong
-                      >{{
-                        dialogViewObject.status == 1 ? "Approved" : "Rejected"
-                      }}
-                      Notes
-                    </strong>
-                  </v-col>
-                  <v-col cols="8">
-                    : {{ dialogViewObject.approve_reject_notes }}
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12">
-                <strong> Leave Notes </strong>:
-                <label for="">: {{ dialogViewObject.reason }}</label>
-              </v-col>
-              <label
-                ><strong>Uploaded Documents</strong> ({{
-                  document_list.length
-                }})</label
-              >
-              <v-col cols="12" v-if="document_list.length">
-                <table style="border-collapse: collapse; width: 100%">
-                  <thead>
-                    <tr>
-                      <th
-                        style="
-                          border: 1px solid #dddddd;
-                          text-align: left;
-                          padding: 8px;
-                        "
-                      >
-                        Title
-                      </th>
-                      <th
-                        style="
-                          border: 1px solid #dddddd;
-                          text-align: center;
-                          padding: 8px;
-                        "
-                      >
-                        File
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(d, index) in document_list" :key="index">
-                      <td
-                        style="
-                          border: 1px solid #dddddd;
-                          text-align: left;
-                          padding: 8px;
-                        "
-                      >
-                        {{ d.key }}
-                      </td>
-                      <td
-                        style="
-                          border: 1px solid #dddddd;
-                          text-align: center;
-                          padding: 8px;
-                        "
-                      >
-                        <a :href="d.value" target="_blank">
-                          <v-btn small class="primary">
-                            View File <v-icon>mdi-open-window</v-icon>
-                          </v-btn>
-                        </a>
-                      </td>
-                    </tr>
-                    <!-- Add more rows as needed -->
-                  </tbody>
-                </table>
-              </v-col>
-            </v-row>
-          </v-container>
+              <v-row v-if="dialogViewObject.status != 0">
+                <v-col cols="4">
+                  <strong
+                    >{{
+                      dialogViewObject.status == 1 ? "Approved" : "Rejected"
+                    }}
+                    Notes
+                  </strong>
+                </v-col>
+                <v-col cols="8">
+                  : {{ dialogViewObject.approve_reject_notes }}
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="12">
+              <strong> Leave Notes </strong>:
+              <label for="">: {{ dialogViewObject.reason }}</label>
+            </v-col>
+            <label
+              ><strong>Uploaded Documents</strong> ({{
+                document_list.length
+              }})</label
+            >
+            <v-col cols="12" v-if="document_list.length">
+              <table style="border-collapse: collapse; width: 100%">
+                <thead>
+                  <tr>
+                    <th
+                      style="
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                      "
+                    >
+                      Title
+                    </th>
+                    <th
+                      style="
+                        border: 1px solid #dddddd;
+                        text-align: center;
+                        padding: 8px;
+                      "
+                    >
+                      File
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(d, index) in document_list" :key="index">
+                    <td
+                      style="
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                      "
+                    >
+                      {{ d.key }}
+                    </td>
+                    <td
+                      style="
+                        border: 1px solid #dddddd;
+                        text-align: center;
+                        padding: 8px;
+                      "
+                    >
+                      <a :href="d.value" target="_blank">
+                        <v-btn small class="primary">
+                          View File <v-icon>mdi-open-window</v-icon>
+                        </v-btn>
+                      </a>
+                    </td>
+                  </tr>
+                  <!-- Add more rows as needed -->
+                </tbody>
+              </table>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
     <v-row>
       <v-col md="12">
         <v-card class="mb-5">
-          <v-toolbar class="rounded-md" color="popup_background" dense flat>
+          <v-toolbar
+            class="rounded-md"
+            color="popup_background"
+            dense
+            flat
+            style="width: 100%"
+          >
             <v-toolbar-title>
               Leave Group:
 

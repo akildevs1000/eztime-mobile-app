@@ -15,9 +15,10 @@
     <v-card class="mb-5" elevation="0">
       <v-toolbar class="backgrounds" dense flat>
         <v-toolbar-title> </v-toolbar-title>
-
-        <div style="display: none">
+        <v-spacer></v-spacer>
+        <div style="display: none1">
           <v-btn
+            style="padding: 0px; min-width: 25px"
             class="ma-0"
             x-small
             :ripple="false"
@@ -30,6 +31,7 @@
           </v-btn>
 
           <v-btn
+            style="padding: 0px; min-width: 25px"
             x-small
             :ripple="false"
             text
@@ -40,6 +42,7 @@
           </v-btn>
 
           <v-btn
+            style="padding: 0px; min-width: 25px"
             x-small
             :ripple="false"
             text
@@ -50,7 +53,7 @@
           </v-btn>
         </div>
 
-        <v-spacer></v-spacer>
+        <!-- <v-spacer></v-spacer>
         <v-menu bottom right>
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -78,7 +81,7 @@
               </v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-menu>
+        </v-menu> -->
       </v-toolbar>
 
       <v-data-table
