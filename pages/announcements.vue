@@ -468,7 +468,10 @@ export default {
           announcement.user &&
           announcement.user.user_type == "employee"
         ) {
-          return announcement.user.employee.profile_picture;
+          return (
+            announcement.user.employee.profile_picture ||
+            "/no-profile-image.jpg"
+          );
         }
       } else {
         return "/no-profile-image.jpg";

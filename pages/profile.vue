@@ -676,7 +676,7 @@
               <h5><v-icon>mdi-cog</v-icon> Settings</h5>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <table style="width: 100%">
+              <table style="width: 100%; font-size: 14px; line-height: 30px">
                 <tr>
                   <td><h4>Employee Status</h4></td>
                   <td class="text-right" style="float: right">

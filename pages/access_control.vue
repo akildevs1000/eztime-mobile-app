@@ -10,7 +10,11 @@
         <h2>
           <span> Access Devices ({{ data.length }}) </span>
         </h2>
-        <v-card v-for="device in data" class="mx-auto mb-5">
+        <v-card
+          v-for="(device, index) in data"
+          class="mx-auto mb-5"
+          :key="'access' + index"
+        >
           <v-card-text>
             <v-row>
               <v-col cols="12" class="text-left">
