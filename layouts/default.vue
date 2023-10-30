@@ -229,14 +229,12 @@ export default {
   created() {
     try {
       setTimeout(() => {
-        console.log("login-verification", this.$auth.user.employee);
         if (this.$auth.user.employee)
           this.profile_picture = this.$auth.user.employee.profile_picture;
         else if (
           this.$auth.user.employee == "undefined" ||
           !this.$auth.user.employee
         ) {
-          console.log("login-verification", this.$auth.user.employee);
           this.logout();
         }
       }, 500);

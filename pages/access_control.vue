@@ -9,8 +9,8 @@
       <v-col cols="12">
         <h2>
           <span> Access Devices ({{ data.length }}) </span>
-        </h2>
-        <v-card v-for="device in data" class="mx-auto mb-5">
+        </h2> 
+        <v-card v-for="(device,index) in data" :key="index" class="mx-auto mb-5">
           <v-card-text>
             <v-row>
               <v-col cols="12" class="text-left">

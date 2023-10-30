@@ -9,7 +9,7 @@
 
       <v-card flat>
         <v-avatar size="150" class="mt-10">
-          <img :src="puching_image" alt="Avatar" @click="generateLog" />
+          <img :src="puching_image" alt="loading..." @click="generateLog" />
         </v-avatar>
 
         <div class="text-center mt-5">
@@ -63,12 +63,12 @@ export default {
     ],
     formattedDateTime: null,
     UserID: null,
+    lastLog: null,
     attendanceLogs: [],
     profile_pictrue: "no-profile-image.jpg",
-    puching_image: "/C-IN.png",
-
+    log_type: "",
+    puching_image: "",
     response_image: "/sucess.png",
-
     uniqueDeviceId: null,
     device_id: null,
     isButtonDisabled: false,
@@ -76,21 +76,16 @@ export default {
     response: "",
     shift_type_id: "",
     logsCount: null,
-
     disableCheckInButton: false,
     disableCheckOutButton: true,
-
     currentTime: "",
     formattedDateTime: "",
     dialog: false,
     nextPunchAllowed: true,
     coordinates: {},
-
     locationError: null,
     company_id: 0,
     intervalId: 0,
-
-    log_type: "in",
   }),
   async mounted() {
     this.updateDateTime();
@@ -122,8 +117,28 @@ export default {
     this.shift_type_id = employee.schedule.shift_type_id;
     this.company_id = this.$auth.user.company_id;
     this.device_id = `Mobile-${this.UserID}`;
+
+    await this.getLastLog();
   },
   methods: {
+    async getLastLog() {
+      this.$axios
+        .get(`attendance_logs`, {
+          params: {
+            company_id: this.company_id,
+            UserID: this.UserID,
+          },
+        })
+        .then(({ data }) => {
+          if (data.data && data.data.length && data.data[0].log_type == "in") {
+            this.log_type = "out";
+            this.puching_image = "/C-OUT.PNG";
+          } else {
+            this.log_type = "in";
+            this.puching_image = "/C-IN.png";
+          }
+        });
+    },
     generateLog() {
       if (!this.nextPunchAllowed) {
         this.dialog = true;
