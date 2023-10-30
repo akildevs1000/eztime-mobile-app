@@ -376,7 +376,6 @@ export default {
       this.to_date = data.to;
       this.filterType = "Monthly"; // data.type;
 
-      console.log(this.from_date, this.to_date);
       //this.search = data.search;
       // if (this.from_date && this.to_date) this.commonMethod();
     },
@@ -540,7 +539,7 @@ export default {
     getBranches() {
       if (this.$auth.user.branch_id) {
         this.payload.branch_id = this.$auth.user.branch_id;
-        console.log(this.payload.branch_id);
+
         this.isCompany = false;
         return;
       }
