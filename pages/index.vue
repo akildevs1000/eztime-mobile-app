@@ -14,12 +14,7 @@
           <b>My Profile</b>
         </v-btn>
       </div>
-      <div class="text-center mt-5">
-        {{ formattedDateTime || "Loading..." }}
-      </div>
-      <v-sheet class="text-h4 text-center">
-        {{ currentTime }}
-      </v-sheet>
+      <WallClock />
     </v-col>
     <v-col cols="12" class="text-center">
       <div>
@@ -173,12 +168,9 @@
 export default {
   data: () => ({
     sinceDate: null,
-    progress_value: 100,
     UserID: null,
     profile_pictrue: "no-profile-image.jpg",
     logsCount: null,
-    currentTime: "",
-    formattedDateTime: "",
     company_id: 0,
     lastLog: null,
     employee_stats: [],
@@ -189,11 +181,7 @@ export default {
       { text: "LogTime", value: "LogTime" },
       { text: "Device", value: "DeviceID" },
     ],
-    formattedDateTime: null,
-    UserID: null,
-    lastLog: null,
     attendanceLogs: [],
-    profile_pictrue: "no-profile-image.jpg",
     log_type: "",
     puching_image: "",
     response_image: "/sucess.png",
@@ -202,26 +190,16 @@ export default {
     isButtonDisabled: false,
     message: "",
     response: "",
-    shift_type_id: "",
-    logsCount: null,
-    disableCheckInButton: false,
-    disableCheckOutButton: true,
-    currentTime: "",
-    formattedDateTime: "",
     dialog: false,
     nextPunchAllowed: true,
-    coordinates: {},
     locationError: null,
-    company_id: 0,
     intervalId: 0,
     locationData: null,
     initialPunch: true,
   }),
 
   mounted() {
-    this.updateDateTime();
     this.getSinceDate();
-    setInterval(this.updateDateTime, 1000);
   },
 
   computed: {
@@ -247,21 +225,19 @@ export default {
 
       this.profile_pictrue = employee.profile_picture;
       this.UserID = employee.system_user_id;
-      this.shift_type_id = employee.schedule.shift_type_id;
       this.company_id = this.$auth.user.company_id;
       this.device_id = `Mobile-${this.UserID}`;
 
-      await this.getEmployeeStats();
-      await this.getLastLog();
+      this.getEmployeeStats();
+      this.getLastLog();
       this.getRealTimeLocation();
-      // setInterval(this.getRealTimeLocation, 60 * 1000);
       this.getTodayAttendance();
     } catch (e) {
       this.$router.push("/login");
     }
   },
   methods: {
-    async getLastLog() {
+    getLastLog() {
       this.$axios
         .get(`attendance_logs`, {
           params: {
@@ -315,6 +291,7 @@ export default {
           this.response_image = "/success.png";
 
           setInterval(this.getTodayAttendance, 60 * 1000);
+          setInterval(this.getEmployeeStats, 60 * 1000);
 
           this.ifExist();
 
@@ -328,12 +305,10 @@ export default {
               }, 60 * 1000);
             }
             this.log_type = "out";
-            this.disableCheckInButton = true;
             this.puching_image = "/C-OUT.PNG";
           } else {
             this.log_type = "in";
             this.puching_image = "/C-IN.png";
-            this.disableCheckOutButton = true;
             clearInterval(this.intervalId);
           }
           this.getLastLog();
@@ -489,7 +464,7 @@ export default {
           );
         });
     },
-    async getEmployeeStats() {
+    getEmployeeStats() {
       this.$axios
         .get(`employee-statistics`, {
           params: {
@@ -504,13 +479,6 @@ export default {
     goToPage(page) {
       this.$router.push(page);
     },
-    updateTime() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-      this.currentTime = `${hours}:${minutes}:${seconds}`;
-    },
     getFormattedDate() {
       const now = new Date();
       return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
@@ -518,94 +486,7 @@ export default {
         "0"
       )}-${String(now.getDate()).padStart(2, "0")}`;
     },
-    updateTime() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-      this.currentTime = `${hours}:${minutes}:${seconds}`;
-    },
-    updateDateTime() {
-      const now = new Date();
-      const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-
-      const dayOfWeek = daysOfWeek[now.getDay()];
-      const month = months[now.getMonth()];
-      const dayOfMonth = now.getDate();
-
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-
-      this.formattedDateTime = `${dayOfWeek}, ${month} ${dayOfMonth}`;
-      this.currentTime = `${hours}:${minutes}:${seconds}`;
-    },
-    updateDateTime() {
-      const now = new Date();
-      const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-
-      const dayOfWeek = daysOfWeek[now.getDay()];
-      const month = months[now.getMonth()];
-      const dayOfMonth = now.getDate();
-
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-
-      this.formattedDateTime = `${dayOfWeek}, ${month} ${dayOfMonth}`;
-      this.currentTime = `${hours}:${minutes}:${seconds}`;
-    },
-    getFormattedDate() {
-      const now = new Date();
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(now.getDate()).padStart(2, "0")}`;
-    },
+    
     getRemainingTime(totalHours, performedHours) {
       const [totalHoursStr, totalMinutesStr] = totalHours
         .split(":")
