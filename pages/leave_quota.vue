@@ -49,19 +49,19 @@
               </div>
             </template>
             <template v-slot:item.approved="{ item }">
-              <spam color="primary" class="leave-quota" style="color: primary">
+              <span color="primary" class="leave-quota" style="color: primary">
                 {{ item.employee_used }}
-              </spam>
+              </span>
             </template>
             <template v-slot:item.available="{ item }">
-              <spam
+              <span
                 color="green"
                 text-color="white"
                 class="leave-quota"
                 style="color: orangered"
               >
                 {{ item.leave_type_count - item.employee_used }}
-              </spam>
+              </span>
             </template>
           </v-data-table>
         </v-card>

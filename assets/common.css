@@ -36,6 +36,8 @@ body {
   padding:0px;
   margin:0px;
   font-size: 10px;
+  padding-left:5%;
+ 
 }
 .v-application--is-ltr .v-data-footer__pagination
 {

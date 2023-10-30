@@ -230,11 +230,13 @@ export default {
     try {
       setTimeout(() => {
         if (this.$auth.user.employee)
-          this.profile_picture = this.$auth.user.employee.profile_picture;
+          this.profile_picture =
+            this.$auth.user.employee.profile_picture || "/no-profile-image.jpg";
         else if (
           this.$auth.user.employee == "undefined" ||
           !this.$auth.user.employee
         ) {
+          // console.log("login-verification", this.$auth.user.employee);
           this.logout();
         }
       }, 500);
