@@ -175,7 +175,7 @@ export default {
     lastLog: null,
     employee_stats: [],
     todayAttendance: null,
-    remainingTime: "00:00",
+    remainingTime: "---",
 
     headers: [
       { text: "LogTime", value: "LogTime" },
@@ -191,7 +191,7 @@ export default {
     message: "",
     response: "",
     dialog: false,
-    nextPunchAllowed: true,
+    buttonLocked: false,
     locationError: null,
     intervalId: 0,
     locationData: null,
@@ -200,6 +200,14 @@ export default {
 
   mounted() {
     this.getSinceDate();
+
+    if (this.$localStorage.get("buttonLocked")) {
+      this.buttonLocked = true;
+      setTimeout(() => {
+        this.buttonLocked = false;
+        this.$localStorage.remove("buttonLocked");
+      }, 60 * 1000);
+    }
   },
 
   computed: {
@@ -237,6 +245,14 @@ export default {
     }
   },
   methods: {
+    lockButton() {
+      this.buttonLocked = true;
+      this.$localStorage.set("buttonLocked", "true");
+      setTimeout(() => {
+        this.buttonLocked = false;
+        this.$localStorage.remove("buttonLocked");
+      }, 60 * 1000);
+    },
     getLastLog() {
       this.$axios
         .get(`attendance_logs`, {
@@ -258,13 +274,14 @@ export default {
         });
     },
     generateLog() {
-      if (!this.nextPunchAllowed) {
+      if (this.buttonLocked) {
         this.dialog = true;
         this.message = "Next Clocking allowed after 1 minute only";
         this.response_image = "/fail.png";
         setTimeout(() => (this.dialog = false), 3000);
         return;
       }
+
       let payload = {
         UserID: this.UserID,
         LogTime: `${this.getFormattedDate()} ${this.getFormattedTime()}`,
@@ -277,7 +294,7 @@ export default {
       this.$axios
         .post(`/generate_log`, payload)
         .then(({ data }) => {
-          this.nextPunchAllowed = false;
+          this.lockButton();
           this.dialog = true;
 
           if (!data.status) {
@@ -319,7 +336,6 @@ export default {
         });
 
       setTimeout(() => (this.dialog = false), 3000);
-      setTimeout(() => (this.nextPunchAllowed = true), 60 * 1000);
     },
 
     async insertRealTimeLocation() {
@@ -486,7 +502,7 @@ export default {
         "0"
       )}-${String(now.getDate()).padStart(2, "0")}`;
     },
-    
+
     getRemainingTime(totalHours, performedHours) {
       const [totalHoursStr, totalMinutesStr] = totalHours
         .split(":")
