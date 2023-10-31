@@ -73,7 +73,7 @@
     <v-col cols="5" class="text-center">
       <div class="text-center mt-5">
         <v-avatar size="150" class="">
-          <img :src="puching_image" alt="loading..." @click="generateLog" />
+          <img :src="puching_image" alt="loading..." @click="submit" />
         </v-avatar>
         <div class="text-center">
           <v-dialog v-model="dialog" width="500">
@@ -196,6 +196,7 @@ export default {
     intervalId: 0,
     locationData: null,
     initialPunch: true,
+    shift_type_id: 0,
   }),
 
   mounted() {
@@ -233,6 +234,7 @@ export default {
 
       this.profile_pictrue = employee.profile_picture;
       this.UserID = employee.system_user_id;
+      this.shift_type_id = (employee && employee.schedule.shift_type_id) || 0;
       this.company_id = this.$auth.user.company_id;
       this.device_id = `Mobile-${this.UserID}`;
 
@@ -264,16 +266,27 @@ export default {
         .then(({ data }) => {
           if (data.data && data.data.length && data.data[0].log_type == "in") {
             this.log_type = "out";
-            this.puching_image = "/C-OUT.PNG";
+            this.puching_image = "/C-OUT.png";
             this.initialPunch = false;
+
+            if (this.$auth.user.tracking_status) {
+              this.invokeRealtimeLocation();
+            }
           } else {
             this.log_type = "in";
             this.puching_image = "/C-IN.png";
+            clearInterval(this.intervalId);
           }
           this.lastLog = data.data[0];
         });
     },
-    generateLog() {
+    invokeRealtimeLocation() {
+      this.insertRealTimeLocation();
+      this.intervalId = setInterval(() => {
+        this.insertRealTimeLocation();
+      }, 60 * 1000);
+    },
+    submit() {
       if (this.buttonLocked) {
         this.dialog = true;
         this.message = "Next Clocking allowed after 1 minute only";
@@ -282,6 +295,11 @@ export default {
         return;
       }
 
+      this.lockButton();
+      this.processLog();
+    },
+
+    processLog() {
       let payload = {
         UserID: this.UserID,
         LogTime: `${this.getFormattedDate()} ${this.getFormattedTime()}`,
@@ -293,8 +311,7 @@ export default {
 
       this.$axios
         .post(`/generate_log`, payload)
-        .then(({ data }) => {
-          this.lockButton();
+        .then(async ({ data }) => {
           this.dialog = true;
 
           if (!data.status) {
@@ -307,28 +324,8 @@ export default {
           this.message = "Your clocking has been recorded successfully";
           this.response_image = "/success.png";
 
-          setInterval(this.getTodayAttendance, 60 * 1000);
-          setInterval(this.getEmployeeStats, 60 * 1000);
-
-          this.ifExist();
-
-          this.puching_image = "";
-
-          if (this.log_type == "in") {
-            if (this.$auth.user.tracking_status) {
-              this.insertRealTimeLocation();
-              this.intervalId = setInterval(() => {
-                this.insertRealTimeLocation();
-              }, 60 * 1000);
-            }
-            this.log_type = "out";
-            this.puching_image = "/C-OUT.PNG";
-          } else {
-            this.log_type = "in";
-            this.puching_image = "/C-IN.png";
-            clearInterval(this.intervalId);
-          }
-          this.getLastLog();
+          await this.renderAttendance();
+          this.registerDeviceIfNotExist();
         })
         .catch(({ message }) => {
           this.message = message;
@@ -338,20 +335,29 @@ export default {
       setTimeout(() => (this.dialog = false), 3000);
     },
 
-    async insertRealTimeLocation() {
+    async renderAttendance() {
+      try {
+        const { data } = await this.$axios.get(`/render_logs`, {
+          params: {
+            company_ids: [this.company_id],
+            employee_ids: [this.UserID],
+            dates: [this.getFormattedDate(), this.getFormattedDate()],
+            shift_type_id: this.shift_type_id,
+          },
+        });
+
+        this.getTodayAttendance();
+        this.getEmployeeStats();
+        this.getLastLog();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    insertRealTimeLocation() {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           ({ coords: { latitude, longitude } }) => {
-            if (
-              this.initialPunch == false &&
-              this.latitude == latitude &&
-              this.longitude == longitude &&
-              this.currentDate == this.getFormattedDate()
-            ) {
-              console.log(`same location found on ${this.currentDate} date.`);
-              return;
-            }
-
             let payload = {
               company_id: this.company_id,
               device_id: this.device_id,
@@ -365,6 +371,7 @@ export default {
             this.$axios
               .post(`/realtime_location`, payload)
               .then(async ({ data }) => {
+                console.log(data.message);
                 await this.setRealTimeLocation(latitude, longitude);
               })
               .catch(({ message }) => console.log(message));
@@ -377,15 +384,7 @@ export default {
         this.locationError = "Location not available";
       }
     },
-    ifExist() {
-      this.$axios
-        .get(`/device-by-user/${this.device_id}`)
-        .then(({ data }) => {
-          if (!data) this.registerDevice();
-        })
-        .catch(({ message }) => console.log(message));
-    },
-    registerDevice() {
+    registerDeviceIfNotExist() {
       let payload = {
         device_id: this.device_id,
         name: this.device_id,
@@ -393,7 +392,7 @@ export default {
         model_number: this.device_id,
         location: this.locationData.display_name ?? "---",
         company_id: this.$auth.user.company_id,
-        branch_id: this.$auth.user.branch_id,
+        branch_id: this.$auth.user.employee.branch_id,
         status_id: 1,
         function: "ignore",
         utc_time_zone: "ignore",
@@ -404,7 +403,7 @@ export default {
 
       this.$axios
         .post(`/device`, payload)
-        .then(({ data }) => console.log(`This device registered successfully`))
+        .then(({ data }) => console.log(data.message))
         .catch(({ message }) => console.log(message));
     },
 

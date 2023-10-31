@@ -132,7 +132,7 @@ export default {
         .then(({ data }) => {
           if (data.data && data.data.length && data.data[0].log_type == "in") {
             this.log_type = "out";
-            this.puching_image = "/C-OUT.PNG";
+            this.puching_image = "/C-OUT.png";
           } else {
             this.log_type = "in";
             this.puching_image = "/C-IN.png";
@@ -185,7 +185,7 @@ export default {
             }
             this.log_type = "out";
             this.disableCheckInButton = true;
-            this.puching_image = "/C-OUT.PNG";
+            this.puching_image = "/C-OUT.png";
           } else {
             this.log_type = "in";
             this.puching_image = "/C-IN.png";
