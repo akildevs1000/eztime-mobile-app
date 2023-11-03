@@ -471,11 +471,16 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (!data.data.length) {
+            this.getRemainingTime("00:00", "00:00");
+            this.todayAttendance = { total_hrs: "---", ot: "---" };
+            return;
+          }
           this.todayAttendance = data.data[0];
 
           this.getRemainingTime(
-            data.data[0].total_hrs,
-            data.data[0].shift.working_hours || "00:00"
+            data.data[0].total_hrs || "---",
+            data.data[0].shift.working_hours || "---"
           );
         });
     },
