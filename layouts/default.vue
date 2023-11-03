@@ -227,6 +227,12 @@ export default {
           color: "#9aa9b9",
         },
         {
+          icon: "mdi-transit-transfer",
+          title: "Visitors",
+          to: "/visitors",
+          color: "#9aa9b9",
+        },
+        {
           icon: "mdi-logout",
           title: "Logout",
           to: "/logout",

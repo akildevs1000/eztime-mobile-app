@@ -831,13 +831,38 @@
               </table>
             </v-expansion-panel-content>
           </v-expansion-panel>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <h5><v-icon>mdi-account</v-icon> Host Info</h5>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <div class="mt-3">
+                <DetailView
+                  @success="(e) => setLinkAndQrCode(e)"
+                  endpoint="host"
+                  :cols="cols"
+                />
+              </div>
+
+              <div v-if="detail_data && detail_data.id">
+                <v-avatar v-if="qrCodeDataURL" size="125" tile>
+                  <img :src="qrCodeDataURL" alt="Avatar" />
+                </v-avatar>
+                <span> {{ fullLink }} </span>
+              </div>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
     </v-row>
   </div>
 </template>
 <script>
+import DetailView from "../components/DetailView.vue";
+
 export default {
+  components: { DetailView },
+
   data: () => ({
     panel: [0],
 
@@ -914,9 +939,23 @@ export default {
     payloadOptions: {},
     last_login: {},
     document_list: [],
+    detail_data: {},
+    cols: [
+      `flat_number`,
+      `floor_number`,
+      `number`,
+      `emergency_phone`,
+      `open_time`,
+      `close_time`,
+      `zone_id`,
+    ],
+
+    qrCodeDataURL: "",
+    originalURL: `https://mobile.mytime2cloud.com/register/visitor/`,
+    fullLink: "",
   }),
 
-  created() {
+  async created() {
     let options = {
       params: {
         id: this.$auth.user.employee.id,
@@ -942,6 +981,18 @@ export default {
   watch: {},
   computed: {},
   methods: {
+    setLinkAndQrCode(e) {
+      this.detail_data = e;
+      this.fullLink = `${this.originalURL}${this.$auth.user.company_id}-${e.id}`;
+      this.generateQRCode(this.fullLink);
+    },
+    async generateQRCode(fullLink) {
+      try {
+        this.qrCodeDataURL = await this.$qrcode.generate(fullLink);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    },
     getLastLogin() {
       //
       if (this.employeeObject)

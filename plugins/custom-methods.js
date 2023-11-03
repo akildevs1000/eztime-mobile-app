@@ -1,4 +1,29 @@
+import QRCode from 'qrcode';
+
 export default ({ app }, inject) => {
+
+  inject('qrcode', {
+    generate: (text, options) => {
+      return new Promise((resolve, reject) => {
+        QRCode.toDataURL(text, options, (error, dataURL) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(dataURL);
+          }
+        });
+      });
+    }
+  });
+
+  inject("util", {
+    toTitleCase(str) {
+      return str.replace(/_/g, " ").replace(/\w\S*/g, function (text) {
+        return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
+      });
+    },
+  });
+  
   inject("dateFormat", {
     format1: (inputdate) => {
       // Create a Date object with the date "2023-09-13"  Output Sun, Jan 01, 2023
