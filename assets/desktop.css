@@ -7,4 +7,17 @@
     box-shadow:none!important; 
   }
 
+    nav
+  {
+   
+    top: 64px!important; 
+    width:auto!important;
+ 
+  }
+ 
+  header
+  {
+    left:0px!important;
+  } 
+
 }

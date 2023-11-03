@@ -85,7 +85,7 @@
       </v-toolbar>
 
       <v-data-table
-        :mobile-breakpoint="2000"
+        :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
         dense
         :headers="headers"
         :items="data"

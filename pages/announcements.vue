@@ -436,8 +436,8 @@ export default {
     this.loading = true;
 
     this.getDataFromApi();
-    this.getDepartments();
-    this.getEmployees();
+    //this.getDepartments();
+    //this.getEmployees();
   },
 
   methods: {

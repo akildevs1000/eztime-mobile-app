@@ -1,6 +1,19 @@
 <template>
   <v-app dark>
+    <!-- <v-navigation-drawer
+      dark
+      v-model="drawer"
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      fixed
+      app
+      class="theme--dark background"
+      style="width: 215px"
+    > -->
+
     <v-navigation-drawer
+      :expand-on-hover="miniVariant"
+      :rail="miniVariant"
       dark
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -23,13 +36,13 @@
             <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>{{ item.title }} </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar class="bg-color" :clipped-left="clipped" fixed app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="!miniVariant" @click.stop="drawer = !drawer" />
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
       </v-btn> -->
@@ -40,7 +53,7 @@
         <v-icon>mdi-minus</v-icon>
       </v-btn> -->
       <span class="text-overflow">
-        <img title="My Time Cloud " :src="`/logo22.png`" style="width: 150px" />
+        <img title="My Time Cloud " :src="`/logo22.png`" style="width: 86px" />
       </span>
       <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
@@ -241,13 +254,35 @@ export default {
         }
       }, 500);
     } catch (e) {
-      this.logout();
+      // this.logout();
+    }
+  },
+  mounted() {
+    if (window.innerWidth >= 500) {
+      this.miniVariant = true;
+
+      this.$store.commit("isMobile", false);
     }
   },
   computed: {
     locationData() {
       return this.$store.state.locationData;
     },
+
+    // miniVariant() {
+    //   switch (this.$vuetify.breakpoint.name) {
+    //     case "xs":
+    //       return true;
+    //     case "sm":
+    //       return true;
+    //     case "md":
+    //       return true;
+    //     case "lg":
+    //       return false;
+    //     case "xl":
+    //       return false;
+    //   }
+    // },
   },
   methods: {
     // getPhoto() {
@@ -259,12 +294,10 @@ export default {
     //   }, 2000);
     // },
     logout() {
-      if (confirm("Are you sure want to logout?")) {
-        this.$axios.get(`/logout`).then(({ res }) => {
-          this.$auth.logout();
-          this.$router.push(`/login`);
-        });
-      }
+      this.$axios.get(`/logout`).then(({ res }) => {
+        this.$auth.logout();
+        this.$router.push(`/login`);
+      });
     },
   },
 };

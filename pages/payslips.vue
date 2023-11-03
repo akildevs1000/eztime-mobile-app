@@ -40,7 +40,7 @@
       </v-toolbar>
 
       <v-data-table
-        :mobile-breakpoint="2000"
+        :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
         dense
         v-model="selectedItems"
         :headers="headers_table"

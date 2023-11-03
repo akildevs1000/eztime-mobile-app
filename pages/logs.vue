@@ -91,7 +91,7 @@
           </v-snackbar>
 
           <v-data-table
-            :mobile-breakpoint="2000"
+            :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
             dense
             :headers="headers_table"
             :items="data"
