@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import Fingerprint2 from "fingerprintjs2";
+// import Fingerprint2 from "fingerprintjs2";
 
 export default {
   data: () => ({
@@ -105,10 +105,10 @@ export default {
     this.startCamera();
   },
   created() {
-    Fingerprint2.get({}, (components) => {
-      const values = components.map(({ value }) => value);
-      this.uniqueDeviceId = Fingerprint2.x64hash128(values.join(""), 31);
-    });
+    // Fingerprint2.get({}, (components) => {
+    //   const values = components.map(({ value }) => value);
+    //   this.uniqueDeviceId = Fingerprint2.x64hash128(values.join(""), 31);
+    // });
 
     this.UserID = this.$auth.user.employee.system_user_id;
     this.profile_pictrue = this.$auth.user.employee.profile_picture;
