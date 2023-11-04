@@ -13,7 +13,6 @@
 
     <v-navigation-drawer
       :expand-on-hover="miniVariant"
-      :rail="miniVariant"
       dark
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -25,7 +24,8 @@
     >
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in menu_items"
+          v-if="item.show_mobile_app != miniVariant"
           :key="i"
           :to="item.to"
           :style="'color:' + item.color"
@@ -52,6 +52,7 @@
       <!-- <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
       </v-btn> -->
+
       <span class="text-overflow">
         <img title="My Time Cloud " :src="`/logo22.png`" style="width: 86px" />
       </span>
@@ -123,7 +124,7 @@
 </template>
 
 <script>
-// import Location from "@/components/Snippets/Location.vue";
+ 
 
 export default {
   // components: { Location },
@@ -135,13 +136,15 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [
+      menu_items: [
         {
           icon: "mdi-apps",
           title: "Home",
           to: "/",
           color: "#9aa9b9",
+          show_mobile_app: true,
         },
+
         // {
         //   icon: "mdi-chart-bubble",
         //   title: "Tracker",
@@ -152,6 +155,14 @@ export default {
           title: "Clocking",
           to: "/clocking",
           color: "#9aa9b9",
+          show_mobile_app: true,
+        },
+        {
+          icon: "mdi-apps",
+          title: "Dashboard",
+          to: "/dashboard",
+          color: "#9aa9b9",
+          show_mobile_app: false,
         },
         {
           icon: "mdi-map-marker-radius",
@@ -197,7 +208,7 @@ export default {
         },
         {
           icon: "mdi-account-tie",
-          title: "Access Control",
+          title: "Access Devices",
           to: "/access_control",
           color: "#9aa9b9",
         },
@@ -262,13 +273,21 @@ export default {
     } catch (e) {
       // this.logout();
     }
+
+    // if (this.$store.state.isDesktop) {
+    //   this.$router.push(`/dashboard`);
+    // }
   },
   mounted() {
-    if (window.innerWidth >= 500) {
+    if (window.innerWidth >= 600) {
+      this.drawer = true;
       this.miniVariant = true;
-
-      this.$store.commit("isMobile", false);
+    } else {
+      this.miniVariant = false;
     }
+    this.$store.commit("isDesktop", this.miniVariant);
+
+    console.log("isDesktop", this.miniVariant);
   },
   computed: {
     locationData() {

@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #6946dd; height: 100%">
+  <div class="loginbg" style="background-color: #eeeeee; height: 100%">
     <v-dialog persistent v-model="dialogWhatsapp" width="600px">
       <v-card>
         <v-card-title
@@ -77,96 +77,123 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <div
-      class="col-lg-12 col-md-12 col-sm-12 col-lg-12"
-      style="background-color: #6946dd; height: 100%"
-    >
-      <div class="text-center" style="height: 100px">
-        <!-- <img width="35%" :src="logo" alt="logo" /> -->
-      </div>
-      <div class="card-body p-md-5 mx-md-12" style="color: #fff">
-        <h2 class="pb-7">Welcome To EzTime</h2>
 
-        <v-form
-          ref="form"
-          method="post"
-          v-model="valid"
-          lazy-validation
-          autocomplete="off"
-        >
-          <div class="form-outline">
-            <v-text-field
-              dark
-              color="white--text"
-              rounded
-              v-model="email"
-              :rules="emailRules"
-              :hide-details="false"
-              id="form2Example11"
-              placeholder="username"
-              autofill="false"
-              required
-              dense
-              outlined
-              type="email"
-              prepend-inner-icon="mdi-account"
-              autocomplete="false"
-              aria-autocomplete="none"
-            ></v-text-field>
+    <section class="h-100 gradient-form" style="background-color: #eee">
+      <div class="container py-0 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-xl-8 login2">
+            <div style="" class="login1">
+              <div class="card1 rounded-3 text-black">
+                <div class="row g-0">
+                  <div
+                    class="col-lg-6 col-md-12 col-sm-12 col-lg-6"
+                    style="background-color: #6946dd"
+                  >
+                    <div class="text-center" style="height: 100px"></div>
+                    <div class="card-body login3" style="color: #fff">
+                      <h2 class="pb-7" style="font-size: 2em">
+                        Welcome To EzTime
+                      </h2>
+
+                      <v-form
+                        ref="form"
+                        method="post"
+                        v-model="valid"
+                        lazy-validation
+                        autocomplete="off"
+                      >
+                        <div class="form-outline">
+                          <v-text-field
+                            dark
+                            color="white--text"
+                            rounded
+                            v-model="email"
+                            :rules="emailRules"
+                            :hide-details="false"
+                            id="form2Example11"
+                            placeholder="username"
+                            autofill="false"
+                            required
+                            dense
+                            outlined
+                            type="email"
+                            prepend-inner-icon="mdi-account"
+                            autocomplete="false"
+                            aria-autocomplete="none"
+                          ></v-text-field>
+                        </div>
+
+                        <div class="form-outline">
+                          <v-text-field
+                            dark
+                            color="white--text"
+                            rounded
+                            dense
+                            outlined
+                            :rules="passwordRules"
+                            autocomplete="off"
+                            placeholder="Password"
+                            prepend-inner-icon="mdi-lock  "
+                            :append-icon="
+                              show_password ? 'mdi-eye' : 'mdi-eye-off'
+                            "
+                            :type="show_password ? 'text' : 'password'"
+                            v-model="password"
+                            class="input-group--focused text-white"
+                            @click:append="show_password = !show_password"
+                          ></v-text-field>
+                        </div>
+
+                        <v-row>
+                          <v-col md="6">
+                            <v-checkbox color="white--text" value="red" dark>
+                              <template v-slot:label>
+                                <label style="color: #fff"
+                                  >Remember Password</label
+                                >
+                              </template>
+                            </v-checkbox>
+                          </v-col>
+                          <v-col md="6" class="text-right pt-8">
+                            <nuxt-link class="text-white" to="#"
+                              >Forgot password?</nuxt-link
+                            >
+                          </v-col>
+                        </v-row>
+
+                        <div class="text-center pt-1 mb-5 pb-1">
+                          <span
+                            v-if="msg"
+                            class="error--text"
+                            style="color: #ff9e86"
+                          >
+                            {{ msg }}
+                          </span>
+                          <v-btn
+                            :loading="loading"
+                            @click="loginWithOTP()"
+                            class="btn btn-black btn-block white mt-1 mb-3 p-4 btntext"
+                            style="width: 100%; height: 48px"
+                          >
+                            Login
+                          </v-btn>
+                        </div>
+                      </v-form>
+                      <div class="text-center white--text text-white">
+                        Don't Have an Account?. Contact Admin
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-12 col-sm-12 col-lg-6 align-items-center bgimage d-none d-sm-flex"
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="form-outline">
-            <v-text-field
-              dark
-              color="white--text"
-              rounded
-              dense
-              outlined
-              :rules="passwordRules"
-              autocomplete="off"
-              placeholder="Password"
-              prepend-inner-icon="mdi-lock  "
-              :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show_password ? 'text' : 'password'"
-              v-model="password"
-              class="input-group--focused text-white"
-              @click:append="show_password = !show_password"
-            ></v-text-field>
-          </div>
-
-          <v-row style="width: 100%">
-            <v-col md="12" cols="12">
-              <v-checkbox color="white--text" value="red" dark>
-                <template v-slot:label>
-                  <label style="color: #fff">Remember Password</label>
-                </template>
-              </v-checkbox>
-            </v-col>
-            <v-col md="12" class="text-right pt-8">
-              <!-- <nuxt-link class="text-white" to="/reset-password"
-                >Forgot password?</nuxt-link
-              > -->
-            </v-col>
-          </v-row>
-
-          <div class="text-center pt-1 mb-5 pb-1">
-            <span v-if="msg" class="error--text" style="color: #ff9e86">
-              {{ msg }}
-            </span>
-            <v-btn
-              :loading="loading"
-              @click="login"
-              class="btn btn-black btn-block white mt-1 mb-3 p-4 btntext"
-            >
-              Login
-            </v-btn>
-          </div>
-        </v-form>
-        <div class="text-center white--text text-white">
-          Don't Have an Account?. Contact Admin
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -201,7 +228,15 @@ export default {
     otp: "",
     userId: "",
   }),
+
   created() {},
+  mounted() {
+    if (window.innerWidth >= 600) {
+      this.$store.commit("isDesktop", true);
+    } else {
+      this.$store.commit("isDesktop", false);
+    }
+  },
   methods: {
     hideMobileNumber(inputString) {
       // Check if the input is a valid string
@@ -305,7 +340,8 @@ export default {
         this.$auth
           .loginWith("local", { data: credentials })
           .then(({ data }) => {
-            this.$router.push(`/`);
+            if (this.$store.state.isDesktop) this.$router.push(`/dashboard`);
+            else this.$router.push(`/`);
           })
           .catch(({ response }) => {
             if (!response) {
@@ -396,6 +432,15 @@ input:-webkit-autofill::webkit-input-placeholder {
 input:-webkit-autofill {
   -webkit-text-fill-color: red !important;
   background-color: red !important;
+}
+.bgimage {
+  /* background-image: url(../static/login2.jpg) no-repeat center center fixed;
+  ; */
+
+  background-image: url("../static/login2.jpg");
+  background-size: cover;
+
+  min-height: 600px;
 }
 /*
 input:-webkit-autofill,

@@ -6,7 +6,7 @@
       </v-snackbar>
     </div>
 
-    <v-dialog persistent v-model="dialogLeaveGroup" width="600px">
+    <v-dialog persistent v-model="dialogLeaveGroup" width="400px">
       <v-card>
         <v-card-title dense class="primary white--text background">
           Statistics
@@ -17,7 +17,7 @@
         </v-card-title>
         <v-card-text>
           <v-data-table
-            :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             v-model="ids"
             item-key="id"
             :headers="headersGroupInfo"
@@ -45,7 +45,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog persistent v-model="dialog" width="80%">
+    <v-dialog persistent v-model="dialog" width="600px">
       <v-card>
         <v-card-title dense class="popup_background">
           <span class="headline" v-if="editedIndex == -1">New Leave </span>
@@ -668,16 +668,17 @@
             </template>
           </v-snackbar>
           <v-data-table
-            :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             v-model="ids"
             item-key="id"
             :headers="headers"
             :items="data"
             :loading="loading"
+            class="elevation-1 alternate-rows"
+            :options.sync="options"
             :footer-props="{
               itemsPerPageOptions: [10, 50, 100, 500, 1000],
             }"
-            class="elevation-1 alternate-rows"
           >
             <template v-slot:header="{ props: { headers } }">
               <tr v-if="isFilter">
@@ -715,6 +716,14 @@
                   ></v-select>
                 </td>
               </tr>
+            </template>
+            <template v-slot:item.sno="{ item, index }">
+              {{
+                currentPage
+                  ? (currentPage - 1) * perPage +
+                    (cumulativeIndex + data.indexOf(item))
+                  : "-"
+              }}
             </template>
             <template v-slot:item.name="{ item }">
               {{ item.employee.first_name }} {{ item.employee.last_name }}
@@ -827,6 +836,16 @@
 <script>
 export default {
   data: () => ({
+    cumulativeIndex: 1,
+    perPage: 10,
+    currentPage: 1,
+    totalRowsCount: 0,
+    options: {
+      current: 1,
+      total: 0,
+      itemsPerPage: 10,
+    },
+
     dialogUploadDocuments: false,
     valid: true,
     documents: false,
@@ -895,7 +914,12 @@ export default {
     des: "",
     desDate: "",
     dept: "",
-    options: {},
+    options: {
+      current: 1,
+      total: 0,
+      itemsPerPage: 10,
+    },
+
     Model: "leaves",
     endpoint: "employee_leaves",
     search: "",
@@ -936,6 +960,13 @@ export default {
       },
     ],
     headers: [
+      {
+        text: "#",
+        align: "left",
+        sortable: false,
+        key: "LogTime", //sorting
+        value: "sno", //edit purpose
+      },
       {
         text: "Employee Name",
         align: "left",
@@ -1031,7 +1062,14 @@ export default {
 
   computed: {},
 
-  watch: {},
+  watch: {
+    options: {
+      handler() {
+        this.getDataFromApi();
+      },
+      deep: true,
+    },
+  },
 
   created() {
     this.loading = true;
@@ -1256,10 +1294,16 @@ export default {
 
       let endDate = new Date();
 
-      const { page, itemsPerPage } = this.options;
+      const { sortBy, sortDesc, page, itemsPerPage } = this.options;
 
-      let options = {
+      let sortedBy = sortBy ? sortBy[0] : "";
+      let sortedDesc = sortDesc ? sortDesc[0] : "";
+
+      this.payloadOptions = {
         params: {
+          page: page,
+          sortBy: sortedBy,
+          sortDesc: sortedDesc,
           per_page: itemsPerPage,
           company_id: this.$auth.user.company_id,
           year: endDate.getFullYear(),
@@ -1267,27 +1311,33 @@ export default {
         },
       };
       if (filter_column != "") {
-        options.params[filter_column] = filter_value;
+        this.payloadOptions.params[filter_column] = filter_value;
       }
 
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        if (filter_column != "" && data.data.length == 0) {
-          this.snack = true;
-          this.snackColor = "error";
-          this.snackText = "No Results Found";
+      this.$axios
+        .get(`${url}?page=${page}`, this.payloadOptions)
+        .then(({ data }) => {
+          if (filter_column != "" && data.data.length == 0) {
+            this.snack = true;
+            this.snackColor = "error";
+            this.snackText = "No Results Found";
+            this.loading = false;
+            //return false;
+          }
+          this.data = data.data;
+          this.totalRowsCount = data.total;
+
+          this.currentPage = page;
+          this.perPage = itemsPerPage;
+
+          this.total = data.total;
           this.loading = false;
-          //return false;
-        }
-        this.data = data.data;
+          this.gotoGroupDetails("");
 
-        this.total = data.total;
-        this.loading = false;
-        this.gotoGroupDetails("");
-
-        if (this.$auth)
-          if (this.$auth.user)
-            this.login_user_employee_id = this.$auth.user.employee.id;
-      });
+          if (this.$auth)
+            if (this.$auth.user)
+              this.login_user_employee_id = this.$auth.user.employee.id;
+        });
     },
 
     editItem(item) {

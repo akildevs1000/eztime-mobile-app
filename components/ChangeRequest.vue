@@ -85,7 +85,7 @@
         <p :class="`${responseStatusColor}--text`" v-if="response">
           {{ response }}
         </p>
-        <v-btn class="indigo" block dark @click="submit">Submit</v-btn>
+        <v-btn class="primary" block dark @click="submit">Submit</v-btn>
       </v-col>
     </v-row>
   </v-container>

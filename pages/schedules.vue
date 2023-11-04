@@ -14,7 +14,7 @@
       </v-toolbar>
 
       <v-data-table
-        :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
         dense
         :headers="headers_table"
         :items="schdulesList"

@@ -10,7 +10,7 @@ export const state = () => ({
   longitude: null,
   currentDate: null,
   initialPunch: true,
-  isMobile: true,
+  isDesktop: true,
 });
 
 // contains your mutations
@@ -18,8 +18,8 @@ export const mutations = {
   locationData(state, value) {
     state.locationData = value;
   },
-  isMobile(state, value) {
-    state.isMobile = value;
+  isDesktop(state, value) {
+    state.isDesktop = value;
   },
 
   locationError(state, value) {

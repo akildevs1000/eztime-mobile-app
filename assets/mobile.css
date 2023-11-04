@@ -1,5 +1,5 @@
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     .v-application--is-ltr .v-text-field .v-label
   {
 font-size: 12px;;
@@ -72,4 +72,46 @@ font-size: 12px;;
     margin-right:0px;
   }
 
+  
+.v-data-footer
+{
+  padding:0px;
+  margin:0px;
+  font-size: 10px;
+  padding-left:5%;
+ 
+}
+.v-application--is-ltr .v-data-footer__pagination
+{
+  padding: 0px;
+  margin: 5px;
+}
+.v-application--is-ltr .v-data-footer__select , .v-data-footer__select ,.v-application--is-ltr .v-data-footer__select .v-select 
+{
+  margin:0px;
+}
+.v-data-footer  div  {
+  margin:5px;
+  padding: 0px;
+  font-size: 10px;
+  
+};
+.v-data-footer  > div    {
+  margin:5px;
+  padding: 0px;
+   
+};
+.v-data-footer  > div > div  {
+  margin:5px;
+  padding: 0px;
+  font-size: 10px;
+};
+.mobile-panel-container {
+  display: flex;
+  flex-direction: column;
+}
+.loginbg
+{
+  background-color: #6946dd!important;
+}
 }

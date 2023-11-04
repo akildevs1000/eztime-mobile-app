@@ -12,35 +12,32 @@
           <v-toolbar-title>
             <v-row class=" ">
               <v-col md="3"> Payslips </v-col>
-              <v-col md="1" sm="1" class="text-right">
+
+              <v-col md="9" sm="9" class="text-right" style="font-size: 20px">
+                <!-- <v-icon size="20" fill>mdi-calendar-month</v-icon> -->
                 <v-icon
                   size="20"
                   @click="getDataFromApi(--year_display)"
                   style="cursor: pointer"
                 >
                   mdi-less-than</v-icon
-                ></v-col
-              >
-              <v-col md="6" sm="6" class="text-center" style="font-size: 20px">
-                <!-- <v-icon size="20" fill>mdi-calendar-month</v-icon> -->
+                >
                 {{ year_display }}
-              </v-col>
-              <v-col md="1" sm="1" class="align-left text-left">
                 <v-icon
                   size="20"
                   @click="getDataFromApi(++year_display)"
                   style="cursor: pointer"
                 >
                   mdi-greater-than</v-icon
-                ></v-col
-              >
+                >
+              </v-col>
             </v-row></v-toolbar-title
           >
         </v-col>
       </v-toolbar>
 
       <v-data-table
-        :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
         dense
         v-model="selectedItems"
         :headers="headers_table"

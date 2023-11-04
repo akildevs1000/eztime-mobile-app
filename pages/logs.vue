@@ -33,53 +33,13 @@
                 Attendances Logs</span
               ></v-toolbar-title
             >
-            <!-- <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }"> -->
-            <!-- <v-btn
-              title="Reload"
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              @click="getRecords"
-              text
-            >
-              <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-            </v-btn> -->
-            <!-- </template>
-              <span>Reload</span>
-            </v-tooltip> -->
-
-            <!-- <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }"> -->
-            <!-- <v-btn
-              title="Filter"
-              x-small
-              :ripple="false"
-              text
-              @click="toggleFilter"
-            >
-              <v-icon dark white>mdi-filter</v-icon>
-            </v-btn> -->
-            <!-- </template>
-              <span>Filter</span>
-            </v-tooltip> -->
 
             <v-spacer></v-spacer>
-            <!-- <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }"> -->
-            <!-- <v-btn
-              title="Attendance Log"
-              x-small
-              :ripple="false"
-              text
-              @click="generateLogsDialog = true"
-            >
-              <v-icon class="">mdi mdi-plus-circle</v-icon>
-            </v-btn> -->
-            <!-- </template>
-              <span> Attendance Log</span>
-            </v-tooltip> -->
+            <Calender
+              @filter-attr="filterAttr"
+              :defaultFilterType="1"
+              :height="'28px '"
+            />
           </v-toolbar>
 
           <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
@@ -91,7 +51,7 @@
           </v-snackbar>
 
           <v-data-table
-            :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             dense
             :headers="headers_table"
             :items="data"
@@ -107,6 +67,14 @@
             :height="tableHeight"
             :disable-sort="true"
           >
+            <template v-slot:item.sno="{ item, index }">
+              {{
+                currentPage
+                  ? (currentPage - 1) * perPage +
+                    (cumulativeIndex + data.indexOf(item))
+                  : "-"
+              }}
+            </template>
             <template v-slot:item.UserID="{ item }">
               <strong> {{ item.UserID ? item.UserID : "---" }}</strong>
               <br />
@@ -198,12 +166,22 @@
 
 <script>
 // import DateRangePicker from "../components/Snippets/Filters/DateRangePicker.vue";
-
+import Calender from "../components/Calender.vue";
 export default {
   components: {
-    // DateRangePicker,
+    Calender,
   },
   data: () => ({
+    cumulativeIndex: 1,
+    perPage: 10,
+    currentPage: 1,
+    totalRowsCount: 0,
+    options: {
+      current: 1,
+      total: 0,
+      itemsPerPage: 10,
+    },
+
     branchesList: [],
     tableHeight: 750,
     id: "",
@@ -249,6 +227,13 @@ export default {
     },
     headers: [
       {
+        text: "#",
+        align: "left",
+        sortable: false,
+        key: "LogTime", //sorting
+        value: "sno", //edit purpose
+      },
+      {
         text: "UserID",
         align: "center",
         sortable: false,
@@ -274,45 +259,18 @@ export default {
       itemsPerPage: 1000,
     },
     payloadOptions: {},
-    options: {
-      current: 1,
-      total: 0,
-      itemsPerPage: 10,
-    },
+
     errors: [],
     response: "",
     snackbar: false,
     headers_table: [
-      // {
-      //   text: "User Id /Emp.Id ",
-      //   align: "left",
-      //   sortable: true,
-      //   key: "UserID",
-      //   value: "UserID",
-      //   width: "150px",
-      //   filterable: true,
-      //   filterSpecial: false,
-      // },
-      // {
-      //   text: "Employee",
-      //   align: "left",
-      //   sortable: true,
-      //   key: "employee_first_name", //sorting
-      //   value: "employee.first_name", //edit purpose
-      //   width: "300px",
-      //   filterable: true,
-      //   filterSpecial: false,
-      // },
-
-      // {
-      //   text: "Department",
-      //   align: "left",
-      //   sortable: false,
-      //   key: "department", //sorting
-      //   value: "department.name.id", //edit purpose
-      //   filterable: true,
-      //   filterSpecial: true,
-      // },
+      {
+        text: "#",
+        align: "left",
+        sortable: false,
+        key: "LogTime", //sorting
+        value: "sno", //edit purpose
+      },
       {
         text: "DateTime",
         align: "left",
@@ -321,15 +279,7 @@ export default {
         value: "LogTime",
         fieldType: "date_range_picker",
       },
-      // {
-      //   text: "Log Time",
-      //   align: "left",
-      //   sortable: true,
-      //   key: "LogTime", //sorting
-      //   value: "LogTime", //edit purpose
-      //   filterable: true,
-      //   filterSpecial: true
-      // },
+
       {
         text: "Device Name",
         align: "left",
@@ -349,6 +299,7 @@ export default {
         filterSpecial: true,
       },
     ],
+    payload: {},
   }),
 
   mounted() {
@@ -370,6 +321,14 @@ export default {
     },
   },
   methods: {
+    filterAttr(data) {
+      this.payload.from_date = data.from;
+      this.payload.to_date = data.to;
+      this.payload.from_date_txt = data.from;
+      this.payload.to_date_txt = data.to;
+
+      this.getLogs();
+    },
     handleDatesFilter(dates) {
       if (dates.length > 1) {
         this.getLogs(this.endpoint, "dates", dates);
@@ -455,6 +414,9 @@ export default {
         this.total = data.total;
         this.loading = false;
         this.totalRowsCount = data.total;
+
+        this.currentPage = page;
+        this.perPage = itemsPerPage;
       });
     },
   },

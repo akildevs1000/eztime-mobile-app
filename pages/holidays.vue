@@ -16,6 +16,7 @@
 
             <v-col cols="6" class="mt-6">
               <v-select
+                style="max-width: 200px; float: right"
                 @change="getDataFromApi()"
                 outlined
                 dense
@@ -30,7 +31,7 @@
           </v-toolbar>
 
           <v-data-table
-            :mobile-breakpoint="$store.state.isMobile ? 2000 : 0"
+            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             v-model="ids"
             item-key="id"
             :headers="headers"
@@ -43,6 +44,14 @@
             :options.sync="options"
             :server-items-length="totalRowsCount"
           >
+            <template v-slot:item.sno="{ item, index }">
+              {{
+                currentPage
+                  ? (currentPage - 1) * perPage +
+                    (cumulativeIndex + data.indexOf(item))
+                  : "-"
+              }}
+            </template>
             <template v-slot:item.name="{ item }">
               {{ item.name }}
             </template>
@@ -68,6 +77,16 @@
 <script>
 export default {
   data: () => ({
+    cumulativeIndex: 1,
+    perPage: 10,
+    currentPage: 1,
+    totalRowsCount: 0,
+    options: {
+      current: 1,
+      total: 0,
+      itemsPerPage: 50,
+    },
+
     dialogFilter: false,
     options: {},
     totalRowsCount: 0,
@@ -82,10 +101,7 @@ export default {
     snackText: "",
 
     // starting editor's content
-    content: `
-        <h1>Yay Headlines!</h1>
-        <p>All these <strong>cool tags</strong> are working now.</p>
-          `,
+    content: ` `,
 
     //end editor
     scrollInvoked: 0,
@@ -132,6 +148,13 @@ export default {
       // },
     ],
     headers: [
+      {
+        text: "#",
+        align: "left",
+        sortable: false,
+        key: "name",
+        value: "sno",
+      },
       {
         text: "Title",
         align: "left",
@@ -336,6 +359,11 @@ export default {
 
         this.totalRowsCount = data.total;
         this.dialogFilter = false;
+
+        this.totalRowsCount = data.total;
+
+        this.currentPage = page;
+        this.perPage = itemsPerPage;
       });
     },
     searchIt(e) {
