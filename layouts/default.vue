@@ -177,6 +177,12 @@ export default {
           color: "#9aa9b9",
         },
         {
+          icon: "mdi-transit-transfer",
+          title: "Visitor Requests",
+          to: "/visitor_requests",
+          color: "#9aa9b9",
+        },
+        {
           icon: "mdi-clipboard-text-clock",
           title: "Logs",
           to: "/logs",
