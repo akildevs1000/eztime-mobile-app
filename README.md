@@ -72,3 +72,5 @@ More information about the usage of this directory in [the documentation](https:
 npm install vue2-datepicker --save
 
 npm install --save-dev @nuxtjs/dotenv
+
+ 

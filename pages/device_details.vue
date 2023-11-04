@@ -12,7 +12,9 @@
       <div><b>productSub: </b> {{ navigator.productSub }}</div>
       <v-divider></v-divider>
       <div><b>serial onconnect: </b> {{ serial && serial.onconnect }}</div>
-      <div><b>serial ondisconnect: </b> {{ serial && serial.ondisconnect }}</div>
+      <div>
+        <b>serial ondisconnect: </b> {{ serial && serial.ondisconnect }}
+      </div>
 
       <v-divider></v-divider>
       <div><b>userAgent: </b> {{ navigator.userAgent }}</div>
@@ -64,8 +66,10 @@ export default {
   },
 
   created() {
-    this.UserID = this.$auth.user.employee.system_user_id;
-    this.profile_pictrue = this.$auth.user.employee.profile_picture;
+    if (this.$auth.user.employee) {
+      this.UserID = this.$auth.user.employee.system_user_id;
+      this.profile_pictrue = this.$auth.user.employee.profile_picture;
+    }
   },
   methods: {
     getFormattedDateTime(type) {

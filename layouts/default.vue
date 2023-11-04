@@ -124,8 +124,6 @@
 </template>
 
 <script>
- 
-
 export default {
   // components: { Location },
 
@@ -265,7 +263,7 @@ export default {
   created() {
     try {
       setTimeout(() => {
-        if (this.$auth.user.employee)
+        if (this.$auth.user && this.$auth.user.employee)
           this.profile_picture =
             this.$auth.user.employee.profile_picture || "/no-profile-image.jpg";
         else if (
