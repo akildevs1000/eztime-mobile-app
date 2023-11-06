@@ -373,7 +373,7 @@ export default {
         })
         .then(({ data }) => {
           this.getUnReads();
-          this.$router.push(`/change_requests`);
+          this.$router.push(`/visitor_requests`);
         });
     },
     getUnReads() {
