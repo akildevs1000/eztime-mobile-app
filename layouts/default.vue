@@ -58,6 +58,36 @@
       </span>
       <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
+      <v-icon class="mx-2" v-if="!unreads.length" color="grey">mdi-bell</v-icon>
+      <v-menu v-else offset-y v-model="menuOpen">
+        <template v-slot:activator="{ on }">
+          <v-badge
+            class="mx-1"
+            overlap
+            color="red"
+            :content="notificationCount"
+          >
+            <v-icon v-on="on" color="primary">mdi-bell</v-icon>
+          </v-badge>
+        </template>
+        <v-list dense>
+          <v-list-item-group>
+            <v-list-item v-for="(unread, index) in unreads" :key="index">
+              <!-- <v-list-item-icon>
+                <v-icon color="primary">mdi-bell</v-icon>
+              </v-list-item-icon> -->
+              <v-list-item-content>
+                <v-list-item-title
+                  @click="updateNotificationStatus(unread.id)"
+                  color="primary"
+                  >{{ unread.data }}</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+
       <v-menu
         class="avatar-menu"
         nudge-bottom="50"
@@ -69,12 +99,7 @@
         nudge-right="0"
       >
         <template v-slot:activator="{ on, attrs }">
-          <label class="px-2 text-overflow" v-bind="attrs" v-on="on">
-            <!-- {{ getUser }} -->
-          </label>
-
           <v-btn icon color="red" v-bind="attrs" v-on="on">
-            <!-- {{ getUser }} -->
             <v-avatar size="35" style="border: 1px solid #6946dd">
               <v-img :src="profile_picture"></v-img>
             </v-avatar>
@@ -130,6 +155,8 @@ export default {
   name: "DefaultLayout",
   data() {
     return {
+      notificationCount: 0,
+      menuOpen: false,
       profile_picture: "",
       clipped: false,
       drawer: false,
@@ -258,6 +285,7 @@ export default {
       right: true,
       rightDrawer: false,
       title: "Mytime",
+      unreads: [],
     };
   },
   created() {
@@ -281,6 +309,9 @@ export default {
     // if (this.$store.state.isDesktop) {
     //   this.$router.push(`/dashboard`);
     // }
+    this.getUnReads();
+
+    setInterval(this.getUnReads, 30000);
   },
   mounted() {
     if (window.innerWidth >= 600) {
@@ -314,6 +345,9 @@ export default {
     // },
   },
   methods: {
+    toggleMenu() {
+      this.menuOpen = !this.menuOpen;
+    },
     // getPhoto() {
     //   setTimeout(() => {
     //     console.log(this);
@@ -328,10 +362,36 @@ export default {
         this.$router.push(`/login`);
       });
     },
+    updateNotificationStatus(id) {
+      this.$axios
+        .put(`/update/${id}`, {
+          params: {
+            company_id: this.$auth.user.company_id,
+            user_id: this.$auth.user.id,
+          },
+        })
+        .then(({ data }) => {
+          this.getUnReads();
+          this.$router.push(`/change_requests`);
+        });
+    },
+    getUnReads() {
+      this.$axios
+        .get(`unread`, {
+          params: {
+            company_id: this.$auth.user.company_id,
+            user_id: this.$auth.user.id,
+          },
+        })
+        .then(({ data }) => {
+          this.unreads = data;
+          this.notificationCount = data.length;
+        });
+    },
   },
 };
 </script>
-<style scoped>
+<!-- <style scoped>
 .bg-color {
   background-color: rgb(236, 240, 244) !important;
 }
@@ -351,7 +411,7 @@ th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
-</style>
+</style> -->
 <style src="@/assets/common.css"></style>
 <style src="@/assets/mobile.css"></style>
 <style src="@/assets/desktop.css"></style>
