@@ -118,6 +118,7 @@
 <script>
 export default {
   data: () => ({
+    totalRowsCount: 0,
     loading: false,
     branchesList: [],
     changeRequestDialog: false,

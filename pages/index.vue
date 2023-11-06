@@ -209,6 +209,10 @@ export default {
         this.$localStorage.remove("buttonLocked");
       }, 60 * 1000);
     }
+
+    if (this.$store.state.isDesktop) {
+      this.$router.push(`/dashboard`);
+    }
   },
 
   computed: {

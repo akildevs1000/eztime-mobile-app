@@ -90,7 +90,7 @@ export default {
         company_id: this.$auth.user.company_id,
       };
 
-      console.log(payload);
+      // console.log(payload);
 
       return;
 

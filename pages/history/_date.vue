@@ -72,7 +72,7 @@ export default {
         const infowindow = new google.maps.InfoWindow();
 
         data.forEach(({ latitude, longitude, datetime }) => {
-          console.log(datetime);
+          // console.log(datetime);
           const position = {
             lat: parseFloat(latitude),
             lng: parseFloat(longitude),
