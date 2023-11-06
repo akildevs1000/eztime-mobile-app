@@ -72,15 +72,18 @@
         </template>
         <v-list dense>
           <v-list-item-group>
-            <v-list-item v-for="(unread, index) in unreads" :key="index">
+            <v-list-item
+              v-for="({ id, redirect_url, data }, index) in unreads"
+              :key="index"
+            >
               <!-- <v-list-item-icon>
                 <v-icon color="primary">mdi-bell</v-icon>
               </v-list-item-icon> -->
               <v-list-item-content>
                 <v-list-item-title
-                  @click="updateNotificationStatus(unread.id)"
+                  @click="updateNotificationStatus(id, redirect_url)"
                   color="primary"
-                  >{{ unread.data }}</v-list-item-title
+                  >{{ data }}</v-list-item-title
                 >
               </v-list-item-content>
             </v-list-item>
@@ -312,7 +315,7 @@ export default {
     // }
     this.getUnReads();
 
-    setInterval(this.getUnReads, 30000);
+    setInterval(this.getUnReads, 10000);
   },
   mounted() {
     if (window.innerWidth >= 600) {
@@ -363,7 +366,7 @@ export default {
         this.$router.push(`/login`);
       });
     },
-    updateNotificationStatus(id) {
+    updateNotificationStatus(id, redirect_url) {
       this.$axios
         .put(`/update/${id}`, {
           params: {
@@ -373,7 +376,7 @@ export default {
         })
         .then(({ data }) => {
           this.getUnReads();
-          this.$router.push(`/visitor_requests`);
+          this.$router.push(redirect_url);
         });
     },
     getUnReads() {
