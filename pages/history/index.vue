@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     loadGoogleMapsScript(callback) {
-      console.log(process.env.MapApiKey);
+      //console.log(process.env.MapApiKey);
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gRWcOb3kuzIvykjNeJ8ezm4l5YCpJFw`;
       script.async = true;
@@ -72,7 +72,7 @@ export default {
         const infowindow = new google.maps.InfoWindow();
 
         data.forEach(({ latitude, longitude, datetime }) => {
-          console.log(datetime);
+          //console.log(datetime);
           const position = {
             lat: parseFloat(latitude),
             lng: parseFloat(longitude),

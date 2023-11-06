@@ -229,15 +229,50 @@ export default {
     userId: "",
   }),
 
-  created() {},
+  created() {
+    this.verifyToken();
+  },
   mounted() {
     if (window.innerWidth >= 600) {
       this.$store.commit("isDesktop", true);
     } else {
       this.$store.commit("isDesktop", false);
     }
+    this.verifyToken();
   },
   methods: {
+    verifyToken() {
+      if (this.$route.query.token) {
+        let token = this.$route.query.token;
+        console.log(token);
+        if (token != "" && token != "undefined") {
+          let options = {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          };
+          this.$axios
+            .get(`me`, null, options)
+            .then(({ data }) => {
+              if (!data.status) {
+                alert("Invalid OTP. Please try again");
+              } else {
+                console.log("isDesktop", this.$store.state.isDesktop);
+                if (this.$store.state.isDesktop) {
+                  window.location.href = process.env.APP_URL + "/dashboard";
+                  //this.$router.push(`/dashboard`);
+                } else {
+                  window.location.href = process.env.APP_URL + "/";
+                }
+              }
+            })
+            .catch((err) => console.log(err));
+        } else {
+          this.$router.push(`/login`);
+        }
+      }
+    },
     hideMobileNumber(inputString) {
       // Check if the input is a valid string
       if (typeof inputString !== "string" || inputString.length < 4) {
@@ -285,7 +320,7 @@ export default {
 
     loginWithOTP() {
       this.loading = true;
-      console.log(this.$refs.form.validate());
+      //(this.$refs.form.validate());
       //if (this.$refs.form.validate())
       {
         let credentials = {

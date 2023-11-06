@@ -1042,7 +1042,7 @@ export default {
         }, 2000);
     });
     setTimeout(() => {
-      console.log("Desktop111111 ", this.$store.state.isDesktop);
+      //console.log("Desktop111111 ", this.$store.state.isDesktop);
       this.panel = this.$store.state.isDesktop == true ? [0, 1] : [];
       this.panel1 = this.$store.state.isDesktop == true ? [0, 1] : [];
     }, 2000);

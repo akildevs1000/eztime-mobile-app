@@ -262,6 +262,7 @@ export default {
   },
   created() {
     try {
+      this.profile_picture = "/no-profile-image.jpg";
       setTimeout(() => {
         if (this.$auth.user && this.$auth.user.employee)
           this.profile_picture =

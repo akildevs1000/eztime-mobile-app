@@ -6,7 +6,7 @@
       >
 
       <v-col md="6">
-        <CustomFilter
+        <Calender
           style="float: right"
           @filter-attr="filterAttr"
           :default_date_from="date_from"
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import Calender from "../../components/Calender.vue";
 export default {
   props: ["name", "height", "branch_id"],
   data() {
@@ -103,8 +104,6 @@ export default {
   async created() {
     // Get today's date
     let today = new Date();
-
-    let monthObj = this.$dateFormat.monthStartEnd(today);
 
     // Subtract 7 days from today
     let sevenDaysAgo = new Date(today);
