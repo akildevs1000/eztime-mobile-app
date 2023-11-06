@@ -11,10 +11,14 @@ export const state = () => ({
   currentDate: null,
   initialPunch: true,
   isDesktop: true,
+  login_token: "",
 });
 
 // contains your mutations
 export const mutations = {
+  login_token(state, value) {
+    state.login_token = value;
+  },
   locationData(state, value) {
     state.locationData = value;
   },

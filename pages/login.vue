@@ -230,7 +230,7 @@ export default {
   }),
 
   created() {
-    this.verifyToken();
+    // this.verifyToken();
   },
   mounted() {
     if (window.innerWidth >= 600) {
@@ -238,41 +238,47 @@ export default {
     } else {
       this.$store.commit("isDesktop", false);
     }
-    this.verifyToken();
+    //this.verifyToken();
   },
   methods: {
-    verifyToken() {
-      if (this.$route.query.token) {
-        let token = this.$route.query.token;
-        console.log(token);
-        if (token != "" && token != "undefined") {
-          let options = {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          };
-          this.$axios
-            .get(`me`, null, options)
-            .then(({ data }) => {
-              if (!data.status) {
-                alert("Invalid OTP. Please try again");
-              } else {
-                console.log("isDesktop", this.$store.state.isDesktop);
-                if (this.$store.state.isDesktop) {
-                  window.location.href = process.env.APP_URL + "/dashboard";
-                  //this.$router.push(`/dashboard`);
-                } else {
-                  window.location.href = process.env.APP_URL + "/";
-                }
-              }
-            })
-            .catch((err) => console.log(err));
-        } else {
-          this.$router.push(`/login`);
-        }
-      }
-    },
+    // verifyToken() {
+    //   // alert(this.$route.query.token);
+    //   if (this.$route.query.token) {
+    //     let token = this.$route.query.token;
+
+    //     token = token; //this.$crypto.decrypt(token);
+    //     this.$store.commit("login_token", token);
+
+    //     token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
+
+    //     if (token != "" && token != "undefined") {
+    //       let options = {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: "Bearer " + token,
+    //         },
+    //       };
+    //       this.$axios
+    //         .get(`me`, null, options)
+    //         .then(({ data }) => {
+    //           if (!data.user) {
+    //             alert("Invalid Login Details. Please try again");
+    //           } else {
+    //             if (this.$store.state.isDesktop) {
+    //               // window.location.href = process.env.APP_URL + "/dashboard";
+    //               this.$router.push(`/dashboard`);
+    //             } else {
+    //               // window.location.href = process.env.APP_URL + "/";
+    //               this.$router.push(`/`);
+    //             }
+    //           }
+    //         })
+    //         .catch((err) => console.log(err));
+    //     } else {
+    //       this.$router.push(`/login`);
+    //     }
+    //   }
+    // },
     hideMobileNumber(inputString) {
       // Check if the input is a valid string
       if (typeof inputString !== "string" || inputString.length < 4) {
@@ -375,6 +381,9 @@ export default {
         this.$auth
           .loginWith("local", { data: credentials })
           .then(({ data }) => {
+            let token = data.token; //this.$crypto.encrypt1(data.token);
+            this.$store.commit("login_token", token);
+
             if (this.$store.state.isDesktop) this.$router.push(`/dashboard`);
             else this.$router.push(`/`);
           })
