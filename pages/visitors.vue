@@ -951,8 +951,8 @@ export default {
         sortable: false,
         filterSpecial: false,
         filterable: true,
-        key: "company_name",
-        value: "company_name",
+        key: "visitor_company_name",
+        value: "visitor_company_name",
         text: "Company Name",
       },
 
