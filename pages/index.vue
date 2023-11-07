@@ -200,6 +200,7 @@ export default {
   }),
 
   mounted() {
+    console.log("Index 1");
     if (window.innerWidth >= 600) {
       this.$store.commit("isDesktop", true);
     } else {
@@ -235,6 +236,7 @@ export default {
   },
 
   async created() {
+    console.log("Index 2");
     try {
       let employee = this.$auth.user.employee;
 

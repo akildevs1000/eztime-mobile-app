@@ -229,54 +229,72 @@ export default {
     userId: "",
   }),
 
-  created() {
-    // this.verifyToken();
-  },
+  created() {},
   mounted() {
     if (window.innerWidth >= 600) {
       this.$store.commit("isDesktop", true);
     } else {
       this.$store.commit("isDesktop", false);
     }
-    //this.verifyToken();
+    // this.verifyToken();
   },
   methods: {
-    // verifyToken() {
+    // verifyToken_old() {
     //   // alert(this.$route.query.token);
     //   if (this.$route.query.token) {
-    //     let token = this.$route.query.token;
+    //     try {
+    //       let token = this.$route.query.token;
 
-    //     token = token; //this.$crypto.decrypt(token);
-    //     this.$store.commit("login_token", token);
+    //       console.log("token", token);
 
-    //     token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
+    //       token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
+    //       token = token; //this.$crypto.decrypt1(token);
 
-    //     if (token != "" && token != "undefined") {
-    //       let options = {
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: "Bearer " + token,
-    //         },
-    //       };
-    //       this.$axios
-    //         .get(`me`, null, options)
-    //         .then(({ data }) => {
-    //           if (!data.user) {
-    //             alert("Invalid Login Details. Please try again");
-    //           } else {
-    //             if (this.$store.state.isDesktop) {
-    //               // window.location.href = process.env.APP_URL + "/dashboard";
-    //               this.$router.push(`/dashboard`);
+    //       if (token != "" && token != "undefined") {
+    //         this.$store.commit("login_token", token);
+    //         let Authorization1 = "Authorization";
+    //         let options = {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: "Bearer " + token,
+    //           },
+    //         };
+    //         console.log("options", options);
+    //         this.$axios
+    //           .get(`me`, options, {})
+    //           .then(({ data }) => {
+    //             if (!data.user) {
+    //               console.log("Loign page 1");
+    //               alert("Invalid Login Details. Please try again");
+    //               this.$router.push(`/login`);
+
+    //               return false;
     //             } else {
-    //               // window.location.href = process.env.APP_URL + "/";
-    //               this.$router.push(`/`);
+    //               this.$auth.setUser(data.user);
+    //               console.log(this.$auth.user);
+    //               console.log(this.$auth.user.user_type);
+
+    //               console.log("Test");
+    //               this.$auth.setUserToken(true);
+    //               this.$router.push(`/dashboard`);
+    //               return false;
+
+    //               if (this.$store.state.isDesktop) {
+    //                 // window.location.href = process.env.APP_URL + "/dashboard";
+    //                 this.$router.push(`/dashboard`);
+    //                 return false;
+    //               } else {
+    //                 // window.location.href = process.env.APP_URL + "/";
+    //                 this.$router.push(`/`);
+    //                 return false;
+    //               }
     //             }
-    //           }
-    //         })
-    //         .catch((err) => console.log(err));
-    //     } else {
-    //       this.$router.push(`/login`);
-    //     }
+    //           })
+    //           .catch((err) => console.log(err));
+    //       } else {
+    //         this.$router.push(`/login`);
+    //       }
+    //     } catch (e) {}
     //   }
     // },
     hideMobileNumber(inputString) {
@@ -333,6 +351,8 @@ export default {
           email: this.email,
           password: this.password,
         };
+        this.$store.commit("email", this.email);
+        this.$store.commit("password", this.password);
 
         let payload = credentials;
 

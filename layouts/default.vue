@@ -90,7 +90,7 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-
+      {{ this.$store.state.email }}-------
       <v-menu
         class="avatar-menu"
         nudge-bottom="50"
@@ -307,6 +307,7 @@ export default {
     };
   },
   created() {
+    console.log("Default page");
     try {
       this.profile_picture = "/no-profile-image.jpg";
       setTimeout(() => {
@@ -324,7 +325,7 @@ export default {
     } catch (e) {
       // this.logout();
     }
-    this.verifyToken();
+    // this.verifyToken();
     // if (this.$store.state.isDesktop) {
     //   this.$router.push(`/dashboard`);
     // }
@@ -333,6 +334,7 @@ export default {
     setInterval(this.getUnReads, 10000);
   },
   mounted() {
+    console.log("Default page 1");
     if (window.innerWidth >= 600) {
       this.drawer = true;
       this.miniVariant = true;
@@ -365,57 +367,75 @@ export default {
     toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
-    verifyToken() {
-      // alert(this.$route.query.token);
-      if (this.$route.query.token) {
-        let token = this.$route.query.token;
+    // verifyToken() {
+    //   // alert(this.$route.query.token);
+    //   if (this.$route.query.token) {
+    //     let token = this.$route.query.token;
 
-        token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
-        token = token; //this.$crypto.decrypt1(token);
+    //     token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
+    //     token = token; //this.$crypto.decrypt1(token);
 
-        if (token != "" && token != "undefined") {
-          this.$store.commit("login_token", token);
+    //     if (token != "" && token != "undefined") {
+    //       this.$store.commit("login_token", token);
 
-          let options = {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          };
-          this.$axios
-            .get(`me`, null, options)
-            .then(({ data }) => {
-              if (!data.user) {
-                alert("Invalid Login Details. Please try again");
-                this.$router.push(`/login`);
+    //       let options = {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: "Bearer " + token,
+    //         },
+    //       };
+    //       this.$axios
+    //         .get(`me`, null, options)
+    //         .then(({ data }) => {
+    //           if (!data.user) {
+    //             alert("Invalid Login Details. Please try again");
+    //             this.$router.push(`/login`);
 
-                return false;
-              } else {
-                if (this.$store.state.isDesktop) {
-                  // window.location.href = process.env.APP_URL + "/dashboard";
-                  this.$router.push(`/dashboard`);
-                  return false;
-                } else {
-                  // window.location.href = process.env.APP_URL + "/";
-                  this.$router.push(`/`);
-                  return false;
-                }
-              }
-            })
-            .catch((err) => console.log(err));
-        } else {
-          this.$router.push(`/login`);
-        }
-      }
-    },
+    //             return false;
+    //           } else {
+    //             if (this.$store.state.isDesktop) {
+    //               // window.location.href = process.env.APP_URL + "/dashboard";
+    //               this.$router.push(`/dashboard`);
+    //               return false;
+    //             } else {
+    //               // window.location.href = process.env.APP_URL + "/";
+    //               this.$router.push(`/`);
+    //               return false;
+    //             }
+    //           }
+    //         })
+    //         .catch((err) => console.log(err));
+    //     } else {
+    //       this.$router.push(`/login`);
+    //     }
+    //   }
+    // },
+
     changeLoginType() {
-      window.location.href =
-        process.env.ADMIN_APP_URL +
-        "/login?token=" +
-        this.$store.state.login_token +
-        ":" +
-        process.env.SECRET_PASS_PHRASE;
-      return "";
+      try {
+        let email = this.$store.state.email;
+        let password = this.$store.state.password;
+
+        email = this.$crypto.encrypt(email);
+        password = this.$crypto.encrypt(password);
+
+        email = encodeURIComponent(email);
+        password = encodeURIComponent(password);
+
+        if (email && password) {
+          window.location.href =
+            process.env.ADMIN_APP_URL +
+            "/loginwithtoken?email=" +
+            email +
+            "&password=" +
+            password;
+
+          return "";
+        }
+        // this.$router.push("/employees/profile");
+      } catch (e) {
+        console.log(e);
+      }
     },
     // getPhoto() {
     //   setTimeout(() => {

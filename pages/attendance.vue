@@ -10,7 +10,7 @@
         <v-row>
           <v-col cols="8">
             <Calender
-              style="width: 100%"
+              style="width: 100%; max-width: 200px; float: right"
               @filter-attr="filterAttr"
               :defaultFilterType="1"
               :height="'28px '"
