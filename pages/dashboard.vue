@@ -83,9 +83,11 @@ export default {
   //   },
   // },
   mounted() {
-    // if (this.$auth.user.user_type == "employee") {
-    //   this.$router.push(`/dashboard/employee`);
-    // }
+    if (window.innerWidth >= 600) {
+      this.$store.commit("isDesktop", true);
+    } else {
+      this.$store.commit("isDesktop", false);
+    }
   },
   created() {
     // if (this.$auth.user.user_type == "employee") {
@@ -93,6 +95,10 @@ export default {
     // }
     this.getBranches();
     //this.$root.$on("openalert", this.openalert);
+
+    if (!this.$store.state.isDesktop) {
+      this.$router.push(`/`);
+    }
   },
   watch: {
     overlay(val) {

@@ -112,7 +112,9 @@
         <v-list class="avatar-menu">
           <v-list-item-group color="primary">
             <v-list-item
-              v-if="$auth.user.user_type == 'branch'"
+              v-if="
+                $auth.user.user_type == 'branch' && this.$store.state.isDesktop
+              "
               @click="changeLoginType"
             >
               <v-list-item-icon>

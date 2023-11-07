@@ -341,7 +341,7 @@ export default {
           .post("loginwith_otp", payload)
           .then(({ data }) => {
             if (!data.status) {
-              alert("OTP Verification: " + data.message);
+              alert("Login Details: " + data.message);
             } else if (data.user_id) {
               if (data.enable_whatsapp_otp == 1) {
                 this.dialogWhatsapp = true;
@@ -357,7 +357,7 @@ export default {
                 this.login();
               }
             } else {
-              alert("OTP Verification: " + "Invalid Deails");
+              alert("Login Details: " + data.message);
             }
           })
           .catch((err) => console.log(err));
