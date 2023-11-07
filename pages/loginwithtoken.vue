@@ -53,6 +53,7 @@ export default {
           .then(({ data }) => {
             if (!data.status) {
               alert("Login Details: " + data.message);
+              this.login();
             } else if (data.user_id) {
               if (data.enable_whatsapp_otp == 1) {
                 this.dialogWhatsapp = true;
@@ -69,6 +70,7 @@ export default {
               }
             } else {
               alert("Login Details: " + data.message);
+              this.login();
             }
           })
           .catch((err) => console.log(err));

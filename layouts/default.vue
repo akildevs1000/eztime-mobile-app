@@ -90,7 +90,7 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-      {{ this.$store.state.email }}-------
+
       <v-menu
         class="avatar-menu"
         nudge-bottom="50"
