@@ -330,7 +330,7 @@ export default {
     // }
     this.getUnReads();
 
-    setInterval(this.getUnReads, 10000);
+    setInterval(this.getUnReads, 30000);
   },
   mounted() {
     if (window.innerWidth >= 600) {

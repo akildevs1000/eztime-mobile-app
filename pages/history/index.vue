@@ -23,9 +23,13 @@ export default {
   },
   methods: {
     loadGoogleMapsScript(callback) {
+      if (window.google && window.google.maps) {
+        callback();
+        return;
+      }
       //console.log(process.env.MapApiKey);
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gRWcOb3kuzIvykjNeJ8ezm4l5YCpJFw`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.MapApiKey}`;
       script.async = true;
       script.defer = true;
       script.addEventListener("load", callback);
