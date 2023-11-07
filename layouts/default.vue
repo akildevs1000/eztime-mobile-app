@@ -194,13 +194,6 @@ export default {
         //   to: "/tracker",
         // },
         {
-          icon: "mdi-clock-outline",
-          title: "Clocking",
-          to: "/clocking",
-          color: "#9aa9b9",
-          show_mobile_app: true,
-        },
-        {
           icon: "mdi-apps",
           title: "Dashboard",
           to: "/dashboard",
