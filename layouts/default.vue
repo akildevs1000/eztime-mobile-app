@@ -90,7 +90,7 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-
+      {{ this.$store.state.email }}-------
       <v-menu
         class="avatar-menu"
         nudge-bottom="50"
@@ -111,6 +111,21 @@
 
         <v-list class="avatar-menu">
           <v-list-item-group color="primary">
+            <v-list-item
+              v-if="
+                $auth.user.user_type == 'branch' && this.$store.state.isDesktop
+              "
+              @click="changeLoginType"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-account-multiple-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="black--text">
+                  Login Into Branch
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-icon>
                 <v-icon>mdi-logout</v-icon>
@@ -309,7 +324,7 @@ export default {
     } catch (e) {
       // this.logout();
     }
-
+    // this.verifyToken();
     // if (this.$store.state.isDesktop) {
     //   this.$router.push(`/dashboard`);
     // }
@@ -325,8 +340,6 @@ export default {
       this.miniVariant = false;
     }
     this.$store.commit("isDesktop", this.miniVariant);
-
-    console.log("isDesktop", this.miniVariant);
   },
   computed: {
     locationData() {
@@ -351,6 +364,76 @@ export default {
   methods: {
     toggleMenu() {
       this.menuOpen = !this.menuOpen;
+    },
+    // verifyToken() {
+    //   // alert(this.$route.query.token);
+    //   if (this.$route.query.token) {
+    //     let token = this.$route.query.token;
+
+    //     token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
+    //     token = token; //this.$crypto.decrypt1(token);
+
+    //     if (token != "" && token != "undefined") {
+    //       this.$store.commit("login_token", token);
+
+    //       let options = {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: "Bearer " + token,
+    //         },
+    //       };
+    //       this.$axios
+    //         .get(`me`, null, options)
+    //         .then(({ data }) => {
+    //           if (!data.user) {
+    //             alert("Invalid Login Details. Please try again");
+    //             this.$router.push(`/login`);
+
+    //             return false;
+    //           } else {
+    //             if (this.$store.state.isDesktop) {
+    //               // window.location.href = process.env.APP_URL + "/dashboard";
+    //               this.$router.push(`/dashboard`);
+    //               return false;
+    //             } else {
+    //               // window.location.href = process.env.APP_URL + "/";
+    //               this.$router.push(`/`);
+    //               return false;
+    //             }
+    //           }
+    //         })
+    //         .catch((err) => console.log(err));
+    //     } else {
+    //       this.$router.push(`/login`);
+    //     }
+    //   }
+    // },
+
+    changeLoginType() {
+      try {
+        let email = this.$store.state.email;
+        let password = this.$store.state.password;
+
+        email = this.$crypto.encrypt(email);
+        password = this.$crypto.encrypt(password);
+
+        email = encodeURIComponent(email);
+        password = encodeURIComponent(password);
+
+        if (email && password) {
+          window.location.href =
+            process.env.ADMIN_APP_URL +
+            "/loginwithtoken?email=" +
+            email +
+            "&password=" +
+            password;
+
+          return "";
+        }
+        // this.$router.push("/employees/profile");
+      } catch (e) {
+        console.log(e);
+      }
     },
     // getPhoto() {
     //   setTimeout(() => {

@@ -209,6 +209,7 @@ export default {
       }
 
       setTimeout(() => {
+        if (!this.$auth.user) return false;
         this.loading = true;
 
         let { sortBy, sortDesc, page } = this.options;

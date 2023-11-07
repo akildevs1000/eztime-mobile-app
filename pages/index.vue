@@ -200,6 +200,12 @@ export default {
   }),
 
   mounted() {
+    if (window.innerWidth >= 600) {
+      this.$store.commit("isDesktop", true);
+    } else {
+      this.$store.commit("isDesktop", false);
+    }
+
     this.getSinceDate();
 
     if (this.$localStorage.get("buttonLocked")) {
@@ -211,6 +217,7 @@ export default {
     }
 
     if (this.$store.state.isDesktop) {
+      //this.$router.push(`/dashboard`);
       this.$router.push(`/dashboard`);
     }
   },
@@ -375,7 +382,6 @@ export default {
             this.$axios
               .post(`/realtime_location`, payload)
               .then(async ({ data }) => {
-                console.log(data.message);
                 await this.setRealTimeLocation(latitude, longitude);
               })
               .catch(({ message }) => console.log(message));

@@ -83,16 +83,24 @@ export default {
   //   },
   // },
   mounted() {
-    // if (this.$auth.user.user_type == "employee") {
-    //   this.$router.push(`/dashboard/employee`);
-    // }
+    //console.log("Dashbaord page 1");
+    if (window.innerWidth >= 600) {
+      this.$store.commit("isDesktop", true);
+    } else {
+      this.$store.commit("isDesktop", false);
+    }
   },
   created() {
+    //console.log("Dashbaord page 2");
     // if (this.$auth.user.user_type == "employee") {
     //   this.$router.push(`/dashboard/employee`);
     // }
     this.getBranches();
     //this.$root.$on("openalert", this.openalert);
+
+    if (!this.$store.state.isDesktop) {
+      this.$router.push(`/`);
+    }
   },
   watch: {
     overlay(val) {
