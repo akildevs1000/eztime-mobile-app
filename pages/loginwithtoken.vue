@@ -16,7 +16,6 @@ export default {
   },
   created() {
     //this.test();
-    console.log("-------------");
   },
   methods: {
     verifyToken() {
@@ -29,8 +28,6 @@ export default {
 
         this.email = this.$crypto.decrypt(this.email);
         this.password = this.$crypto.decrypt(this.password);
-
-        console.log("this.email", this.email);
 
         this.loginWithOTP();
       }

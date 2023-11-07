@@ -83,7 +83,7 @@ export default {
   //   },
   // },
   mounted() {
-    console.log("Dashbaord page 1");
+    //console.log("Dashbaord page 1");
     if (window.innerWidth >= 600) {
       this.$store.commit("isDesktop", true);
     } else {
@@ -91,7 +91,7 @@ export default {
     }
   },
   created() {
-    console.log("Dashbaord page 2");
+    //console.log("Dashbaord page 2");
     // if (this.$auth.user.user_type == "employee") {
     //   this.$router.push(`/dashboard/employee`);
     // }

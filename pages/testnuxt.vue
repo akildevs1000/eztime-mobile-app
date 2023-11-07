@@ -13,18 +13,12 @@ export default {
   }),
   auth: false,
 
-  created() {
-    //this.test();
-    console.log("-------------");
-    //this.verifyToken();
-  },
+  created() {},
   methods: {
     verifyToken() {
       // alert(this.$route.query.token);
       if (this.$route.query.token) {
         let token = this.$route.query.token;
-
-        console.log("token", token);
 
         token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
         token = token; //this.$crypto.decrypt1(token);
@@ -38,22 +32,18 @@ export default {
               Authorization: "Bearer " + token,
             },
           };
-          console.log("options", options);
+
           this.$axios
             .get(`me`, options, {})
             .then(({ data }) => {
               if (!data.user) {
-                console.log("Loign page 1");
                 alert("Invalid Login Details. Please try again");
-                this.$router.push(`/login3333333333333333`);
+                this.$router.push(`/login`);
 
                 return false;
               } else {
                 this.$auth.setUser(data.user);
-                console.log(this.$auth.user);
-                console.log(this.$auth.user.user_type);
 
-                console.log("Test");
                 this.$router.push(`/dashboard`);
                 return false;
 

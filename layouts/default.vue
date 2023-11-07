@@ -307,7 +307,6 @@ export default {
     };
   },
   created() {
-    console.log("Default page");
     try {
       this.profile_picture = "/no-profile-image.jpg";
       setTimeout(() => {
@@ -334,7 +333,6 @@ export default {
     setInterval(this.getUnReads, 10000);
   },
   mounted() {
-    console.log("Default page 1");
     if (window.innerWidth >= 600) {
       this.drawer = true;
       this.miniVariant = true;

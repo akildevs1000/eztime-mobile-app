@@ -200,7 +200,6 @@ export default {
   }),
 
   mounted() {
-    console.log("Index 1");
     if (window.innerWidth >= 600) {
       this.$store.commit("isDesktop", true);
     } else {
@@ -236,7 +235,6 @@ export default {
   },
 
   async created() {
-    console.log("Index 2");
     try {
       let employee = this.$auth.user.employee;
 
@@ -384,7 +382,6 @@ export default {
             this.$axios
               .post(`/realtime_location`, payload)
               .then(async ({ data }) => {
-                console.log(data.message);
                 await this.setRealTimeLocation(latitude, longitude);
               })
               .catch(({ message }) => console.log(message));
