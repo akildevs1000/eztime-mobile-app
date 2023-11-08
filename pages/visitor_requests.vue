@@ -2,16 +2,16 @@
   <div>
     <v-row>
       <v-col>
-        <v-card elevation="0" class="mt-2">
-          <v-toolbar class="mb-2 white--text" color="white" dense flat>
+        <v-card elevation="1" class="mt-2" style="min-height: 500px">
+          <v-toolbar class="mb-2 popup_background" dense flat>
             <v-toolbar-title>
-              <span style="color: black">
+              <span style="color: black" class="page-title-display">
                 Visitor Requests</span
               ></v-toolbar-title
             >
             <!-- <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }"> -->
-            <v-btn
+            <!-- <v-btn
               title="Reload"
               dense
               class="ma-0 px-0"
@@ -21,11 +21,23 @@
               text
             >
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-            </v-btn>
+            </v-btn> -->
             <v-spacer></v-spacer>
+            <Calender
+              style="width: 100%; max-width: 180px; float: right"
+              @filter-attr="filterAttr"
+              :defaultFilterType="1"
+              :height="'28px '"
+            />
           </v-toolbar>
 
           <v-alert
+            style="
+              height: 140px;
+              padding-top: 5px;
+              padding-bottom: 0px;
+              font-size: 14px;
+            "
             v-for="(item, index) in data"
             :key="index"
             border="left"
@@ -33,61 +45,77 @@
             :color="getRelatedColor(item)"
             elevation="2"
           >
-            <v-row class="100%">
+            <v-row class="100%" style="margin: auto">
               <v-col cols="3" style="padding: 0px">
                 <v-img
                   style="
                     border-radius: 2%;
                     width: 100px;
-                    max-width: 100px;
+                    max-width: 95%;
+                    min-height: 100px;
                     height: auto;
+                    border: 1px solid #ddd;
                   "
                   :src="item.logo ? item.logo : '/no-profile-image.jpg'"
                 >
                 </v-img>
               </v-col>
-              <v-col cols="8" style="padding-left: 5px">
-                <b>{{ item.full_name }} </b>
+              <v-col cols="9" style="padding-left: 5px; padding-top: 0px">
+                <span cols="8">
+                  <b>{{ item.full_name }} </b></span
+                >
+                <span
+                  cols="4"
+                  style="padding-left: 0px; padding-right: 5px; float: right"
+                >
+                  <v-menu bottom left>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list width="120" dense>
+                      <v-list-item @click="updateStatus(item.id, 1)">
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="green" small> mdi-check </v-icon>
+                          Approve
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="updateStatus(item.id, 2)">
+                        <v-list-item-title style="cursor: pointer">
+                          <v-icon color="red" small> mdi-cancel</v-icon>
+                          Reject
+                        </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </span>
+
                 <div>
-                  <v-icon>mdi-calendar-range</v-icon>
+                  <v-icon size="20">mdi-calendar-range</v-icon>
                   {{ item.from_date_display }} to
                   {{ item.to_date_display }}
                 </div>
+                <!-- <div>
+                  <v-icon size="20">mdi-clock</v-icon>
+                  10:45 PM
+                </div> -->
                 <div>
-                  <v-icon>mdi-briefcase-account</v-icon> {{ item.purpose.name }}
+                  <v-icon size="20">mdi-briefcase-account</v-icon>
+                  {{ item.purpose.name }}
                 </div>
                 <div>
-                  <v-icon>mdi-cellphone-basic</v-icon> {{ item.phone_number }}
+                  <v-icon size="20">mdi-cellphone</v-icon>
+                  {{ item.phone_number }}
                 </div>
                 <div v-if="item.email">
-                  <v-icon>mdi-email</v-icon> {{ item.email }}
+                  <v-icon size="20">mdi-email</v-icon> {{ item.email }}
                 </div>
-              </v-col>
-              <v-col cols="1" style="padding-left: 0px; padding-right: 5px">
-                <v-menu bottom left>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list width="120" dense>
-                    <v-list-item @click="updateStatus(item.id, 1)">
-                      <v-list-item-title style="cursor: pointer">
-                        <v-icon color="green" small> mdi-check </v-icon>
-                        Approve
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="updateStatus(item.id, 2)">
-                      <v-list-item-title style="cursor: pointer">
-                        <v-icon color="red" small> mdi-cancel</v-icon>
-                        Reject
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
               </v-col>
             </v-row>
           </v-alert>
+
+          <div v-if="data.length == 0" class="pa-5">No data available</div>
         </v-card>
       </v-col>
     </v-row>
@@ -134,11 +162,16 @@ export default {
     endpoint: "visitor",
 
     data: [],
+    from_date: "",
+    to_date: "",
   }),
-  created() {
-    this.getData();
-  },
+  created() {},
   methods: {
+    filterAttr(data) {
+      this.from_date = data.from;
+      this.to_date = data.to;
+      this.getData();
+    },
     updateStatus(id, status_id) {
       this.status_id = status_id;
       this.$axios
@@ -181,6 +214,8 @@ export default {
             per_page: 10,
             company_id: this.$auth.user.company_id,
             UserID: this.$auth.user.employee.system_user_id,
+            from_date: this.from_date,
+            to_date: this.to_date,
           },
         })
         .then(({ data }) => {

@@ -115,3 +115,8 @@ width: 24px;
     /* min-width: 40px; text-align: center; */
 
   }
+
+  .page-title-display
+  {
+    font-size: 18px;
+  }

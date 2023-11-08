@@ -86,7 +86,7 @@ export default {
       lang: "en",
     },
     icon: {
-      source: "static/favicon.jpeg", // Path to your app icon
+      source: "static/android-chrome-192x192.png", // Path to your app icon
     },
   },
 
