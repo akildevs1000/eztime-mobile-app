@@ -4,7 +4,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: "",
-    title: "Mytime2Cloud",
+    title: "",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -77,12 +77,15 @@ export default {
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
+  
   pwa: {
     manifest: {
+      name: "Mytime2Cloud",
+      short_name: "Mytime2Cloud",
       lang: "en",
     },
     icon: {
-      fileName: "/favicon.ico",
+      source: "static/favicon.jpeg", // Path to your app icon
     },
   },
 
