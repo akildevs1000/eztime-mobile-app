@@ -23,6 +23,7 @@ export default {
     { src: "~/plugins/vue-apexchart.js", ssr: false },
     { src: "~/plugins/custom-methods", ssr: false },
     { src: "~/plugins/axios.js" },
+    { src: "~/plugins/crypto.js", mode: "client" },
   ],
 
   target: "static",
@@ -77,7 +78,7 @@ export default {
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
-  
+
   pwa: {
     manifest: {
       name: "Mytime2Cloud",
