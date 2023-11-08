@@ -33,41 +33,60 @@
             :color="getRelatedColor(item)"
             elevation="2"
           >
-            <v-toolbar dense flat>
-              <b>{{ item.full_name }} </b>
-              <v-spacer></v-spacer>
-
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list width="120" dense>
-                  <v-list-item @click="updateStatus(item.id, 1)">
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="green" small> mdi-check </v-icon>
-                      Approve
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="updateStatus(item.id, 2)">
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="red" small> mdi-cancel</v-icon>
-                      Reject
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-toolbar>
-            <div class="mx-5">
-              <div>
-                {{ item.from_date_display }} to
-                {{ item.to_date_display }}
-              </div>
-              <div>Purpose: {{ item.purpose.name }}</div>
-              <div>Phone: {{ item.phone_number }}</div>
-              <div>Email: {{ item.email }}</div>
-            </div>
+            <v-row class="100%">
+              <v-col cols="3" style="padding: 0px">
+                <v-img
+                  style="
+                    border-radius: 2%;
+                    width: 100px;
+                    max-width: 100px;
+                    height: auto;
+                  "
+                  :src="item.logo ? item.logo : '/no-profile-image.jpg'"
+                >
+                </v-img>
+              </v-col>
+              <v-col cols="8" style="padding-left: 5px">
+                <b>{{ item.full_name }} </b>
+                <div>
+                  <v-icon>mdi-calendar-range</v-icon>
+                  {{ item.from_date_display }} to
+                  {{ item.to_date_display }}
+                </div>
+                <div>
+                  <v-icon>mdi-briefcase-account</v-icon> {{ item.purpose.name }}
+                </div>
+                <div>
+                  <v-icon>mdi-cellphone-basic</v-icon> {{ item.phone_number }}
+                </div>
+                <div v-if="item.email">
+                  <v-icon>mdi-email</v-icon> {{ item.email }}
+                </div>
+              </v-col>
+              <v-col cols="1" style="padding-left: 0px; padding-right: 5px">
+                <v-menu bottom left>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list width="120" dense>
+                    <v-list-item @click="updateStatus(item.id, 1)">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="green" small> mdi-check </v-icon>
+                        Approve
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="updateStatus(item.id, 2)">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="red" small> mdi-cancel</v-icon>
+                        Reject
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
           </v-alert>
         </v-card>
       </v-col>

@@ -53,7 +53,9 @@
                     <v-col cols="8">
                       <div style="color: grey; font-size: 12px">
                         Posted:
-                        {{ $dateFormat.format4(item.updated_at) }}
+                        {{
+                          $dateFormat && $dateFormat.format4(item.updated_at)
+                        }}
                       </div>
                     </v-col>
                     <v-col cols="4" class="text-right" style="font-size: 12px">
@@ -79,7 +81,11 @@
 
             <div style="color: black; height: 50px; font-size: 12px">
               Posted:
-              {{ selectedItem && $dateFormat.format4(selectedItem.updated_at) }}
+              {{
+                $dateFormat &&
+                selectedItem &&
+                $dateFormat.format4(selectedItem.updated_at)
+              }}
             </div>
           </v-toolbar>
           <v-card-text>

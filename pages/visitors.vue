@@ -599,7 +599,7 @@
               </v-tooltip> -->
             </v-toolbar>
             <v-data-table
-              :mobile-breakpoint="2000"
+              :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
               dense
               :headers="headers"
               :items="data"

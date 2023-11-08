@@ -145,17 +145,24 @@
                         </div>
 
                         <v-row>
-                          <v-col md="6">
+                          <v-col cols="6" style="padding: 0px">
                             <v-checkbox color="white--text" value="red" dark>
                               <template v-slot:label>
-                                <label style="color: #fff"
+                                <label style="color: #fff; font-size: 12px"
                                   >Remember Password</label
                                 >
                               </template>
                             </v-checkbox>
                           </v-col>
-                          <v-col md="6" class="text-right pt-8">
-                            <nuxt-link class="text-white" to="#"
+                          <v-col
+                            cols="6"
+                            class="text-right pt-4"
+                            style="padding: 0px"
+                          >
+                            <nuxt-link
+                              class="text-white"
+                              to="#"
+                              style="font-size: 12px"
                               >Forgot password?</nuxt-link
                             >
                           </v-col>
