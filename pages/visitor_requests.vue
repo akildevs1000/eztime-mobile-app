@@ -7,6 +7,18 @@
             Visitor Requests</span
           ></v-toolbar-title
         >
+        <v-btn
+          dense
+          class="ma-0 px-0"
+          x-small
+          :ripple="false"
+          text
+          title="Filter"
+        >
+          <v-icon @click="toggleFilter" class="mx-1 ml-2"
+            >mdi mdi-filter</v-icon
+          >
+        </v-btn>
         <!-- <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }"> -->
         <!-- <v-btn
@@ -21,12 +33,12 @@
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn> -->
         <v-spacer></v-spacer>
-        <Calender
+        <!-- <Calender
           style="width: 100%; max-width: 180px; float: right"
           @filter-attr="filterAttr"
           :defaultFilterType="1"
           :height="'28px '"
-        />
+        /> -->
       </v-toolbar>
       <v-data-table
         v-if="$store.state.isDesktop"
@@ -43,6 +55,57 @@
         class="elevation-1 alternate-rows"
         :server-items-length="totalRowsCount"
       >
+        <template v-slot:header="{ props: { headers } }">
+          <tr v-if="isFilter">
+            <td v-for="header in headers" :key="header.text">
+              <v-container>
+                <v-text-field
+                  clearable
+                  :hide-details="true"
+                  v-if="header.filterable && !header.filterSpecial"
+                  v-model="filters[header.value]"
+                  id="header.value"
+                  @input="applyFilters(header.value, $event)"
+                  outlined
+                  dense
+                  autocomplete="off"
+                ></v-text-field>
+
+                <v-select
+                  clearable
+                  :hide-details="true"
+                  @change="applyFilters('status', $event)"
+                  item-value="id"
+                  item-text="name"
+                  v-model="filters[header.value]"
+                  outlined
+                  dense
+                  v-else-if="
+                    header.filterable &&
+                    header.filterSpecial &&
+                    header.value == 'purpose_id'
+                  "
+                  :items="[{ id: '', name: 'All Purposes' }, ...purposeList]"
+                ></v-select>
+
+                <div
+                  v-else-if="
+                    header.filterable &&
+                    header.filterSpecial &&
+                    header.value == 'visit_from'
+                  "
+                  style="margin-top: -17px"
+                >
+                  <Calender
+                    @filter-attr="filterAttr"
+                    :defaultFilterType="1"
+                    :height="'40px'"
+                  />
+                </div>
+              </v-container>
+            </td>
+          </tr>
+        </template>
         <template v-slot:item.sno="{ item, index }">
           {{
             currentPage
@@ -242,15 +305,18 @@
 </template>
 
 <script>
+import Calender from "../components/Calender.vue";
+
 export default {
   data: () => ({
+    isFilter: false,
+    filters: [],
     loading: false,
     cumulativeIndex: 1,
     perPage: 10,
     currentPage: 1,
     totalRowsCount: 0,
     options: { perPage: 10 },
-
     status_id: 0,
     response_image: "/sucess.png",
     dialog: false,
@@ -259,11 +325,9 @@ export default {
     changeRequestDialog: false,
     Model: "Visitor Request",
     endpoint: "visitor",
-
     data: [],
     from_date: "",
     to_date: "",
-
     headers_table: [
       {
         text: "#",
@@ -284,50 +348,56 @@ export default {
         align: "left",
         sortable: true,
         value: "first_name",
-        filterable: false,
+        filterable: true,
+        filterSpecial: false,
       },
       {
         text: "Purpose",
         align: "left",
         sortable: true,
         value: "purpose_id",
-        filterable: false,
+        filterable: true,
+        filterSpecial: true,
       },
       {
         text: "Date",
         align: "left",
         sortable: true,
         value: "visit_from",
-        filterable: false,
+        filterable: true,
+        filterSpecial: true,
       },
-
       {
         text: "Time",
         align: "left",
         sortable: true,
         value: "time_in",
-        filterable: false,
+        filterable: true,
+        filterSpecial: false,
       },
       {
         text: "Contact Number",
         align: "left",
         sortable: true,
         value: "phone_number",
-        filterable: false,
+        filterable: true,
+        filterSpecial: false,
       },
       {
         text: "Email",
         align: "left",
         sortable: true,
         value: "email",
-        filterable: false,
+        filterable: true,
+        filterSpecial: false,
       },
       {
         text: "Status",
         align: "left",
         sortable: true,
         value: "status_id",
-        filterable: false,
+        filterable: true,
+        filterSpecial: true,
       },
       {
         text: "Options",
@@ -342,22 +412,54 @@ export default {
       total: 0,
       per_page: 10,
     },
+    purposeList: [],
   }),
   watch: {
     options: {
       handler() {
-        this.getData();
+        this.getDataFromApi();
       },
       deep: true,
     },
   },
-  created() {},
+  created() {
+    this.getPurposeList();
+  },
   methods: {
     filterAttr(data) {
+      if (data != null) {
+        this.filters.visit_from = data.from;
+        this.filters.visit_to = data.to;
+      } else {
+        this.filters.visit_from = null;
+        this.filters.visit_to = null;
+      }
+
       this.from_date = data.from;
       this.to_date = data.to;
-      this.getData();
+      this.applyFilters();
     },
+    applyFilters() {
+      this.getDataFromApi();
+    },
+    toggleFilter() {
+      this.isFilter = !this.isFilter;
+    },
+    getPurposeList() {
+      let options = {
+        params: {
+          company_id: this.$auth.user.company_id,
+        },
+      };
+      this.$axios.get(`purpose_list`, options).then(({ data }) => {
+        this.purposeList = data;
+      });
+    },
+    // filterAttr(data) {
+    //   this.from_date = data.from;
+    //   this.to_date = data.to;
+    //   this.getDataFromApi();
+    // },
     updateStatus(id, status_id) {
       this.status_id = status_id;
       this.$axios
@@ -372,7 +474,6 @@ export default {
             return;
           }
           this.message = "Your clocking has been recorded successfully";
-
           if (status_id == 1) {
             this.response_image = "/success.png";
           } else {
@@ -380,7 +481,7 @@ export default {
           }
           this.dialog = true;
           this.message = data.message;
-          this.getData();
+          this.getDataFromApi();
         });
     },
     getRelatedColor(item) {
@@ -390,17 +491,13 @@ export default {
         2: "green",
         UNKNOWN: "purple",
       };
-
       return colors[item.status_id || "UNKNOWN"];
     },
-    getData() {
+    getDataFromApi() {
       this.loading = true;
-
       let { sortBy, sortDesc, page, itemsPerPage } = this.options;
-
       let sortedBy = sortBy ? sortBy[0] : "";
       let sortedDesc = sortDesc ? sortDesc[0] : "";
-
       let options = {
         params: {
           page: page,
@@ -412,19 +509,18 @@ export default {
           UserID: this.$auth.user.employee.system_user_id,
           from_date: this.from_date,
           to_date: this.to_date,
+          ...this.filters,
         },
       };
-
       this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.data = data.data;
-
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
-
         this.totalRowsCount = data.total;
       });
     },
   },
+  components: { Calender },
 };
 </script>

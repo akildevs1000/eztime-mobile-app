@@ -144,7 +144,10 @@
       </v-btn> -->
     </v-app-bar>
     <v-main>
-      <v-container style="background-color: #f4f5fa !important">
+      <v-container
+        class="deafult-layout"
+        style="background-color: #f4f5fa !important"
+      >
         <Nuxt />
       </v-container>
     </v-main>

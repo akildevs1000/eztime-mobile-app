@@ -9,6 +9,10 @@
      .container
      {
       max-width: 100%!important;
+      /* padding-left:70px; */
+     }
+     .deafult-layout
+     {
       padding-left:70px;
      }
  
