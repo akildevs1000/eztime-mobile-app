@@ -120,3 +120,8 @@ width: 24px;
   {
     font-size: 18px;
   }
+
+  .mx-table-date td
+  {
+    border-bottom: 0px!important;
+  }

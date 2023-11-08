@@ -1,17 +1,15 @@
 <template>
   <div>
-    <v-row>
-      <v-col>
-        <v-card elevation="1" class="mt-2" style="min-height: 500px">
-          <v-toolbar class="mb-2 popup_background" dense flat>
-            <v-toolbar-title>
-              <span style="color: black" class="page-title-display">
-                Visitor Requests</span
-              ></v-toolbar-title
-            >
-            <!-- <v-tooltip top color="primary">
+    <v-card elevation="1" class="mt-2" style="min-height: 500px">
+      <v-toolbar class="mb-2 popup_background" dense flat>
+        <v-toolbar-title>
+          <span style="color: black" class="page-title-display">
+            Visitor Requests</span
+          ></v-toolbar-title
+        >
+        <!-- <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }"> -->
-            <!-- <v-btn
+        <!-- <v-btn
               title="Reload"
               dense
               class="ma-0 px-0"
@@ -22,103 +20,197 @@
             >
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn> -->
-            <v-spacer></v-spacer>
-            <Calender
-              style="width: 100%; max-width: 180px; float: right"
-              @filter-attr="filterAttr"
-              :defaultFilterType="1"
-              :height="'28px '"
-            />
-          </v-toolbar>
+        <v-spacer></v-spacer>
+        <Calender
+          style="width: 100%; max-width: 180px; float: right"
+          @filter-attr="filterAttr"
+          :defaultFilterType="1"
+          :height="'28px '"
+        />
+      </v-toolbar>
+      <v-data-table
+        v-if="$store.state.isDesktop"
+        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+        dense
+        :headers="headers_table"
+        :items="data"
+        model-value="data.id"
+        :loading="loading"
+        :options.sync="options"
+        :footer-props="{
+          itemsPerPageOptions: [10, 50, 100, 500, 1000],
+        }"
+        class="elevation-1 alternate-rows"
+        :server-items-length="totalRowsCount"
+      >
+        <template v-slot:item.sno="{ item, index }">
+          {{
+            currentPage
+              ? (currentPage - 1) * perPage +
+                (cumulativeIndex + data.indexOf(item))
+              : "-"
+          }}
+        </template>
 
-          <v-alert
+        <template v-slot:item.pic="{ item }">
+          <v-img
             style="
-              height: 140px;
-              padding-top: 5px;
-              padding-bottom: 0px;
-              font-size: 14px;
+              border-radius: 2%;
+              width: 100px;
+              max-width: 95%;
+              min-height: 100px;
+              height: auto;
+              border: 1px solid #ddd;
             "
-            v-for="(item, index) in data"
-            :key="index"
-            border="left"
-            colored-border
-            :color="getRelatedColor(item)"
-            elevation="2"
+            :src="item.logo ? item.logo : '/no-profile-image.jpg'"
           >
-            <v-row class="100%" style="margin: auto">
-              <v-col cols="3" style="padding: 0px">
-                <v-img
-                  style="
-                    border-radius: 2%;
-                    width: 100px;
-                    max-width: 95%;
-                    min-height: 100px;
-                    height: auto;
-                    border: 1px solid #ddd;
-                  "
-                  :src="item.logo ? item.logo : '/no-profile-image.jpg'"
-                >
-                </v-img>
-              </v-col>
-              <v-col cols="9" style="padding-left: 5px; padding-top: 0px">
-                <span cols="8">
-                  <b>{{ item.full_name }} </b></span
-                >
-                <span
-                  cols="4"
-                  style="padding-left: 0px; padding-right: 5px; float: right"
-                >
-                  <v-menu bottom left>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list width="120" dense>
-                      <v-list-item @click="updateStatus(item.id, 1)">
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="green" small> mdi-check </v-icon>
-                          Approve
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="updateStatus(item.id, 2)">
-                        <v-list-item-title style="cursor: pointer">
-                          <v-icon color="red" small> mdi-cancel</v-icon>
-                          Reject
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </span>
+          </v-img>
+        </template>
+        <template v-slot:item.first_name="{ item }">
+          {{ item.full_name }}
+        </template>
 
-                <div>
-                  <v-icon size="20">mdi-calendar-range</v-icon>
-                  {{ item.from_date_display }} to
-                  {{ item.to_date_display }}
-                </div>
-                <!-- <div>
-                  <v-icon size="20">mdi-clock</v-icon>
-                  10:45 PM
-                </div> -->
-                <div>
-                  <v-icon size="20">mdi-briefcase-account</v-icon>
-                  {{ item.purpose.name }}
-                </div>
-                <div>
-                  <v-icon size="20">mdi-cellphone</v-icon>
-                  {{ item.phone_number }}
-                </div>
-                <div v-if="item.email">
-                  <v-icon size="20">mdi-email</v-icon> {{ item.email }}
-                </div>
-              </v-col>
-            </v-row>
-          </v-alert>
+        <template v-slot:item.purpose_id="{ item }">
+          {{ item.purpose.name }}
+        </template>
+        <template v-slot:item.visit_from="{ item }">
+          {{ item.from_date_display }}
+          <span v-if="item.to_date_display != item.from_date_display">
+            to {{ item.to_date_display }}</span
+          >
+        </template>
+        <template v-slot:item.time_in="{ item }">
+          {{ item.time_in }} - {{ item.time_out }}
+        </template>
 
-          <div v-if="data.length == 0" class="pa-5">No data available</div>
-        </v-card>
-      </v-col>
-    </v-row>
+        <template v-slot:item.phone_number="{ item }">
+          {{ item.phone_number }}
+        </template>
+        <template v-slot:item.email="{ item }">
+          {{ item.email }}
+        </template>
+
+        <template v-slot:item.status_id="{ item }">
+          <span :style="'color:' + getRelatedColor(item)">{{
+            item.status
+          }}</span>
+        </template>
+        <template v-slot:item.options="{ item }">
+          <v-menu bottom left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list width="120" dense>
+              <v-list-item @click="updateStatus(item.id, 2)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon color="green" small> mdi-check </v-icon>
+                  Approve
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="updateStatus(item.id, 3)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon color="red" small> mdi-cancel</v-icon>
+                  Reject
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-data-table>
+      <v-alert
+        v-else
+        style="
+          height: 140px;
+          padding-top: 5px;
+          padding-bottom: 0px;
+          font-size: 14px;
+        "
+        v-for="(item, index) in data"
+        :key="index"
+        border="left"
+        colored-border
+        :color="getRelatedColor(item)"
+        elevation="2"
+      >
+        <v-row class="100%" style="margin: auto">
+          <v-col cols="3" style="padding: 0px">
+            <v-img
+              style="
+                border-radius: 2%;
+                width: 100px;
+                max-width: 95%;
+                min-height: 100px;
+                height: auto;
+                border: 1px solid #ddd;
+              "
+              :src="item.logo ? item.logo : '/no-profile-image.jpg'"
+            >
+            </v-img>
+          </v-col>
+          <v-col cols="9" style="padding-left: 5px; padding-top: 0px">
+            <span cols="8">
+              <b>{{ item.full_name }} </b></span
+            >
+            <span
+              cols="4"
+              style="padding-left: 0px; padding-right: 5px; float: right"
+            >
+              <v-menu bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list width="120" dense>
+                  <v-list-item @click="updateStatus(item.id, 2)">
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="green" small> mdi-check </v-icon>
+                      Approve
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="updateStatus(item.id, 3)">
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="red" small> mdi-cancel</v-icon>
+                      Reject
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </span>
+
+            <div>
+              <v-icon size="20">mdi-calendar-range</v-icon>
+              {{ item.from_date_display }}
+              <span v-if="item.to_date_display != item.from_date_display">
+                to {{ item.to_date_display }}</span
+              >
+            </div>
+            <div>
+              <v-icon size="20">mdi-clock-outline</v-icon>
+              {{ item.time_in }} - {{ item.time_out }}
+            </div>
+            <div>
+              <v-icon size="20">mdi-briefcase-account-outline</v-icon>
+              {{ item.purpose.name }}
+            </div>
+            <div>
+              <v-icon size="20">mdi-cellphone</v-icon>
+              {{ item.phone_number }}
+            </div>
+            <div v-if="item.email">
+              <v-icon size="20">mdi-email</v-icon> {{ item.email }}
+            </div>
+          </v-col>
+        </v-row>
+      </v-alert>
+
+      <div v-if="data.length == 0 && !$store.state.isDesktop" class="pa-5">
+        No data available
+      </div>
+    </v-card>
+
     <div class="text-center">
       <v-dialog v-model="dialog" width="500">
         <v-card>
@@ -152,6 +244,13 @@
 <script>
 export default {
   data: () => ({
+    loading: false,
+    cumulativeIndex: 1,
+    perPage: 10,
+    currentPage: 1,
+    totalRowsCount: 0,
+    options: { perPage: 10 },
+
     status_id: 0,
     response_image: "/sucess.png",
     dialog: false,
@@ -164,7 +263,94 @@ export default {
     data: [],
     from_date: "",
     to_date: "",
+
+    headers_table: [
+      {
+        text: "#",
+        align: "left",
+        sortable: false,
+        value: "sno",
+        filterable: false,
+      },
+      {
+        text: "Picture",
+        align: "left",
+        sortable: true,
+        value: "pic",
+        filterable: false,
+      },
+      {
+        text: "Name",
+        align: "left",
+        sortable: true,
+        value: "first_name",
+        filterable: false,
+      },
+      {
+        text: "Purpose",
+        align: "left",
+        sortable: true,
+        value: "purpose_id",
+        filterable: false,
+      },
+      {
+        text: "Date",
+        align: "left",
+        sortable: true,
+        value: "visit_from",
+        filterable: false,
+      },
+
+      {
+        text: "Time",
+        align: "left",
+        sortable: true,
+        value: "time_in",
+        filterable: false,
+      },
+      {
+        text: "Contact Number",
+        align: "left",
+        sortable: true,
+        value: "phone_number",
+        filterable: false,
+      },
+      {
+        text: "Email",
+        align: "left",
+        sortable: true,
+        value: "email",
+        filterable: false,
+      },
+      {
+        text: "Status",
+        align: "left",
+        sortable: true,
+        value: "status_id",
+        filterable: false,
+      },
+      {
+        text: "Options",
+        align: "left",
+        sortable: false,
+        value: "options",
+        filterable: false,
+      },
+    ],
+    pagination: {
+      current: 1,
+      total: 0,
+      per_page: 10,
+    },
   }),
+  watch: {
+    options: {
+      handler() {
+        this.getData();
+      },
+      deep: true,
+    },
+  },
   created() {},
   methods: {
     filterAttr(data) {
@@ -199,28 +385,45 @@ export default {
     },
     getRelatedColor(item) {
       let colors = {
-        0: "purple",
-        2: "red",
-        1: "green",
+        1: "purple",
+        3: "red",
+        2: "green",
         UNKNOWN: "purple",
       };
 
       return colors[item.status_id || "UNKNOWN"];
     },
     getData() {
-      this.$axios
-        .get(this.endpoint, {
-          params: {
-            per_page: 10,
-            company_id: this.$auth.user.company_id,
-            UserID: this.$auth.user.employee.system_user_id,
-            from_date: this.from_date,
-            to_date: this.to_date,
-          },
-        })
-        .then(({ data }) => {
-          this.data = data.data;
-        });
+      this.loading = true;
+
+      let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+
+      let sortedBy = sortBy ? sortBy[0] : "";
+      let sortedDesc = sortDesc ? sortDesc[0] : "";
+
+      let options = {
+        params: {
+          page: page,
+          sortBy: sortedBy,
+          sortDesc: sortedDesc,
+          per_page: itemsPerPage,
+          pagination: true,
+          company_id: this.$auth.user.company_id,
+          UserID: this.$auth.user.employee.system_user_id,
+          from_date: this.from_date,
+          to_date: this.to_date,
+        },
+      };
+
+      this.$axios.get(this.endpoint, options).then(({ data }) => {
+        this.data = data.data;
+
+        this.pagination.current = data.current_page;
+        this.pagination.total = data.last_page;
+        this.loading = false;
+
+        this.totalRowsCount = data.total;
+      });
     },
   },
 };
