@@ -33,12 +33,13 @@
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn> -->
         <v-spacer></v-spacer>
-        <!-- <Calender
-          style="width: 100%; max-width: 180px; float: right"
+        <Calender
           @filter-attr="filterAttr"
           :defaultFilterType="1"
-          :height="'28px '"
-        /> -->
+          :height="'40px'"
+          :default_date_from="from_date"
+          :default_date_to="to_date"
+        />
       </v-toolbar>
       <v-data-table
         v-if="$store.state.isDesktop"
@@ -100,6 +101,8 @@
                     @filter-attr="filterAttr"
                     :defaultFilterType="1"
                     :height="'40px'"
+                    :default_date_from="from_date"
+                    :default_date_to="to_date"
                   />
                 </div>
               </v-container>
@@ -148,9 +151,17 @@
 
         <template v-slot:item.phone_number="{ item }">
           {{ item.phone_number }}
+          <br />
+          <span class="secondary-value"> {{ item.email }}</span>
         </template>
-        <template v-slot:item.email="{ item }">
-          {{ item.email }}
+        <template v-slot:item.visitor_company_name="{ item }"
+          >{{ item.visitor_company_name }}
+        </template>
+        <template v-slot:item.id="{ item }">
+          <span v-if="item.id_type == 1">Emirates ID</span>
+          <span v-else-if="item.id_type == 2">National ID</span> <br />
+
+          <span class="secondary-value"> {{ item.id_number }}</span>
         </template>
 
         <template v-slot:item.status_id="{ item }">
@@ -384,10 +395,18 @@ export default {
         filterSpecial: false,
       },
       {
-        text: "Email",
+        text: "From Company",
         align: "left",
         sortable: true,
-        value: "email",
+        value: "visitor_company_name",
+        filterable: true,
+        filterSpecial: false,
+      },
+      {
+        text: "ID",
+        align: "left",
+        sortable: true,
+        value: "id",
         filterable: true,
         filterSpecial: false,
       },
@@ -423,20 +442,22 @@ export default {
     },
   },
   created() {
+    const today = new Date();
+
+    this.from_date = today.toISOString().slice(0, 10);
+    this.to_date = today.toISOString().slice(0, 10);
     this.getPurposeList();
   },
   methods: {
     filterAttr(data) {
       if (data != null) {
-        this.filters.visit_from = data.from;
-        this.filters.visit_to = data.to;
+        this.from_date = data.from;
+        this.to_date = data.to;
       } else {
-        this.filters.visit_from = null;
-        this.filters.visit_to = null;
+        this.from_date = null;
+        this.to_date = null;
       }
 
-      this.from_date = data.from;
-      this.to_date = data.to;
       this.applyFilters();
     },
     applyFilters() {

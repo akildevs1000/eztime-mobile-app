@@ -40,7 +40,7 @@
   .login1
 {
   width: 100%!important; position: absolute!important; top: 66%!important; left: 24%!important;
-}
+} 
 .login2
 {
   margin: 25px!important; width: 100%!important; height: 200px!important; position: relative!important;
@@ -48,5 +48,5 @@
 .login3
 {
   color: #fff; padding: 3rem !important
-}
+}  
 }
