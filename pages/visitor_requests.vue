@@ -169,7 +169,7 @@
             item.status
           }}</span>
         </template>
-        <!-- <template v-slot:item.options="{ item }">
+        <template v-slot:item.options="{ item }">
           <v-menu bottom left>
             <template v-slot:activator="{ on, attrs }">
               <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -191,7 +191,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </template> -->
+        </template>
       </v-data-table>
       <v-alert
         v-else
