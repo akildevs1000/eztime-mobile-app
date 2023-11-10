@@ -44,20 +44,9 @@
     </v-navigation-drawer>
     <v-app-bar class="bg-color" :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon v-if="!miniVariant" @click.stop="drawer = !drawer" />
-      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
-      </v-btn> -->
-      <!-- <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>mdi-application</v-icon>
-      </v-btn> -->
-      <!-- <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>mdi-minus</v-icon>
-      </v-btn> -->
-
       <span class="text-overflow">
         <img title="My Time Cloud " :src="`/logo22.png`" style="width: 86px" />
       </span>
-      <!-- <v-toolbar-title>{{ title }}</v-toolbar-title> -->
       <v-spacer />
       <v-icon class="mx-2" v-if="!unreads.length" color="grey">mdi-bell</v-icon>
       <v-menu v-else offset-y v-model="menuOpen">
@@ -160,6 +149,8 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer :absolute="!fixed" app>
+      <!-- {{ (locationData && locationData.name) || "Getting location..." }}
+      <Location @location="(e) => (locationData = e)" /> -->
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -187,7 +178,7 @@ export default {
       unreads: [],
     };
   },
-  created() {
+  async created() {
     setTimeout(() => {
       if (this.$auth.user && this.$auth.user.employee) {
         this.profile_picture =
@@ -203,7 +194,7 @@ export default {
     // if (this.$store.state.isDesktop) {
     //   this.$router.push(`/dashboard`);
     // }
-    this.getUnReads();
+    await this.getUnReads();
 
     setInterval(this.getUnReads, 30000);
   },
@@ -217,6 +208,10 @@ export default {
     this.$store.commit("isDesktop", this.miniVariant);
   },
   computed: {
+    locationData() {
+      return this.$store.state.locationData;
+    },
+
     loadMenus() {
       return [
         {
@@ -330,6 +325,7 @@ export default {
     toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
+
     changeLoginType() {
       try {
         let email = this.$store.state.email;
@@ -351,10 +347,12 @@ export default {
 
           return "";
         }
+        // this.$router.push("/employees/profile");
       } catch (e) {
         console.log(e);
       }
     },
+
     logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
@@ -374,22 +372,23 @@ export default {
           this.$router.push(redirect_url);
         });
     },
-    methods: {
-      async getUnReads() {
-        try {
-          const { id, company_id } = await this.$auth.user;
-          const { data } = await this.$axios.get(`unread`, {
-            params: { company_id, id },
-          });
 
-          this.unreads = data;
-          this.notificationCount = data.length;
-        } catch (error) {
-          // Handle any errors that might occur during the request
-          console.error("Error fetching unread notifications:", error);
-          // You may want to handle the error or log it accordingly
-        }
-      },
+    async getUnReads() {
+      try {
+        const { company_id, id } = await this.$auth.user;
+
+        const { data } = await this.$axios.get(`unread`, {
+          params: {
+            company_id,
+            user_id: id,
+          },
+        });
+
+        this.unreads = data;
+        this.notificationCount = data.length;
+      } catch (error) {
+        console.error("Error fetching unread notifications:", error);
+      }
     },
   },
 };

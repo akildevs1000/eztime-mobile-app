@@ -316,7 +316,7 @@
 </template>
 
 <script>
-import Calender from "../../components/Calender.vue";
+import Calender from "../components/Calender.vue";
 
 export default {
   data: () => ({
@@ -447,6 +447,7 @@ export default {
     this.from_date = today.toISOString().slice(0, 10);
     this.to_date = today.toISOString().slice(0, 10);
     this.getPurposeList();
+    this.getDataFromApi();
   },
   methods: {
     filterAttr(data) {
