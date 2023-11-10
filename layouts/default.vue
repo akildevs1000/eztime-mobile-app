@@ -23,22 +23,23 @@
       style="width: 215px"
     >
       <v-list>
-        <v-list-item
-          v-for="(item, i) in menu_items"
-          v-if="item.show_mobile_app != miniVariant"
-          :key="i"
-          :to="item.to"
-          :style="'color:' + item.color"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }} </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <template v-for="(item, i) in loadMenus">
+          <v-list-item
+            v-if="item.show_mobile_app != miniVariant"
+            :key="i"
+            :to="item.to"
+            :style="'color:' + item.color"
+            router
+            exact
+          >
+            <v-list-item-action>
+              <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }} </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar class="bg-color" :clipped-left="clipped" fixed app>
@@ -104,7 +105,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon color="red" v-bind="attrs" v-on="on">
             <v-avatar size="35" style="border: 1px solid #6946dd">
-              <v-img :src="profile_picture"></v-img>
+              <v-img :src="profile_picture" />
             </v-avatar>
           </v-btn>
         </template>
@@ -144,10 +145,7 @@
       </v-btn> -->
     </v-app-bar>
     <v-main>
-      <v-container
-        class="deafult-layout"
-        style="background-color: #f4f5fa !important"
-      >
+      <v-container style="background-color: #f4f5fa !important">
         <Nuxt />
       </v-container>
     </v-main>
@@ -162,8 +160,6 @@
       </v-list>
     </v-navigation-drawer>
     <v-footer :absolute="!fixed" app>
-      <!-- {{ (locationData && locationData.name) || "Getting location..." }}
-      <Location @location="(e) => (locationData = e)" /> -->
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -178,11 +174,51 @@ export default {
     return {
       notificationCount: 0,
       menuOpen: false,
-      profile_picture: "",
+      profile_picture: "/no-profile-image.jpg",
       clipped: false,
       drawer: false,
       fixed: false,
-      menu_items: [
+      menus: [],
+
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: "Mytime",
+      unreads: [],
+    };
+  },
+  created() {
+    setTimeout(() => {
+      if (this.$auth.user && this.$auth.user.employee) {
+        this.profile_picture =
+          this.$auth.user.employee.profile_picture || "/no-profile-image.jpg";
+      } else {
+        // User is not authenticated or doesn't have an employee object
+        // You might want to handle this case or log a message
+        this.logout();
+      }
+    }, 500);
+
+    // this.verifyToken();
+    // if (this.$store.state.isDesktop) {
+    //   this.$router.push(`/dashboard`);
+    // }
+    this.getUnReads();
+
+    setInterval(this.getUnReads, 30000);
+  },
+  mounted() {
+    if (window.innerWidth >= 600) {
+      this.drawer = true;
+      this.miniVariant = true;
+    } else {
+      this.miniVariant = false;
+    }
+    this.$store.commit("isDesktop", this.miniVariant);
+  },
+  computed: {
+    loadMenus() {
+      return [
         {
           icon: "mdi-apps",
           title: "Home",
@@ -190,12 +226,6 @@ export default {
           color: "#9aa9b9",
           show_mobile_app: true,
         },
-
-        // {
-        //   icon: "mdi-chart-bubble",
-        //   title: "Tracker",
-        //   to: "/tracker",
-        // },
         {
           icon: "mdi-apps",
           title: "Dashboard",
@@ -283,128 +313,23 @@ export default {
           color: "#9aa9b9",
         },
         {
-          icon: "mdi-transit-transfer",
-          title: "Visitors",
-          to: "/visitors",
-          color: "#9aa9b9",
-        },
-        {
           icon: "mdi-logout",
           title: "Logout",
           to: "/logout",
           color: "#f36c6c",
         },
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: "Mytime",
-      unreads: [],
-    };
-  },
-  created() {
-    try {
-      this.profile_picture = "/no-profile-image.jpg";
-      setTimeout(() => {
-        if (this.$auth.user && this.$auth.user.employee)
-          this.profile_picture =
-            this.$auth.user.employee.profile_picture || "/no-profile-image.jpg";
-        else if (
-          this.$auth.user.employee == "undefined" ||
-          !this.$auth.user.employee
-        ) {
-          // console.log("login-verification", this.$auth.user.employee);
-          this.logout();
-        }
-      }, 500);
-    } catch (e) {
-      // this.logout();
-    }
-    // this.verifyToken();
-    // if (this.$store.state.isDesktop) {
-    //   this.$router.push(`/dashboard`);
-    // }
-    this.getUnReads();
-
-    setInterval(this.getUnReads, 30000);
-  },
-  mounted() {
-    if (window.innerWidth >= 600) {
-      this.drawer = true;
-      this.miniVariant = true;
-    } else {
-      this.miniVariant = false;
-    }
-    this.$store.commit("isDesktop", this.miniVariant);
-  },
-  computed: {
-    locationData() {
-      return this.$store.state.locationData;
+      ];
     },
-
-    // miniVariant() {
-    //   switch (this.$vuetify.breakpoint.name) {
-    //     case "xs":
-    //       return true;
-    //     case "sm":
-    //       return true;
-    //     case "md":
-    //       return true;
-    //     case "lg":
-    //       return false;
-    //     case "xl":
-    //       return false;
-    //   }
-    // },
   },
   methods: {
+    can(per) {
+      return this.$auth.user.permissions.includes(per) || per === "/"
+        ? true
+        : false;
+    },
     toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
-    // verifyToken() {
-    //   // alert(this.$route.query.token);
-    //   if (this.$route.query.token) {
-    //     let token = this.$route.query.token;
-
-    //     token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
-    //     token = token; //this.$crypto.decrypt1(token);
-
-    //     if (token != "" && token != "undefined") {
-    //       this.$store.commit("login_token", token);
-
-    //       let options = {
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: "Bearer " + token,
-    //         },
-    //       };
-    //       this.$axios
-    //         .get(`me`, null, options)
-    //         .then(({ data }) => {
-    //           if (!data.user) {
-    //             alert("Invalid Login Details. Please try again");
-    //             this.$router.push(`/login`);
-
-    //             return false;
-    //           } else {
-    //             if (this.$store.state.isDesktop) {
-    //               // window.location.href = process.env.APP_URL + "/dashboard";
-    //               this.$router.push(`/dashboard`);
-    //               return false;
-    //             } else {
-    //               // window.location.href = process.env.APP_URL + "/";
-    //               this.$router.push(`/`);
-    //               return false;
-    //             }
-    //           }
-    //         })
-    //         .catch((err) => console.log(err));
-    //     } else {
-    //       this.$router.push(`/login`);
-    //     }
-    //   }
-    // },
-
     changeLoginType() {
       try {
         let email = this.$store.state.email;
@@ -426,19 +351,10 @@ export default {
 
           return "";
         }
-        // this.$router.push("/employees/profile");
       } catch (e) {
         console.log(e);
       }
     },
-    // getPhoto() {
-    //   setTimeout(() => {
-    //     console.log(this);
-    //     if (this.$auth) {
-    //       this.profile_picture = this.$auth.user.employee.profile_picture;
-    //     }
-    //   }, 2000);
-    // },
     logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
@@ -458,43 +374,26 @@ export default {
           this.$router.push(redirect_url);
         });
     },
-    getUnReads() {
-      this.$axios
-        .get(`unread`, {
-          params: {
-            company_id: this.$auth.user.company_id,
-            user_id: this.$auth.user.id,
-          },
-        })
-        .then(({ data }) => {
+    methods: {
+      async getUnReads() {
+        try {
+          const { id, company_id } = await this.$auth.user;
+          const { data } = await this.$axios.get(`unread`, {
+            params: { company_id, id },
+          });
+
           this.unreads = data;
           this.notificationCount = data.length;
-        });
+        } catch (error) {
+          // Handle any errors that might occur during the request
+          console.error("Error fetching unread notifications:", error);
+          // You may want to handle the error or log it accordingly
+        }
+      },
     },
   },
 };
 </script>
-<!-- <style scoped>
-.bg-color {
-  background-color: rgb(236, 240, 244) !important;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-</style> -->
 <style src="@/assets/common.css"></style>
 <style src="@/assets/mobile.css"></style>
 <style src="@/assets/desktop.css"></style>

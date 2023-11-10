@@ -169,7 +169,7 @@
             item.status
           }}</span>
         </template>
-        <template v-slot:item.options="{ item }">
+        <!-- <template v-slot:item.options="{ item }">
           <v-menu bottom left>
             <template v-slot:activator="{ on, attrs }">
               <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -191,7 +191,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </template>
+        </template> -->
       </v-data-table>
       <v-alert
         v-else
@@ -316,7 +316,7 @@
 </template>
 
 <script>
-import Calender from "../components/Calender.vue";
+import Calender from "../../components/Calender.vue";
 
 export default {
   data: () => ({
@@ -495,7 +495,7 @@ export default {
             return;
           }
           this.message = "Your clocking has been recorded successfully";
-          if (status_id == 1) {
+          if (status_id == 2) {
             this.response_image = "/success.png";
           } else {
             this.response_image = "/fail.png";
