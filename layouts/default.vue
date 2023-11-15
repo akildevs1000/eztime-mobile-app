@@ -176,6 +176,7 @@ export default {
       rightDrawer: false,
       title: "Mytime",
       unreads: [],
+      interval: 0,
     };
   },
   async created() {
@@ -196,7 +197,11 @@ export default {
     // }
     await this.getUnReads();
 
-    setInterval(this.getUnReads, 30000);
+    this.interval = setInterval(this.getUnReads, 30000);
+  },
+  beforeDestroy() {
+    // Clear the interval when the component is destroyed
+    clearInterval(this.interval);
   },
   mounted() {
     if (window.innerWidth >= 600) {
