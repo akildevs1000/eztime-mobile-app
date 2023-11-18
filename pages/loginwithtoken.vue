@@ -1,5 +1,15 @@
 <template>
-  <div>Loading.....please wait</div>
+  <div>
+    <div style="font-size: 25px">Loading.....please wait</div>
+    <v-btn
+      @click="goToLoginPage()"
+      small
+      class="btn btn-block fa-lg mt-1 mb-3 ml-5"
+      style="background-color: #6946dd; color: #fff"
+    >
+      Click to Login Page
+    </v-btn>
+  </div>
 </template>
 
 <script>
@@ -18,6 +28,12 @@ export default {
     //this.test();
   },
   methods: {
+    goToLoginPage() {
+      this.$axios.get(`/logout`).then(({ res }) => {
+        this.$auth.logout();
+        this.$router.push(`/login`);
+      });
+    },
     verifyToken() {
       if (this.$route.query.email) {
         this.email = this.$route.query.email;
