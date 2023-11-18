@@ -1200,21 +1200,22 @@ export default {
       if (leaveGroupId == "") {
         leaveGroupId = this.$auth.user.employee.leave_group_id;
       }
-
-      let options = {
-        params: {
-          per_page: 1000,
-          company_id: this.$auth.user.company_id,
-          employee_id: this.$auth.user.employee.id,
-        },
-      };
-      this.$axios
-        .get("leave_groups/" + leaveGroupId, options)
-        .then(({ data }) => {
-          //  this.dialogLeaveGroup = true;
-          this.DialogLeaveGroupInfo = data;
-          this.DialogLeavesList = data[0].leave_count;
-        });
+      if (leaveGroupId) {
+        let options = {
+          params: {
+            per_page: 1000,
+            company_id: this.$auth.user.company_id,
+            employee_id: this.$auth.user.employee.id,
+          },
+        };
+        this.$axios
+          .get("leave_groups/" + leaveGroupId, options)
+          .then(({ data }) => {
+            //  this.dialogLeaveGroup = true;
+            this.DialogLeaveGroupInfo = data;
+            this.DialogLeavesList = data[0].leave_count;
+          });
+      }
     },
     gotoDialogPage(item) {
       this.DialogEmployeesData = item.employees;
@@ -1269,17 +1270,19 @@ export default {
       });
     },
     getLeaveTypesByGroupId(leaveGroupId) {
-      let options = {
-        params: {
-          per_page: 1000,
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      this.$axios
-        .get("leave_groups/" + leaveGroupId, options)
-        .then(({ data }) => {
-          this.leaveTypes = data[0].leave_count;
-        });
+      if (leaveGroupId) {
+        let options = {
+          params: {
+            per_page: 1000,
+            company_id: this.$auth.user.company_id,
+          },
+        };
+        this.$axios
+          .get("leave_groups/" + leaveGroupId, options)
+          .then(({ data }) => {
+            this.leaveTypes = data[0].leave_count;
+          });
+      }
     },
 
     clearFilters() {
