@@ -133,12 +133,12 @@
         <v-icon>mdi-logout</v-icon>
       </v-btn> -->
     </v-app-bar>
-    <v-main>
+    <v-main class="pb-0">
       <v-container style="background-color: #f4f5fa !important">
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
+    <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
         <v-list-item @click.native="right = !right">
           <v-list-item-action>
@@ -147,12 +147,7 @@
           <v-list-item-title>Switch drawer (click me)</v-list-item-title>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
-    <v-footer :absolute="!fixed" app>
-      <!-- {{ (locationData && locationData.name) || "Getting location..." }}
-      <Location @location="(e) => (locationData = e)" /> -->
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+    </v-navigation-drawer> -->
   </v-app>
 </template>
 
