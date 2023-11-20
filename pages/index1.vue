@@ -302,10 +302,17 @@ export default {
           params: {
             company_id: this.company_id,
             UserID: this.UserID,
+            from_date: this.getFormattedDate(),
+            to_date: this.getFormattedDate(),
           },
         })
         .then(({ data }) => {
           // if (data.data && data.data.length && (data.data[0].log_type == "in" ||data.data[0].log_type == "auto")) {
+          if (!data?.data?.length) {
+            this.log_type = "in";
+            this.puching_image = "/C-IN.png";
+            return;
+          }
           if (
             data?.data?.length &&
             ["in", "auto"].includes(data.data[0].log_type)
