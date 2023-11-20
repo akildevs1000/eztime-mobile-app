@@ -1,8 +1,8 @@
 <template>
   <div>
-    <!-- <v-alert  v-if="!shift_type_id" class="red" dark dense flat>
+    <v-alert v-if="!shift_type_id" class="red lighten-2" dark dense flat>
       <div class="">Your are not schedule yet</div>
-    </v-alert> -->
+    </v-alert>
 
     <v-row>
       <v-col cols="5">
@@ -305,7 +305,11 @@ export default {
           },
         })
         .then(({ data }) => {
-          if (data.data && data.data.length && data.data[0].log_type == "in") {
+          // if (data.data && data.data.length && (data.data[0].log_type == "in" ||data.data[0].log_type == "auto")) {
+          if (
+            data?.data?.length &&
+            ["in", "auto"].includes(data.data[0].log_type)
+          ) {
             this.log_type = "out";
             this.puching_image = "/C-OUT.png";
             this.initialPunch = false;
