@@ -339,6 +339,14 @@ export default {
       }, 60 * 1000);
     },
     submit() {
+      if (this.lockPunchTime()) {
+        this.dialog = true;
+        this.message = `You can only punch after your last puch time (${this.lastLog.time})`;
+        this.response_image = "/fail.png";
+        setTimeout(() => (this.dialog = false), 3000);
+        return;
+      }
+
       if (this.buttonLocked) {
         this.dialog = true;
         this.message = "Next Clocking allowed after 1 minute only";
@@ -351,6 +359,13 @@ export default {
       this.processLog();
     },
 
+    lockPunchTime() {
+      if (!this.lastLog) return false;
+      return (
+        new Date() <
+        new Date(`${this.lastLog.edit_date}T${this.lastLog.time}:00`)
+      );
+    },
     processLog() {
       let payload = {
         UserID: this.UserID,
