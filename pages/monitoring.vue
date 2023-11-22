@@ -256,7 +256,7 @@ export default {
         status_id: 1,
         function: "ignore",
         utc_time_zone: "ignore",
-        device_type: "auto",
+        device_type: "Mobile",
         ip: "0.0.0.0",
         port: "0000",
       };

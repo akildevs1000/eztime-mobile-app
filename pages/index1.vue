@@ -95,8 +95,8 @@
                     <v-img
                       :src="response_image"
                       alt="Avatar"
-                      height="50px"
-                      width="50px"
+                      height="150px"
+                      width="150px"
                       style="display: inline-block"
                     ></v-img>
                   </p>
@@ -462,7 +462,7 @@ export default {
         status_id: 1,
         function: "ignore",
         utc_time_zone: "ignore",
-        device_type: "auto",
+        device_type: "Mobile",
         ip: "0.0.0.0",
         port: "0000",
       };
