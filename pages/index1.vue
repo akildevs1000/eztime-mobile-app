@@ -83,11 +83,16 @@
             <img :src="puching_image" alt="loading..." @click="submit" />
           </v-avatar>
           <div class="text-center">
-            <v-dialog v-model="dialog" width="500">
-              <v-card>
-                <v-toolbar flat dense>
+            <v-dialog
+              class="remove-transparent-bg"
+              style="box-shadow: none"
+              v-model="dialog"
+              width="500"
+            >
+              <v-card style="background: none">
+                <v-toolbar style="background: none" flat dense>
                   <v-spacer></v-spacer>
-                  <v-icon @click="dialog = false">mdi-close</v-icon>
+                  <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
                 </v-toolbar>
 
                 <v-card-text>
@@ -95,14 +100,14 @@
                     <v-img
                       :src="response_image"
                       alt="Avatar"
-                      height="150px"
-                      width="150px"
+                      height="125px"
+                      width="125px"
                       style="display: inline-block"
                     ></v-img>
                   </p>
-                  <p class="text-center">
-                    {{ message }}
-                  </p>
+                  <!-- <p class="text-center">
+                      {{ message }}
+                    </p> -->
                 </v-card-text>
               </v-card>
             </v-dialog>
@@ -133,11 +138,11 @@
       <v-col cols="12">
         <div class="error--text" v-if="locationError">{{ locationError }}</div>
         <!-- <div v-else>
-      <b>Current Location:</b>
-      <div>
-        {{ locationData && locationData.display_name }}
-      </div>
-    </div> -->
+        <b>Current Location:</b>
+        <div>
+          {{ locationData && locationData.display_name }}
+        </div>
+      </div> -->
       </v-col>
       <v-col
         cols="11"
@@ -612,3 +617,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.v-dialog.v-dialog--active {
+  box-shadow: none !important;
+}
+</style>

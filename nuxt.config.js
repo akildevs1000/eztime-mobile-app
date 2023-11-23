@@ -11,7 +11,7 @@ export default {
       { hid: "description", name: "description", content: "" },
       { name: "format-detection", content: "telephone=no" },
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    link: [{ rel: "icon", type: "image/png", href: "/favicon.png" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -86,7 +86,7 @@ export default {
       lang: "en",
     },
     icon: {
-      source: "static/android-chrome-192x192.png", // Path to your app icon
+      source: "static/favicon.png", // Path to your app icon
     },
   },
 
