@@ -543,3 +543,8 @@ export default {
   components: { Calender },
 };
 </script>
+<style>
+.v-dialog.v-dialog--active {
+  box-shadow: none !important;
+}
+</style>
