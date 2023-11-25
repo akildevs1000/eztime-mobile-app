@@ -163,7 +163,7 @@
           >
         </template>
         <template v-slot:item.time_in="{ item }">
-          {{ item.time_in }} - {{ item.time_out }}
+          {{ item.time_in_display }} - {{ item.time_out_display }}
         </template>
 
         <template v-slot:item.phone_number="{ item }">
@@ -221,7 +221,7 @@
         :color="getRelatedColor(item)"
         elevation="2"
       >
-        <v-row class="100%" no-gutters>
+        <v-row  class="100%" no-gutters>
           <v-col cols="3">
             <v-img
               style="
@@ -248,7 +248,7 @@
             </div>
             <div>
               <v-icon size="12">mdi-clock-outline</v-icon>
-              <span>{{ item.time_in }} - {{ item.time_out }}</span>
+              <span>{{ item.time_in_display }} - {{ item.time_out_display }}</span>
             </div>
             <div>
               <v-icon size="12">mdi-briefcase-account-outline</v-icon>
@@ -544,7 +544,7 @@ export default {
         },
       };
       this.$axios.get(this.endpoint, options).then(({ data }) => {
-        this.data = data.data;
+        this.data = data.data.filter(e => e.host);
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
