@@ -287,10 +287,10 @@
 
     <div class="text-center">
       <v-dialog v-model="dialog" width="500">
-        <v-card>
-          <v-toolbar flat dense>
+        <v-card style="background: none">
+          <v-toolbar style="background: none" flat dense>
             <v-spacer></v-spacer>
-            <v-icon @click="dialog = false">mdi-close</v-icon>
+            <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
           </v-toolbar>
 
           <v-card-text>
@@ -298,15 +298,10 @@
               <v-img
                 :src="response_image"
                 alt="Avatar"
-                height="50px"
-                width="50px"
+                height="125px"
+                width="125px"
                 style="display: inline-block"
               ></v-img>
-              <!-- <v-icon v-if="status_id == 1" color="green">mdi-check</v-icon>
-              <v-icon v-else-if="status_id == 2" color="red">mdi-cancel</v-icon> -->
-            </p>
-            <p class="text-center">
-              {{ message }}
             </p>
           </v-card-text>
         </v-card>
@@ -495,14 +490,16 @@ export default {
             setTimeout(() => (this.dialog = false), 3000);
             return;
           }
-          this.message = "Your clocking has been recorded successfully";
           if (status_id == 2) {
             this.response_image = "/success.png";
+            this.message = " Visitor status has been Approved.";
           } else {
             this.response_image = "/fail.png";
+            this.message = " Visitor status has been Rejected.";
           }
+
           this.dialog = true;
-          this.message = data.message;
+
           this.getDataFromApi();
         });
     },
