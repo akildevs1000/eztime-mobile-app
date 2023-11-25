@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-card elevation="1" class="mt-2" style="min-height: 500px">
-      <v-toolbar class="mb-2 popup_background" dense flat>
+      <v-toolbar
+        v-if="$store.state.isDesktop"
+        class="mb-2 popup_background"
+        dense
+        flat
+      >
         <v-toolbar-title>
           <span style="color: black" class="page-title-display">
             Visitor Requests</span
@@ -33,14 +38,18 @@
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn> -->
         <v-spacer></v-spacer>
+      </v-toolbar>
+      <v-container class="pb-5" v-else>
         <Calender
+          class="pa-1"
           @filter-attr="filterAttr"
           :defaultFilterType="1"
           :height="'40px'"
+          width="100%"
           :default_date_from="from_date"
           :default_date_to="to_date"
         />
-      </v-toolbar>
+      </v-container>
       <v-data-table
         v-if="$store.state.isDesktop"
         :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
@@ -194,13 +203,9 @@
         </template>
       </v-data-table>
       <v-alert
+        class="py-0 ma-0"
         v-else
-        style="
-          height: 140px;
-          padding-top: 5px;
-          padding-bottom: 0px;
-          font-size: 14px;
-        "
+        style="font-size: 12px"
         v-for="(item, index) in data"
         :key="index"
         border="left"
@@ -208,74 +213,71 @@
         :color="getRelatedColor(item)"
         elevation="2"
       >
-        <v-row class="100%" style="margin: auto">
-          <v-col cols="3" style="padding: 0px">
+        <v-row class="100%" no-gutters>
+          <v-col cols="3">
             <v-img
               style="
+                margin-top: 10px;
+                width: 67px;
                 border-radius: 2%;
-                width: 100px;
-                max-width: 95%;
-                min-height: 100px;
-                height: auto;
                 border: 1px solid #ddd;
               "
               :src="item.logo ? item.logo : '/no-profile-image.jpg'"
             >
             </v-img>
           </v-col>
-          <v-col cols="9" style="padding-left: 5px; padding-top: 0px">
-            <span cols="8">
+          <v-col cols="8">
+            <span class="primary--text">
               <b>{{ item.full_name }} </b></span
             >
-            <span
-              cols="4"
-              style="padding-left: 0px; padding-right: 5px; float: right"
-            >
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list width="120" dense>
-                  <v-list-item @click="updateStatus(item.id, 2)">
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="green" small> mdi-check </v-icon>
-                      Approve
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="updateStatus(item.id, 3)">
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="red" small> mdi-cancel</v-icon>
-                      Reject
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </span>
 
             <div>
-              <v-icon size="20">mdi-calendar-range</v-icon>
-              {{ item.from_date_display }}
+              <v-icon size="12">mdi-calendar-range</v-icon>
+              <span>{{ item.from_date_display }}</span>
               <span v-if="item.to_date_display != item.from_date_display">
                 to {{ item.to_date_display }}</span
               >
             </div>
             <div>
-              <v-icon size="20">mdi-clock-outline</v-icon>
-              {{ item.time_in }} - {{ item.time_out }}
+              <v-icon size="12">mdi-clock-outline</v-icon>
+              <span>{{ item.time_in }} - {{ item.time_out }}</span>
             </div>
             <div>
-              <v-icon size="20">mdi-briefcase-account-outline</v-icon>
-              {{ item.purpose.name }}
+              <v-icon size="12">mdi-briefcase-account-outline</v-icon>
+              <span> {{ item.purpose.name }}</span>
             </div>
             <div>
-              <v-icon size="20">mdi-cellphone</v-icon>
-              {{ item.phone_number }}
+              <v-icon size="12">mdi-cellphone</v-icon>
+              <span> {{ item.phone_number }}</span>
             </div>
             <div v-if="item.email">
-              <v-icon size="20">mdi-email</v-icon> {{ item.email }}
+              <v-icon size="12">mdi-email</v-icon>
+              <span> {{ item.email }}</span>
             </div>
+          </v-col>
+
+          <v-col cols="1" class="pa-1">
+            <v-menu right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list width="120" dense>
+                <v-list-item @click="updateStatus(item.id, 2)">
+                  <v-list-item-title style="cursor: pointer">
+                    <v-icon color="green" small> mdi-check </v-icon>
+                    Approve
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="updateStatus(item.id, 3)">
+                  <v-list-item-title style="cursor: pointer">
+                    <v-icon color="red" small> mdi-cancel</v-icon>
+                    Reject
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
       </v-alert>
@@ -501,6 +503,8 @@ export default {
           this.dialog = true;
 
           this.getDataFromApi();
+
+          setTimeout(() => (this.dialog = false), 3000);
         });
     },
     getRelatedColor(item) {
