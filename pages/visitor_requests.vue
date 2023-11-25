@@ -24,6 +24,15 @@
             >mdi mdi-filter</v-icon
           >
         </v-btn>
+        <v-spacer></v-spacer>
+        <Calender
+          class="pa-1"
+          @filter-attr="filterAttr"
+          :defaultFilterType="1"
+          :height="'40px'"
+          :default_date_from="from_date"
+          :default_date_to="to_date"
+        />
         <!-- <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }"> -->
         <!-- <v-btn
@@ -37,7 +46,6 @@
             >
               <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn> -->
-        <v-spacer></v-spacer>
       </v-toolbar>
       <v-container class="pb-5" v-else>
         <Calender
