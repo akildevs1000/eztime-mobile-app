@@ -1,11 +1,11 @@
 <template>
-  <div class="loginbg" style="background-color: #eeeeee; height: 100%">
+  <div class="mobileBGColor111 bg-body">
     <v-dialog persistent v-model="dialogWhatsapp" width="600px">
       <v-card>
         <v-card-title
           dense
           class="white--text"
-          style="background-color: #6946dd"
+          style="background-color: #6946dd; color: #fff !important"
         >
           Whatsapp Verification
           <v-spacer></v-spacer>
@@ -19,7 +19,7 @@
               <div class="card-body p-md-5 mx-md-4">
                 <v-row class="pb-5">
                   <v-col md="12" cols="12" class="text-center">
-                    <h2>EzTime</h2>
+                    <h2>MyTime2Cloud</h2>
                   </v-col>
                 </v-row>
 
@@ -31,9 +31,10 @@
                   We sent a verification code to your mobile number. Enter the
                   Code from the mobile in the filed below
                 </p>
-                <h4>
+                <h2 style="font-size: 30px">
                   {{ maskMobileNumber }}
-                </h4>
+                </h2>
+                <br />
                 <!-- <v-form ref="form" method="post" v-model="whatsappFormValid" lazy-validation> -->
                 <label
                   for=""
@@ -77,150 +78,242 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogForgotPassword" width="400px" height="500px">
+      <v-card>
+        <v-card-title dense class="popup_background">
+          Forgot Password
+          <v-spacer></v-spacer>
+          <v-icon @click="dialogForgotPassword = false" outlined dark>
+            mdi mdi-close-circle
+          </v-icon>
+        </v-card-title>
+        <v-card-text>
+          <ForgotPassword></ForgotPassword>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-snackbar v-model="snackbar" top="top" color="error" elevation="24">
+      {{ snackbarMessage }}
+    </v-snackbar>
 
-    <section class="h-100 gradient-form" style="background-color: #eee">
-      <div class="container py-0 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-xl-8 login2">
-            <div style="" class="login1">
-              <div class="card1 rounded-3 text-black">
-                <div class="row g-0">
-                  <div
-                    class="col-lg-6 col-md-12 col-sm-12 col-lg-6"
-                    style="background-color: #6946dd"
-                  >
-                    <div class="text-center" style="height: 100px"></div>
-                    <div class="card-body login3" style="color: #fff">
-                      <h2 class="pb-7" style="font-size: 2em">
-                        Welcome To EzTime
-                      </h2>
-
-                      <v-form
-                        ref="form"
-                        method="post"
-                        v-model="valid"
-                        lazy-validation
-                        autocomplete="off"
-                      >
-                        <div class="form-outline">
-                          <v-text-field
-                            dark
-                            color="white--text"
-                            rounded
-                            v-model="email"
-                            :rules="emailRules"
-                            :hide-details="false"
-                            id="form2Example11"
-                            placeholder="username"
-                            autofill="false"
-                            required
-                            dense
-                            outlined
-                            type="email"
-                            prepend-inner-icon="mdi-account"
-                            autocomplete="false"
-                            aria-autocomplete="none"
-                          ></v-text-field>
-                        </div>
-
-                        <div class="form-outline">
-                          <v-text-field
-                            dark
-                            color="white--text"
-                            rounded
-                            dense
-                            outlined
-                            :rules="passwordRules"
-                            autocomplete="off"
-                            placeholder="Password"
-                            prepend-inner-icon="mdi-lock  "
-                            :append-icon="
-                              show_password ? 'mdi-eye' : 'mdi-eye-off'
-                            "
-                            :type="show_password ? 'text' : 'password'"
-                            v-model="password"
-                            class="input-group--focused text-white"
-                            @click:append="show_password = !show_password"
-                          ></v-text-field>
-                        </div>
-
-                        <v-row>
-                          <v-col cols="6" style="padding: 0px">
-                            <v-checkbox color="white--text" value="red" dark>
-                              <template v-slot:label>
-                                <label style="color: #fff; font-size: 12px"
-                                  >Remember Password</label
-                                >
-                              </template>
-                            </v-checkbox>
-                          </v-col>
-                          <v-col
-                            cols="6"
-                            class="text-right pt-4"
-                            style="padding: 0px"
-                          >
-                            <nuxt-link
-                              class="text-white"
-                              to="#"
-                              style="font-size: 12px"
-                              >Forgot password?</nuxt-link
-                            >
-                          </v-col>
-                        </v-row>
-
-                        <div class="text-center pt-1 mb-5 pb-1">
-                          <span
-                            v-if="msg"
-                            class="error--text"
-                            style="color: #ff9e86"
-                          >
-                            {{ msg }}
-                          </span>
-                          <v-btn
-                            :loading="loading"
-                            @click="loginWithOTP()"
-                            class="btn btn-black btn-block white mt-1 mb-3 p-4 btntext"
-                            style="width: 100%; height: 48px"
-                          >
-                            Login
-                          </v-btn>
-                        </div>
-                      </v-form>
-                      <div class="text-center white--text text-white">
-                        Don't Have an Account?. Contact Admin
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="col-md-12 col-sm-12 col-lg-6 align-items-center bgimage d-none d-sm-flex"
-                  ></div>
-                </div>
-              </div>
+    <v-row class="" style="height: 100%">
+      <v-col xs="12" sm="12" md="12" lg="5" style="padding: 0px">
+        <div
+          class="card-body p-md-5 mx-md111111-4"
+          style="
+            padding: 3rem !important;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+          "
+        >
+          <div style="min-height: 100px">
+            <div style="width: 100%" class="text-center">
+              <v-img
+                class="text-center"
+                style="
+                  width: 200px;
+                  padding: 0px;
+                  margin: auto;
+                  text-align: center;
+                "
+                src="/logo22.png"
+              ></v-img>
             </div>
+            <h3 class="pb-7 pt-15">
+              Welcome To
+              <span style="font-size: 20px"> Mytime2Cloud </span>
+            </h3>
           </div>
+          <div>
+            <v-form
+              ref="form"
+              method="post"
+              v-model="valid"
+              lazy-validation
+              autocomplete="off"
+            >
+              <div class="form-outline">
+                <v-text-field
+                  role="presentation"
+                  label="Email"
+                  v-model="credentials.email"
+                  :hide-details="false"
+                  id="form2Example11"
+                  autofill="false"
+                  required
+                  dense
+                  outlined
+                  type="email"
+                  prepend-inner-icon="mdi-account"
+                  append-icon="mdi-at"
+                  autocomplete="off"
+                  aria-autocomplete="none"
+                ></v-text-field>
+              </div>
+
+              <div class="form-outline">
+                <v-text-field
+                  role="presentation"
+                  label="Password"
+                  dense
+                  outlined
+                  autocomplete="off"
+                  prepend-inner-icon="mdi-lock  "
+                  :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show_password ? 'text' : 'password'"
+                  v-model="credentials.password"
+                  class="input-group--focused"
+                  @click:append="show_password = !show_password"
+                ></v-text-field>
+              </div>
+
+              <v-row>
+                <v-col md="6">
+                  <!-- <v-checkbox value="red" disabled>
+                    <template v-slot:label>
+                      <label style="">Remember&nbsp;Password</label>
+                    </template>
+                  </v-checkbox> -->
+                </v-col>
+                <v-col md="6" class="text-right pt-6">
+                  <!-- <nuxt-link to="/reset-password"
+                                  >Forgot password?</nuxt-link
+                                > -->
+                  <v-btn
+                    text
+                    @click="openForgotPassword"
+                    style="font-weight: normal"
+                    >Forgot password?</v-btn
+                  >
+                </v-col>
+              </v-row>
+
+              <div class="text-center pt-1 mb-5 pb-1">
+                <span v-if="msg" class="error--text111" style="color: #ff9f87">
+                  {{ msg }}
+                </span>
+                <v-btn
+                  :loading="loading"
+                  @click="loginWithOTP()"
+                  class="btn primary btn-black btn-block mt-1 mb-3 p-4 btntext"
+                  style="width: 100%; height: 48px"
+                >
+                  Login
+                </v-btn>
+              </div>
+            </v-form>
+          </div>
+          <div class="text-center">Don't Have an Account?. Contact Admin</div>
+
+          <v-row class="text-center" style="font-size: 13px">
+            <v-col class="pa-5">
+              For Technical Support :
+              <a
+                target="_blank"
+                href="https://wa.me/971529048025?text=Hello MyTime2Cloud. I need your support."
+                ><v-icon color="black">mdi-whatsapp</v-icon></a
+              >
+              <a
+                style="text-decoration: none; color: black"
+                href="tel:+971529048025"
+                >+971 52 904 8025</a
+              ></v-col
+            >
+          </v-row>
+          <v-row class="text-center" style="font-size: 13px">
+            <v-col class="pa-5">
+              <a
+                style="text-decoration: none; color: black"
+                href="mailto:support@mytime2cloud.com"
+                >support@mytime2cloud.com</a
+              ></v-col
+            >
+          </v-row>
         </div>
-      </div>
-    </section>
+      </v-col>
+      <v-col
+        xs="12"
+        sm="12"
+        md="12"
+        lg="7"
+        style=""
+        class="hide-on-mobile d-none d-lg-flex"
+      >
+        <div class="about-content">
+          <h3>About Mytime2Cloud</h3>
+          <div style="font-weight: 300">
+            MyTime2Cloud is an innovative and comprehensive platform
+            meticulously crafted to redefine how organizations approach
+            workforce management. By combining time attendance management with
+            facial recognition access control, MyTime2Cloud simplifies and
+            provides a streamlined experience for both employees and HR
+            professionals.<br />
+            Customization and Reporting: The platform offers customizable
+            settings to fit the specific needs of different organizations. It
+            generates comprehensive reports and analytics based on attendance
+            data, enabling informed decision-making and efficient resource
+            allocation.
+          </div>
+          <h3 class="pt-10">Features</h3>
+          <ul style="font-weight: 300">
+            <li>Employees management</li>
+
+            <li>Time Attendance</li>
+            <li>Leave management</li>
+            <li>Payroll management</li>
+            <li>Access Controll</li>
+            <li>Visitor management</li>
+            <li>Face Recognisation Integration</li>
+            <li>Custom Reports</li>
+            <li>Custom Dashboards</li>
+            <li>Email and Whatsapp Notifications</li>
+          </ul>
+          <v-row class="text-left pt-10">
+            <v-col class="pa-5">
+              <h3>Technical Support</h3>
+
+              <a
+                style="font-weight: 300"
+                target="_blank"
+                href="https://wa.me/971529048025?text=Hello MyTime2Cloud. I need your support."
+                ><v-icon color="white">mdi-whatsapp</v-icon></a
+              >
+
+              <a
+                style="color: #fff; text-decoration: none; font-weight: 300"
+                href="tel:+971529048025"
+                >+971 52 904 8025</a
+              >
+              <br />
+              <a
+                style="text-decoration: none; color: #fff; font-weight: 300"
+                href="mailto:support@mytime2cloud.com"
+                >support@mytime2cloud.com</a
+              >
+            </v-col>
+          </v-row>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
+import ForgotPassword from "../components/ForgotPassword.vue";
 export default {
-  // components: { VueRecaptcha },
-
   layout: "login",
+  components: { ForgotPassword },
   data: () => ({
-    // sitekey: "6Lf1wYwhAAAAAOMJYvI73SgjCSrS_OSS2kDJbVvs", // i am not robot
-    // reCaptcha: null,
-    // showGRC: false,
+    dialogForgotPassword: false,
     maskMobileNumber: "",
     whatsappFormValid: true,
     logo: "/ideaHRMS-final-blue.svg",
     valid: true,
     loading: false,
     snackbar: false,
-    email: "francisgill1002@gmail.com",
-    password: "secret",
+    snackbarMessage: "",
+
     show_password: false,
     msg: "",
     requiredRules: [(v) => !!v || "Required"],
@@ -234,76 +327,31 @@ export default {
     dialogWhatsapp: false,
     otp: "",
     userId: "",
+    credentials: {
+      email: "",
+      password: "",
+    },
   }),
-
-  created() {},
+  created() {
+    this.verifyToken();
+  },
   mounted() {
-    if (window.innerWidth >= 600) {
-      this.$store.commit("isDesktop", true);
-    } else {
-      this.$store.commit("isDesktop", false);
-    }
-    // this.verifyToken();
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000 * 60 * 15); //15 minutes
   },
   methods: {
-    // verifyToken_old() {
-    //   // alert(this.$route.query.token);
-    //   if (this.$route.query.token) {
-    //     try {
-    //       let token = this.$route.query.token;
+    openForgotPassword() {
+      this.dialogForgotPassword = true;
+    },
+    verifyToken() {
+      if (this.$route.query.email && this.$route.query.password) {
+        this.email = this.$route.query.email;
+        this.password = this.$route.query.password;
 
-    //       console.log("token", token);
-
-    //       token = token.replace(":" + process.env.SECRET_PASS_PHRASE, "");
-    //       token = token; //this.$crypto.decrypt1(token);
-
-    //       if (token != "" && token != "undefined") {
-    //         this.$store.commit("login_token", token);
-    //         let Authorization1 = "Authorization";
-    //         let options = {
-    //           headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: "Bearer " + token,
-    //           },
-    //         };
-    //         console.log("options", options);
-    //         this.$axios
-    //           .get(`me`, options, {})
-    //           .then(({ data }) => {
-    //             if (!data.user) {
-    //               console.log("Loign page 1");
-    //               alert("Invalid Login Details. Please try again");
-    //               this.$router.push(`/login`);
-
-    //               return false;
-    //             } else {
-    //               this.$auth.setUser(data.user);
-    //               console.log(this.$auth.user);
-    //               console.log(this.$auth.user.user_type);
-
-    //               console.log("Test");
-    //               this.$auth.setUserToken(true);
-    //               this.$router.push(`/dashboard`);
-    //               return false;
-
-    //               if (this.$store.state.isDesktop) {
-    //                 // window.location.href = process.env.APP_URL + "/dashboard";
-    //                 this.$router.push(`/dashboard`);
-    //                 return false;
-    //               } else {
-    //                 // window.location.href = process.env.APP_URL + "/";
-    //                 this.$router.push(`/`);
-    //                 return false;
-    //               }
-    //             }
-    //           })
-    //           .catch((err) => console.log(err));
-    //       } else {
-    //         this.$router.push(`/login`);
-    //       }
-    //     } catch (e) {}
-    //   }
-    // },
+        this.loginWithOTP();
+      }
+    },
     hideMobileNumber(inputString) {
       // Check if the input is a valid string
       if (typeof inputString !== "string" || inputString.length < 4) {
@@ -311,7 +359,7 @@ export default {
       }
 
       // Use a regular expression to match all but the last 3 digits
-      var regex = /^(.*)(\d{3})$/;
+      var regex = /^(.*)(\d{5})$/;
       var matches = inputString.match(regex);
 
       if (matches) {
@@ -350,25 +398,17 @@ export default {
     },
 
     loginWithOTP() {
-      this.loading = true;
-      //(this.$refs.form.validate());
-      //if (this.$refs.form.validate())
-      {
-        let credentials = {
-          email: this.email,
-          password: this.password,
-        };
-        this.$store.commit("email", this.email);
-        this.$store.commit("password", this.password);
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        this.$store.commit("email", this.credentials.email);
+        this.$store.commit("password", this.credentials.password);
 
-        let payload = credentials;
-
-        //geenrate OTP
         this.$axios
-          .post("loginwith_otp", payload)
+          .post("loginwith_otp", this.credentials)
           .then(({ data }) => {
             if (!data.status) {
-              alert("Login Details: " + data.message);
+              //alert("OTP Verification: " + data.message);
+              alert("Invalid Login Deails");
             } else if (data.user_id) {
               if (data.enable_whatsapp_otp == 1) {
                 this.dialogWhatsapp = true;
@@ -384,35 +424,37 @@ export default {
                 this.login();
               }
             } else {
-              alert("Login Details: " + data.message);
+              this.snackbar = true;
+              this.snackbarMessage = "Invalid Login Details";
+              //alert("Invalid Login Deails");
             }
           })
           .catch((err) => console.log(err));
+      } else {
+        this.snackbar = true;
+        this.snackbarMessage = "Invalid Emaild and Password";
       }
-
       this.loading = false;
     },
     login() {
-      // this.showGRC = this.reCaptcha ? false : true;
-
-      // if (this.$refs.form.validate() && this.reCaptcha) {
       if (this.$refs.form.validate()) {
+        this.$store.commit("email", this.credentials.email);
+        this.$store.commit("password", this.credentials.password);
+
         this.msg = "";
         this.loading = true;
-        // const token = await this.$recaptcha.getResponse();
-        let credentials = {
-          email: this.email,
-          password: this.password,
-        };
-
         this.$auth
-          .loginWith("local", { data: credentials })
+          .loginWith("local", { data: this.credentials })
           .then(({ data }) => {
-            let token = data.token; //this.$crypto.encrypt1(data.token);
-            this.$store.commit("login_token", token);
+            if (
+              this.$auth.user.role_id == 0 &&
+              this.$auth.user.user_type == "employee"
+            ) {
+              window.location.href = process.env.EMPLOYEE_APP_URL;
+              return "";
+            }
 
-            if (this.$store.state.isDesktop) this.$router.push(`/dashboard`);
-            else this.$router.push(`/`);
+            setTimeout(() => (this.loading = false), 2000);
           })
           .catch(({ response }) => {
             if (!response) {
@@ -422,124 +464,85 @@ export default {
             this.msg = status == 422 ? data.message : statusText;
             setTimeout(() => (this.loading = false), 2000);
           });
+      } else {
+        this.snackbar = true;
+        this.snackbarMessage = "Invalid Emaild and Password";
       }
     },
   },
 };
 </script>
+<style>
+body,
+html {
+  height: 100%;
+}
+
+.bg-body {
+  padding-top: 5%;
+
+  height: 100%;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
+
 <style scoped>
-.v-text-field--outlined >>> fieldset {
-  border-color: #fff;
-}
-
-.v-list__group__header__prepend-icon .v-icon {
-  color: red;
-}
-
-.v-input__icon {
-  color: #fff !important;
-}
-
-.hidden-sm-and-down .v-icon {
-  color: white !important;
-}
-
-.v-text-field--rounded {
-  border-radius: 10px;
-}
-
-.text-white {
+.about-content {
+  padding-left: 30%;
+  padding-top: 1%;
   color: #fff;
-}
 
-.v-label {
-  color: #fff !important;
+  padding-right: 15%;
 }
-
-.v-btn {
-  text-transform: inherit !important;
-}
-
-.v-input__control .v-label {
-  color: red;
-}
-
 .btntext {
   color: #6946dd;
   font-weight: bold;
   font-size: 22px;
 }
-
-/* fieldset {
-  border-radius: 10px;
-  ;
-} */
-/*
-i {
-  color: #FFF;
-} */
-
-@media (min-width: 768px) {
+@media (max-width: 1200px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+@media (min-width: 1300px) {
+  .bg-body {
+    background-image: url("../static/login/bgimage3.png") !important;
+  }
   .gradient-form {
     height: 100vh !important;
   }
+
+  .bgimage2 {
+    background-color: #fff;
+    background-image: url("../static/login/bgimage.png");
+    background-size: cover;
+  }
+
+  .loginForm {
+    width: 100%;
+    position: absolute;
+    top: 10%;
+    left: 5%;
+  }
 }
-@media screen and (max-width: 480px) {
+@media (max-width: 700px) {
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .loginForm {
+    width: 100%;
+    position: absolute;
+    top: 10%;
+    left: 0%;
+  }
   body {
-    background-color: #6946dd !important;
+    width: 100%;
+    max-width: 100%;
+    background-color: #6946dd;
   }
 }
-@media (min-width: 769px) {
-  .primary {
-    background: #5fafa3 !important;
-    /* #5fafa3 */
-    border-top-right-radius: 0.3rem;
-    border-bottom-right-radius: 0.3rem;
-  }
-}
-input:-webkit-autofill::webkit-input-placeholder {
-  background-color: red;
-}
-input:-webkit-autofill {
-  -webkit-text-fill-color: red !important;
-  background-color: red !important;
-}
-.bgimage {
-  /* background-image: url(../static/login2.jpg) no-repeat center center fixed;
-  ; */
-
-  background-image: url("../static/login2.jpg");
-  background-size: cover;
-
-  min-height: 600px;
-}
-/*
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #6946dd;
-  background-color: #6946dd;
-}
-
-input:-internal-autofill-selected {
-  appearance: menulist-button;
-  background-image: none !important;
-  background-color: -internal-light-dark(#6946dd, #6946dd) !important;
-  color: fieldtext !important;
-}
-input:-webkit-autofill,
-input:-webkit-autofill:focus {
-  transition: background-color 0s 600000s, color 0s 600000s;
-}
-input.my-input {
-  background-color: #6946dd !important;
-  background-image: none !important;
-  color: rgb(0, 0, 0) !important;
-}
-
-input.my-input:-internal-autofill-selected {
-  background-color: #6946dd !important;
-  background-image: none !important;
-  color: rgb(0, 0, 0) !important;
-} */
 </style>
