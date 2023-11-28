@@ -495,7 +495,7 @@ export default {
   mounted() {},
   async created() {
     this.loading = false;
-    this.company_id = this.$route.params.id;
+    this.company_id = 0;
     await this.getPurposes();
   },
 
