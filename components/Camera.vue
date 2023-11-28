@@ -1,8 +1,7 @@
 <template>
   <v-avatar size="200">
     <v-img v-show="isImageBox" :src="imageSrc" />
-    <video v-show="!isImageBox" ref="video" autoplay playsinline>
-    </video>
+    <video v-show="!isImageBox" ref="video" autoplay playsinline></video>
   </v-avatar>
 </template>
 
@@ -25,20 +24,28 @@ export default {
       this.videoStream = mediaStream;
     },
     async takePicture() {
-      const canvas = document.createElement("canvas");
+      const targetWidth = 200; // Desired width for the captured image
       const video = this.$refs.video;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+
+      // Create a canvas to capture the video frame
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = (video.videoHeight / video.videoWidth) * targetWidth;
+
+      // Calculate the height based on the video's aspect ratio
+
+      // Draw the resized video frame onto the canvas
       canvas
         .getContext("2d")
-        .drawImage(0, 0, canvas.videoWidth, canvas.videoHeight, 0, 0, 200, 200);
+        .drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvasElement.width, canvasElement.height;
+      // Convert the canvas content to a data URL with JPEG format
       this.imageSrc = canvas.toDataURL("image/jpeg");
-      this.$emit("imageSrc", this.imageSrc);
-    },
-  },
 
+      // Emit the captured image source
+      this.$emit("imageSrc", this.imageSrc);
+    }
+  },
   beforeDestroy() {
     if (this.videoStream) {
       this.videoStream.getTracks().forEach((track) => track.stop());
