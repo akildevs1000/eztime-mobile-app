@@ -1,8 +1,9 @@
 <template>
-    <v-avatar size="200">
-      <v-img v-show="isImageBox" :src="imageSrc" />
-      <video v-show="!isImageBox" ref="video" autoplay playsinline></video>
-    </v-avatar>
+  <v-avatar size="200">
+    <v-img v-show="isImageBox" :src="imageSrc" />
+    <video v-show="!isImageBox" ref="video" autoplay playsinline>
+    </video>
+  </v-avatar>
 </template>
 
 <script>
@@ -30,7 +31,9 @@ export default {
       canvas.height = video.videoHeight;
       canvas
         .getContext("2d")
-        .drawImage(video, 0, 0, canvas.width, canvas.height);
+        .drawImage(0, 0, canvas.videoWidth, canvas.videoHeight, 0, 0, 200, 200);
+
+      canvasElement.width, canvasElement.height;
       this.imageSrc = canvas.toDataURL("image/jpeg");
       this.$emit("imageSrc", this.imageSrc);
     },
