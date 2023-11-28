@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" sm="6" md="4" lg="6">
         <div class="text-center">
-          <TestCamera
+          <Camera
           style="border: 1px solid #6946dd"
           :isImageBox="isImageBox"
           class="mb-5"
