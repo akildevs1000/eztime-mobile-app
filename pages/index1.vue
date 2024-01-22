@@ -85,7 +85,7 @@
           <div class="text-center">
             <v-dialog
               class="remove-transparent-bg"
-              style="box-shadow: none"
+              style="box-shadow: none !important"
               v-model="dialog"
               width="500"
             >
