@@ -168,23 +168,19 @@
                 ></v-text-field>
               </div>
 
-              <v-row>
-                <v-col md="6">
-                  <!-- <v-checkbox value="red" disabled>
-                    <template v-slot:label>
-                      <label style="">Remember&nbsp;Password</label>
-                    </template>
-                  </v-checkbox> -->
+              <v-row no-gutters>
+                <v-col cols="6">
+                  <v-checkbox
+                    class="pa-0 ma-0"
+                    v-model="rememberMe"
+                    label="Remember Me"
+                  />
                 </v-col>
-                <v-col md="6" class="text-right pt-6">
-                  <!-- <nuxt-link to="/reset-password"
-                                  >Forgot password?</nuxt-link
-                                > -->
-                  <v-btn
-                    text
+                <v-col cols="6" class="text-right"  style="margin-top: 4px">
+                  <label
                     @click="openForgotPassword"
-                    style="font-weight: normal"
-                    >Forgot password?</v-btn
+                    class="v-label theme--light"
+                    >Forgot password?</label
                   >
                 </v-col>
               </v-row>
@@ -313,7 +309,7 @@ export default {
     loading: false,
     snackbar: false,
     snackbarMessage: "",
-
+    rememberMe: false,
     show_password: false,
     msg: "",
     requiredRules: [(v) => !!v || "Required"],
@@ -336,6 +332,16 @@ export default {
     this.verifyToken();
   },
   mounted() {
+    if (this.$localStorage.get("email")) {
+      this.credentials.email = this.$localStorage.get("email");
+    }
+    if (this.$localStorage.get("password")) {
+      this.credentials.password = this.$localStorage.get("password");
+    }
+
+    if (this.$localStorage.get("email") && this.$localStorage.get("password")) {
+      this.rememberMe = true;
+    }
     // setTimeout(() => {
     //   window.location.reload();
     // }, 1000 * 60 * 15); //15 minutes
@@ -398,6 +404,14 @@ export default {
     },
 
     loginWithOTP() {
+      if (this.rememberMe) {
+        this.$localStorage.set("email", this.credentials.email);
+        this.$localStorage.set("password", this.credentials.password);
+      } else {
+        this.$localStorage.remove("email");
+        this.$localStorage.remove("password");
+      }
+
       if (this.$refs.form.validate()) {
         this.loading = true;
         this.$store.commit("email", this.credentials.email);

@@ -3,7 +3,36 @@
     <v-alert v-if="!shift_type_id" class="red lighten-2" dark dense flat>
       <div class="">Your are not schedule yet</div>
     </v-alert>
+    <div class="text-center">
+      <v-dialog
+        class="remove-transparent-bg"
+        style="box-shadow: none !important"
+        v-model="dialog"
+        width="500"
+      >
+        <v-card style="background: none">
+          <v-toolbar style="background: none" flat dense>
+            <v-spacer></v-spacer>
+            <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
+          </v-toolbar>
 
+          <v-card-text>
+            <p class="text-center">
+              <v-img
+                :src="response_image"
+                alt="Avatar"
+                height="125px"
+                width="125px"
+                style="display: inline-block"
+              ></v-img>
+            </p>
+            <!-- <p class="text-center">
+                      {{ message }}
+                    </p> -->
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </div>
     <v-row>
       <v-col cols="5">
         <img style="width: 100%" :src="profile_pictrue" alt="Avatar" />
@@ -79,39 +108,12 @@
 
       <v-col cols="5" class="text-center">
         <div class="text-center mt-5">
-          <v-avatar size="150" class="">
-            <img :src="puching_image" alt="loading..." @click="submit" />
-          </v-avatar>
-          <div class="text-center">
-            <v-dialog
-              class="remove-transparent-bg"
-              style="box-shadow: none !important"
-              v-model="dialog"
-              width="500"
-            >
-              <v-card style="background: none">
-                <v-toolbar style="background: none" flat dense>
-                  <v-spacer></v-spacer>
-                  <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
-                </v-toolbar>
-
-                <v-card-text>
-                  <p class="text-center">
-                    <v-img
-                      :src="response_image"
-                      alt="Avatar"
-                      height="125px"
-                      width="125px"
-                      style="display: inline-block"
-                    ></v-img>
-                  </p>
-                  <!-- <p class="text-center">
-                      {{ message }}
-                    </p> -->
-                </v-card-text>
-              </v-card>
-            </v-dialog>
-          </div>
+          <img
+            style="width: 100%"
+            :src="puching_image"
+            alt="loading..."
+            @click="submit"
+          />
         </div>
       </v-col>
 
@@ -144,36 +146,36 @@
         </div>
       </div> -->
       </v-col>
-      <v-col
-        cols="11"
-        style="
-          background-color: rgb(226, 224, 224);
-          border-bottom: 1px solid rgb(199 198 198);
-        "
-      >
-        <div class="text-h5">Last Clocking</div>
-        <span class="">
-          {{ lastLog && lastLog.date }} {{ lastLog && lastLog.time }}
-        </span>
-
-        <div class="">
-          <b>{{ lastLog && lastLog.device && lastLog.gps_location }}</b>
-
-          <v-icon style="margin-top: -2%" color="green"
-            >mdi-map-marker-radius</v-icon
-          >
-        </div>
-      </v-col>
-      <v-col
-        @click="goToPage(`logs`)"
-        cols="1"
-        class="indigo text-center white--text d-flex align-center justify-center"
-      >
-        <span class="white--text" dark>
-          <v-icon dark>mdi-chevron-right</v-icon>
-        </span>
-      </v-col>
     </v-row>
+   
+    <v-footer app class="ma-0 pa-0" style="border-top:1px solid #dddddd;">
+      
+      <v-row no-gutters class="white">
+        <v-col cols="11" class="pl-2">
+          <div class="text-h5">Last Clocking</div>
+          <span class="">
+            {{ lastLog && lastLog.date }} {{ lastLog && lastLog.time }}
+          </span>
+
+          <div class="">
+            <b>{{ lastLog && lastLog.device && lastLog.gps_location }}</b>
+
+            <v-icon style="margin-top: -2%" color="green"
+              >mdi-map-marker-radius</v-icon
+            >
+          </div>
+        </v-col>
+        <v-col
+          @click="goToPage(`logs`)"
+          cols="1"
+          class="indigo text-center white--text d-flex align-center justify-center"
+        >
+          <span class="white--text" dark>
+            <v-icon dark>mdi-chevron-right</v-icon>
+          </span>
+        </v-col>
+      </v-row>
+    </v-footer>
   </div>
 </template>
 

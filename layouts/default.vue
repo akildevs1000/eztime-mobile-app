@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark style="background:#f4f5fa;">
     <!-- <v-navigation-drawer
       dark
       v-model="drawer"
