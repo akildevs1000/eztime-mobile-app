@@ -224,6 +224,27 @@ export default {
           color: "#9aa9b9",
           show_mobile_app: true,
         },
+        // {
+        //   icon: "mdi-apps",
+        //   title: "Option 2",
+        //   to: "/index2",
+        //   color: "#9aa9b9",
+        //   show_mobile_app: true,
+        // },
+        // {
+        //   icon: "mdi-apps",
+        //   title: "Option 3",
+        //   to: "/index3",
+        //   color: "#9aa9b9",
+        //   show_mobile_app: true,
+        // },
+        // {
+        //   icon: "mdi-apps",
+        //   title: "Option 4",
+        //   to: "/index4",
+        //   color: "#9aa9b9",
+        //   show_mobile_app: true,
+        // },
         {
           icon: "mdi-apps",
           title: "Dashboard",

@@ -1,11 +1,7 @@
 <template>
   <div>
-    <div class="text-center text-h6 mt-5">
-      {{ currentDate }}
-    </div>
-    <v-sheet class="text-h4 text-center">
-      {{ currentTime }}
-    </v-sheet>
+    <v-sheet> {{ currentDate }}</v-sheet>
+    <v-sheet> {{ currentTime }} </v-sheet>
   </div>
 </template>
 

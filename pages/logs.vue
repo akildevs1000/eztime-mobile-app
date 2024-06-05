@@ -1,30 +1,5 @@
 <template>
-  <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
-    <v-row justify="center">
-      <v-dialog v-model="generateLogsDialog" max-width="700px">
-        <v-card>
-          <v-card-title dark class="popup_background">
-            <span dense> Manual Log </span>
-            <v-spacer></v-spacer>
-            <v-icon dark @click="generateLogsDialog = false" outlined>
-              mdi mdi-close-circle
-            </v-icon>
-          </v-card-title>
-          <v-card-text>
-            <GenerateLog
-              @close-popup="generateLogsDialog = false"
-              @update-data-table="getLogs"
-            />
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </v-row>
-    <v-row>
+  <v-row>
       <v-col>
         <v-card>
           <v-toolbar class="rounded-md" color="popup_background" dense flat>
@@ -41,14 +16,6 @@
               :height="'28px '"
             />
           </v-toolbar>
-
-          <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-            {{ snackText }}
-
-            <template v-slot:action="{ attrs }">
-              <v-btn v-bind="attrs" text @click="snack = false"> Close </v-btn>
-            </template>
-          </v-snackbar>
 
           <v-data-table
             :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
@@ -68,12 +35,7 @@
             :disable-sort="true"
           >
             <template v-slot:item.sno="{ item, index }">
-              {{
-                currentPage
-                  ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + data.indexOf(item))
-                  : "-"
-              }}
+             {{index + 1}}
             </template>
             <template v-slot:item.UserID="{ item }">
               <strong> {{ item.UserID ? item.UserID : "---" }}</strong>
@@ -153,15 +115,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- <v-row class="mt-5">
-      <v-col cols="12">
-        <v-data-table v-model="ids" item-key="id" :headers="headers" :items="data" :server-items-length="total"
-          :loading="loading" :options.sync="options" :footer-props="{
-            itemsPerPageOptions: [50, 100, 500, 1000],
-          }"></v-data-table>
-      </v-col>
-    </v-row> -->
-  </div>
 </template>
 
 <script>
@@ -172,17 +125,14 @@ export default {
     Calender,
   },
   data: () => ({
-    cumulativeIndex: 1,
     perPage: 10,
     currentPage: 1,
-    totalRowsCount: 0,
     options: {
       current: 1,
       total: 0,
       itemsPerPage: 10,
     },
 
-    branchesList: [],
     tableHeight: 750,
     id: "",
     from_menu_filter: "",
@@ -218,13 +168,6 @@ export default {
 
     loading: false,
     time_menu: false,
-
-    log_payload: {
-      user_id: 41,
-      device_id: "OX-8862021010100",
-      date: null,
-      time: null,
-    },
     headers: [
       {
         text: "#",
