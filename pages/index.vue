@@ -53,7 +53,10 @@
           </v-col> -->
           <v-col cols="12" class="text-center">
             <div class="text-h6">
-              <b>{{ $auth.user.employee.first_name }} {{ $auth.user.employee.last_name }}</b>
+              <b
+                >{{ $auth.user.employee.first_name }}
+                {{ $auth.user.employee.last_name }}</b
+              >
               <!-- <v-btn @click="goToPage('/profile')" color="primary" outlined>
                 <b>My Profile</b>
               </v-btn> -->
@@ -68,8 +71,8 @@
             style="border-top: 1px solid #b8a9eb"
           >
             <div>
-              <span style="color:#8f31e9;">Self Decipline Indicator</span> (For own
-              reference only)
+              <span style="color: #8f31e9">Self Decipline Indicator</span> (For
+              own reference only)
             </div>
           </v-col>
         </v-row>
@@ -110,7 +113,7 @@
         <v-row style="border-bottom: 1px solid #b8a9eb">
           <v-col cols="12" class="text-center">
             <div>
-              My Attendance<span style="color:#8f31e9;">
+              My Attendance<span style="color: #8f31e9">
                 - Since {{ sinceDate }}</span
               >
             </div>
@@ -168,7 +171,6 @@
           <v-row no-gutters class="white">
             <v-col cols="12" class="pl-2">
               <div class="text-h6">Location</div>
-            
 
               <div class="">
                 <b>{{ lastLog && lastLog.device && lastLog.gps_location }}</b>
@@ -230,6 +232,7 @@ export default {
     locationData: null,
     initialPunch: true,
     shift_type_id: 0,
+    initialCount: 59,
   }),
 
   mounted() {
@@ -241,16 +244,16 @@ export default {
 
     this.getSinceDate();
 
-    if (this.$localStorage.get("buttonLocked")) {
-      this.buttonLocked = true;
-      setTimeout(() => {
-        this.buttonLocked = false;
-        this.$localStorage.remove("buttonLocked");
-      }, 60 * 1000);
+    if (process.client) {
+      let savedTimer = localStorage.getItem("timeCounter");
+      if (savedTimer !== null && !isNaN(savedTimer)) {
+        this.initialCount = savedTimer < 0 ? 59 : parseInt(savedTimer);
+      }
+
+      this.lockButton();
     }
 
     if (this.$store.state.isDesktop) {
-      //this.$router.push(`/dashboard`);
       this.$router.push(`/dashboard`);
     }
   },
@@ -314,12 +317,16 @@ export default {
   },
   methods: {
     lockButton() {
-      this.buttonLocked = true;
-      this.$localStorage.set("buttonLocked", "true");
-      setTimeout(() => {
-        this.buttonLocked = false;
-        this.$localStorage.remove("buttonLocked");
-      }, 60 * 1000);
+      this.timeCounterInterval = setInterval(() => {
+        if (this.initialCount > 0) {
+          this.buttonLocked = true;
+          this.$localStorage.set("timeCounter", --this.initialCount);
+        } else {
+          clearInterval(this.timeCounterInterval);
+          this.buttonLocked = false;
+          this.initialCount = 59;
+        }
+      }, 1000);
     },
     async getLastLog() {
       this.$axios
