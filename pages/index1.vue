@@ -1,187 +1,169 @@
 <template>
-  <div>
-    <v-alert v-if="!shift_type_id" class="red lighten-2" dark dense flat>
-      <div class="">Your are not schedule yet</div>
-    </v-alert>
-    <div class="text-center">
-      <v-dialog
-        class="remove-transparent-bg"
-        style="box-shadow: none !important"
-        v-model="dialog"
-        width="500"
-      >
-        <v-card style="background: none">
-          <v-toolbar style="background: none" flat dense>
-            <v-spacer></v-spacer>
-            <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
-          </v-toolbar>
-
-          <v-card-text>
-            <p class="text-center">
-              <v-img
-                :src="response_image"
-                alt="Avatar"
-                height="125px"
-                width="125px"
-                style="display: inline-block"
-              ></v-img>
-            </p>
-            <!-- <p class="text-center">
-                      {{ message }}
-                    </p> -->
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
-    <v-row>
-      <v-col cols="5">
-        <img style="width: 100%" :src="profile_pictrue" alt="Avatar" />
-      </v-col>
-      <v-col cols="7">
-        <div class="text-left">
-          <v-btn
-            @click="goToPage('/profile')"
-            style="width: 100%"
-            class="info"
-            dark
-          >
-            <b>My Profile</b>
-          </v-btn>
+  <div class="text-center">
+    <v-dialog v-model="dialog" width="720">
+      <template v-slot:activator="{ on, attrs }">
+        <span class="ml-2 primary--text" small v-bind="attrs" v-on="on">
+          {{ $auth.user.employee.first_name }}
+          {{ $auth.user.employee.last_name }}
+        </span>
+        <div class="secondary-value ml-2">
+          {{ $auth.user.employee?.designation?.name }}
         </div>
-        <WallClock />
-      </v-col>
-      <v-col cols="12" class="text-center">
-        <div>
-          <span class="blue--text">Self Decipline Indicator</span> (For own
-          reference only)
-        </div>
-      </v-col>
+      </template>
 
-      <v-col
-        cols="4"
-        class="text-center"
-        style="
-          border-top: 1px solid rgb(156, 155, 155);
-          border-bottom: 1px solid rgb(156, 155, 155);
-        "
-      >
-        <v-sheet class="text-h6">
-          {{ todayAttendance && todayAttendance.total_hrs }}
-        </v-sheet>
-        <div>Work Time</div>
-      </v-col>
-      <v-col
-        cols="4"
-        class="text-center"
-        style="border: 1px solid rgb(156, 155, 155)"
-      >
-        <v-sheet class="text-h6">
-          {{ remainingTime }}
-        </v-sheet>
-        <div>Remaing Hours</div>
-      </v-col>
-      <v-col
-        cols="4"
-        class="text-center"
-        style="
-          border-top: 1px solid rgb(156, 155, 155);
-          border-bottom: 1px solid rgb(156, 155, 155);
-        "
-      >
-        <v-sheet class="text-h6">
-          {{ todayAttendance && todayAttendance.ot }}
-        </v-sheet>
-        <div>OverTime</div>
-      </v-col>
-      <v-col
-        cols="12"
-        class="text-center"
-        style="
-          background-color: rgb(226, 224, 224);
-          border-bottom: 1px solid rgb(199 198 198);
-        "
-      >
-        <div>
-          My Attendance<span class="blue--text"> - Since {{ sinceDate }}</span>
-        </div>
-      </v-col>
-
-      <v-col cols="5" class="text-center">
-        <div class="text-center mt-5">
-          <img
-            style="width: 100%"
-            :src="puching_image"
-            alt="loading..."
-            @click="submit"
-          />
-        </div>
-      </v-col>
-
-      <v-col cols="7">
-        <div
-          v-for="(item, index) in employee_stats"
-          :key="index"
-          class="grey lighten-1 my-1"
+      <v-card>
+        <v-toolbar flat dense class="text-h6"
+          ><b>Employee Details</b></v-toolbar
         >
-          <span class="px-1">{{ item.title }} </span>
+        <v-divider></v-divider>
+        <v-container>
+          <v-row no-gutters>
+            <v-col cols="5">
+              <v-row class="mx-1" style="border-right: 1px solid #dddddd">
+                <v-col cols="12" class="mt-1">
+                  <v-row class="pa-1">
+                    <v-col cols="12" class="text-center">
+                      <v-avatar size="120">
+                        <img
+                          style="width: 100%"
+                          :src="profile_pictrue"
+                          alt="Avatar"
+                        />
+                      </v-avatar>
+                    </v-col>
+                    <v-col cols="12" class="text-center">
+                      <div>
+                        <b>EID: {{ $auth.user.employee.system_user_id }}</b>
+                        <br />
+                        {{ $auth.user.employee.first_name }}
+                        {{ $auth.user.employee.last_name }}
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12">
+                  <table style="width: 100%; border-top: 1px solid #dddddd">
+                    <tr v-for="(item, index) in employee_stats" :key="index">
+                      <th class="text-left">{{ item.title }}</th>
+                      <td class="text-right">{{ item.value }}</td>
+                    </tr>
+                  </table>
+                </v-col>
+              </v-row>
+            </v-col>
 
-          <span :class="item.color" style="float: right">
-            <v-icon right x-small dark>mdi-chevron-right</v-icon></span
-          >
-          <span
-            :class="item.color"
-            class="px-1 white--text"
-            dark
-            style="float: right; width: 10px"
-            >{{ item.value }}
-          </span>
-        </div>
-      </v-col>
-      <v-col cols="12">
-        <div class="error--text" v-if="locationError">{{ locationError }}</div>
-        <!-- <div v-else>
-        <b>Current Location:</b>
-        <div>
-          {{ locationData && locationData.display_name }}
-        </div>
-      </div> -->
-      </v-col>
-    </v-row>
-   
-    <v-footer app class="ma-0 pa-0" style="border-top:1px solid #dddddd;">
-      
-      <v-row no-gutters class="white">
-        <v-col cols="11" class="pl-2">
-          <div class="text-h5">Last Clocking</div>
-          <span class="">
-            {{ lastLog && lastLog.date }} {{ lastLog && lastLog.time }}
-          </span>
-
-          <div class="">
-            <b>{{ lastLog && lastLog.device && lastLog.gps_location }}</b>
-
-            <v-icon style="margin-top: -2%" color="green"
-              >mdi-map-marker-radius</v-icon
-            >
-          </div>
-        </v-col>
-        <v-col
-          @click="goToPage(`logs`)"
-          cols="1"
-          class="indigo text-center white--text d-flex align-center justify-center"
-        >
-          <span class="white--text" dark>
-            <v-icon dark>mdi-chevron-right</v-icon>
-          </span>
-        </v-col>
-      </v-row>
-    </v-footer>
+            <v-col cols="7">
+              <v-row no-gutters class="mb-2">
+                <v-col
+                  cols="4"
+                  class="text-center"
+                  style="
+                    border-top: 1px solid #dddddd;
+                    border-bottom: 1px solid #dddddd;
+                    border-right: 1px solid #dddddd;
+                  "
+                >
+                  <b>
+                    {{ todayAttendance && todayAttendance.total_hrs }}
+                  </b>
+                  <div>Work Time</div>
+                </v-col>
+                <v-col
+                  cols="4"
+                  class="text-center"
+                  style="
+                    border-top: 1px solid #dddddd;
+                    border-bottom: 1px solid #dddddd;
+                  "
+                >
+                  <b>
+                    {{ remainingTime }}
+                  </b>
+                  <div>Remaing Hours</div>
+                </v-col>
+                <v-col
+                  cols="4"
+                  class="text-center"
+                  style="
+                    border-top: 1px solid #dddddd;
+                    border-bottom: 1px solid #dddddd;
+                    border-left: 1px solid #dddddd;
+                  "
+                >
+                  <b>
+                    {{ todayAttendance && todayAttendance.ot }}
+                  </b>
+                  <div>OverTime</div>
+                </v-col>
+              </v-row>
+              <v-card elevation="0">
+                <v-container>
+                  <v-data-table
+                    dense
+                    :headers="log_headers"
+                    :items="logs_data"
+                    hide-default-footer
+                  >
+                    <!-- <template v-slot:top>
+      <div class="px-2"><b>Today Logs</b></div>
+    </template> -->
+                    <template v-slot:item.id="{ item, index }">
+                      {{ index + 1 }}
+                    </template>
+                    <template v-slot:item.LogTime="{ item }">
+                      {{ item.date }} {{ item.time }}
+                    </template>
+                    <template v-slot:item.gps_location="{ item }">
+                      {{ item.gps_location || "---" }}
+                    </template>
+                  </v-data-table>
+                </v-container>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 export default {
   data: () => ({
+    logs_data: [],
+    log_endpoint: "attendance_logs",
+    log_headers: [
+      {
+        text: "#",
+        align: "left",
+        sortable: false,
+        key: "id",
+        value: "id",
+        width: "10px",
+      },
+      {
+        text: "DateTime",
+        align: "left",
+        sortable: false,
+        key: "date_range",
+        value: "LogTime",
+        fieldType: "date_range_picker",
+      },
+
+      {
+        text: "Location",
+        align: "left",
+        sortable: true,
+        key: "gps_location",
+        value: "gps_location",
+        filterable: true,
+        filterSpecial: true,
+      },
+    ],
+
+    employee_stats_header: [{ value: "value" }],
+
+    dialog: false,
     sinceDate: null,
     UserID: null,
     profile_pictrue: "no-profile-image.jpg",
@@ -230,11 +212,6 @@ export default {
         this.$localStorage.remove("buttonLocked");
       }, 60 * 1000);
     }
-
-    if (this.$store.state.isDesktop) {
-      //this.$router.push(`/dashboard`);
-      this.$router.push(`/dashboard`);
-    }
   },
 
   computed: {
@@ -272,6 +249,8 @@ export default {
     await this.getTodayAttendance();
     await this.getRealTimeLocation();
 
+    await this.getLogs();
+
     // try {
     //   let employee = this.$auth.user.employee;
 
@@ -295,6 +274,28 @@ export default {
     // }
   },
   methods: {
+    getDate() {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+    async getLogs() {
+      this.$axios
+        .get(this.log_endpoint, {
+          params: {
+            per_page: 10,
+            company_id: 2,
+            UserID: 3,
+            from_date: this.getDate(),
+            to_date: this.getDate(),
+          },
+        })
+        .then(({ data }) => {
+          this.logs_data = data.data;
+        });
+    },
     lockButton() {
       this.buttonLocked = true;
       this.$localStorage.set("buttonLocked", "true");
@@ -619,9 +620,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.v-dialog.v-dialog--active {
-  box-shadow: none !important;
-}
-</style>
