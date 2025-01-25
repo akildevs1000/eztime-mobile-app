@@ -176,7 +176,7 @@
                     label="Remember Me"
                   />
                 </v-col>
-                <v-col cols="6" class="text-right"  style="margin-top: 4px">
+                <v-col cols="6" class="text-right" style="margin-top: 4px">
                   <label
                     @click="openForgotPassword"
                     class="v-label theme--light"
@@ -460,13 +460,13 @@ export default {
         this.$auth
           .loginWith("local", { data: this.credentials })
           .then(({ data }) => {
-            if (
-              this.$auth.user.role_id == 0 &&
-              this.$auth.user.user_type == "employee"
-            ) {
-              window.location.href = process.env.EMPLOYEE_APP_URL;
-              return "";
-            }
+            // if (
+            //   this.$auth.user.role_id == 0 &&
+            //   this.$auth.user.user_type == "employee"
+            // ) {
+            //   window.location.href = process.env.EMPLOYEE_APP_URL;
+            //   return "";
+            // }
 
             setTimeout(() => (this.loading = false), 2000);
           })
