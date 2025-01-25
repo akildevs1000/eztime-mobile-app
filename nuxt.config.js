@@ -49,20 +49,17 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  // axios: {
-  //   // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-  //   //baseURL: 'https://backend.mytime2cloud.com/api',
-  //   // baseURL: 'https://backend.eztime.online/api',
-  //   baseURL: process.env.BACKEND_URL,
-  // },
+  axios: {
+    baseURL: process.env.BACKEND_URL,
+  },
 
   auth: {
     strategies: {
       local: {
         endpoints: {
-          login: { url: "login", method: "post", propertyName: "token" },
+          login: { url: "/employee/login", method: "post", propertyName: "token" },
           logout: false,
-          user: { url: "me", method: "get", propertyName: false },
+          user: { url: "/employee/me", method: "get", propertyName: false },
         },
         maxAge: 86400, // 24 hours
       },
@@ -128,7 +125,7 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
   server: {
-    host: "192.168.2.7",
-    port: 3002,
+    host: process.env.LOCAL_IP,
+    port: process.env.LOCAL_PORT,
   },
 };

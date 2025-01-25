@@ -399,11 +399,11 @@ export default {
 
     async getUnReads() {
       try {
-        const { company_id, id } = await this.$auth.user;
+        const { id,employee } = await this.$auth.user;
 
         const { data } = await this.$axios.get(`unread`, {
           params: {
-            company_id,
+            company_id:employee.company_id,
             user_id: id,
           },
         });
