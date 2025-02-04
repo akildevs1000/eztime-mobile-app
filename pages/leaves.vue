@@ -7,14 +7,10 @@
     </div>
 
     <v-dialog persistent v-model="dialogLeaveGroup" width="400px">
-      <Close left="390" @click="dialogLeaveGroup = false" />
+      <Close left="375" @click="dialogLeaveGroup = false" />
       <v-card>
         <v-card-title dense class="primary white--text background">
           Statistics
-          <v-spacer></v-spacer>
-          <v-icon @click="dialogLeaveGroup = false" outlined dark color="white">
-            mdi mdi-close-circle
-          </v-icon>
         </v-card-title>
         <v-card-text>
           <v-data-table
@@ -287,7 +283,7 @@
                   v-if="newLeaveApplication"
                   class="grey white--text"
                   small
-                  @click="save"
+                  @click="dialog = false"
                   >Close</v-btn
                 >
 
