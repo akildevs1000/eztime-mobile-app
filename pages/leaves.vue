@@ -7,6 +7,7 @@
     </div>
 
     <v-dialog persistent v-model="dialogLeaveGroup" width="400px">
+      <Close left="390" @click="dialogLeaveGroup = false" />
       <v-card>
         <v-card-title dense class="primary white--text background">
           Statistics
@@ -46,15 +47,11 @@
       </v-card>
     </v-dialog>
     <v-dialog persistent v-model="dialog" width="600px">
+      <Close left="375" @click="dialog = false" />
       <v-card>
-        <v-card-title dense class="popup_background">
-          <span class="headline" v-if="editedIndex == -1">New Leave </span>
-          <span class="headline" v-else>Edit </span>
-          <v-spacer></v-spacer>
-          <v-icon @click="dialog = false" outlined dark color="black">
-            mdi mdi-close-circle
-          </v-icon>
-        </v-card-title>
+        <v-alert flat dense class="grey lighten-3">
+          <span>{{ formTitle }} </span>
+        </v-alert>
         <v-card-text>
           <v-container>
             <v-row>
@@ -111,6 +108,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
+                      :hide-details="!errors.start_date"
                       :error-messages="
                         errors && errors.start_date ? errors.start_date[0] : ''
                       "
@@ -150,6 +148,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
+                      :hide-details="!errors.end_date"
                       :error-messages="
                         errors && errors.end_date ? errors.end_date[0] : ''
                       "
@@ -174,6 +173,7 @@
                   outlined
                   v-model="editedItem.reason"
                   placeholder="Reason/Notes"
+                  :hide-details="!errors.reason"
                   :error-messages="
                     errors && errors.reason ? errors.reason[0] : ''
                   "
@@ -197,9 +197,10 @@
                   @click="openDialogUploadDocuments"
                   small
                   dense
-                  class="primary mb-2"
-                  style="float: right"
-                  >Add +
+                  class="primary"
+                  block
+                  rounded
+                  >Upload Document
                 </v-btn>
               </v-col>
               <v-col
@@ -281,18 +282,30 @@
                   </tbody>
                 </table>
               </v-col>
+              <v-col cols="12" class="text-right">
+                <v-btn
+                  v-if="newLeaveApplication"
+                  class="grey white--text"
+                  small
+                  @click="save"
+                  >Close</v-btn
+                >
+
+                <v-btn
+                  v-if="newLeaveApplication"
+                  class="primary"
+                  small
+                  @click="save"
+                  >Save</v-btn
+                >
+
+                <div v-if="!newLeaveApplication" class="danger" small>
+                  Reached maximum Leave count
+                </div>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn v-if="newLeaveApplication" class="primary" small @click="save"
-            >Save</v-btn
-          >
-          <v-btn v-else class="danger" small>Reached maximum Leave count</v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-dialog
@@ -301,26 +314,21 @@
       width="800px"
       height="400px"
     >
+      <Close left="375" @click="dialogUploadDocuments = false" />
+
       <v-card>
-        <v-card-title dense class="popup_background">
+        <v-alert flat dense class="grey lighten-3">
           Documents
           <v-spacer></v-spacer>
-          <v-icon
-            @click="dialogUploadDocuments = false"
-            outlined
-            dark
-            color="black"
-          >
-            mdi mdi-close-circle
-          </v-icon>
-        </v-card-title>
+        </v-alert>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" style="min-height: 200px" class="mt-4">
+              <v-col cols="12">
                 <v-row v-for="(d, index) in Document.items" :key="index">
-                  <v-col cols="5" style="padding: 0px">
+                  <v-col cols="5">
                     <v-text-field
+                      hide-details
                       label="Title"
                       small
                       dense
@@ -329,8 +337,11 @@
                       placeholder="Title"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="6" class="file-upload" style="padding: 0px">
+                  <v-col cols="6">
                     <v-file-input
+                      hide-details
+                      label="Upload Document"
+                      prepend-icon=""
                       @change="uploadFilesizeValidation($event, index)"
                       small
                       dense
@@ -363,14 +374,12 @@
                       >{{ errorsFileUpload[index].value[0] }}</span
                     >
                   </v-col>
-                  <v-col cols="1" style="padding: 0px">
+                  <v-col cols="1">
                     <v-icon class="error--text mt-1" @click="removeItem(index)"
                       >mdi-delete</v-icon
                     >
                   </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12" class="text-right" style="padding: 0px">
+                  <v-col cols="12">
                     <!-- <v-btn
                       title="Maximum file upload size is 100Kb"
                       cols="2"
@@ -381,37 +390,31 @@
                       style="float: right"
                       >Add +
                     </v-btn> -->
-                    <v-icon
-                      style="float: right"
-                      class="black--text mt-1 text-end"
-                      @click="addDocumentInfo"
-                      >mdi-plus-circle</v-icon
-                    >
+                    <v-icon @click="addDocumentInfo">mdi-plus-circle</v-icon>
                   </v-col>
                 </v-row>
+              </v-col>
+              <v-col class="text-right">
+                <v-btn
+                  class="grey white--text"
+                  small
+                  @click="closeDialogUploadDocuments"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn class="primary" small @click="SaveDocumentsDialog"
+                  >Save</v-btn
+                >
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
-        <v-card-actions>
-          <v-btn class="error" small @click="closeDialogUploadDocuments">
-            Cancel
-          </v-btn>
-          <v-spacer></v-spacer>
-
-          <v-btn class="primary" small @click="SaveDocumentsDialog">Save</v-btn>
-        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-dialog persistent v-model="dialogView" width="1000px">
+      <Close left="375" @click="dialogView = false" />
       <v-card>
-        <v-card-title dense class="popup_background">
-          Leave Information
-          <v-spacer></v-spacer>
-          <v-icon @click="dialogView = false" outlined dark color="black">
-            mdi mdi-close-circle
-          </v-icon>
-        </v-card-title>
+        <v-alert flat dense class="grey lighten-3"> Leave Information </v-alert>
         <v-card-text>
           <v-row>
             <v-col cols="12">
@@ -552,11 +555,10 @@
               <strong> Leave Notes </strong>:
               <label for="">: {{ dialogViewObject.reason }}</label>
             </v-col>
-            <label
-              ><strong>Uploaded Documents</strong> ({{
-                document_list.length
-              }})</label
-            >
+            <v-col cols="12">
+              <strong> Uploaded Documents </strong>:
+              <label for="">: ({{ document_list.length }})</label>
+            </v-col>
             <v-col cols="12" v-if="document_list.length">
               <table style="border-collapse: collapse; width: 100%">
                 <thead>
@@ -652,7 +654,7 @@
                   :disabled="!$auth.user.employee.leave_group_id"
                   small
                   color="primary"
-                  @click="openNewDialog()"
+                  @click="openNewDialog"
                   class="mb-2"
                   >New +</v-btn
                 >
@@ -891,7 +893,7 @@ export default {
       approved_datetime: "",
     },
     leaveTypes: [],
-    formTitle: "New Leave Application",
+    formTitle: null,
     dialogEmployees: false,
     idsEmployeeList: [],
     //editor
@@ -1250,6 +1252,7 @@ export default {
       this.scrollInvoked++;
     },
     openNewDialog() {
+      this.formTitle = "New Leave";
       this.editedItem = {
         leave_type_id: "",
         reason: "",
@@ -1344,7 +1347,7 @@ export default {
     },
 
     editItem(item) {
-      this.formTitle = "Edit leaves Information";
+      this.formTitle = "Edit Leave";
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
