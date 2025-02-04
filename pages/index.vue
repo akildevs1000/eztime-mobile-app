@@ -345,10 +345,7 @@ export default {
             this.puching_image = "/C-IN.png";
             return;
           }
-          if (
-            data?.data?.length &&
-            ["in", "auto"].includes(data.data[0].log_type)
-          ) {
+          if (data?.data?.length % 2 !== 0) {
             this.log_type = "out";
             this.puching_image = "/C-OUT.png";
             this.initialPunch = false;
