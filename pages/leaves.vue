@@ -51,7 +51,7 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12">
+              <v-col md="12" sm="12" cols="12">
                 <label style="padding-bottom: 5px"
                   >Used Leaves :
                   <v-chip v-if="leave_available_count != ''" color="primary">{{
@@ -59,11 +59,10 @@
                   }}</v-chip></label
                 >
               </v-col>
-
               <v-col md="12" sm="12" cols="12">
                 <!-- <label for="" style="padding-bottom: 5px"
-                  >Select leave Type</label
-                > -->
+                    >Select leave Type</label
+                  > -->
                 <v-select
                   label="Select Leave Type"
                   @change="verifyAvailableCount"
@@ -122,7 +121,6 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-
               <v-col md="12" sm="12" cols="12">
                 <v-menu
                   ref="end_menu"
@@ -163,7 +161,8 @@
               </v-col>
               <v-col md="12" sm="12" cols="12">
                 <!-- <label for="" style="padding-bottom: 5px">Reason</label> -->
-                <v-text-field
+                <v-textarea
+                  rows="2"
                   label="Reason"
                   dense
                   outlined
@@ -173,7 +172,7 @@
                   :error-messages="
                     errors && errors.reason ? errors.reason[0] : ''
                   "
-                ></v-text-field>
+                ></v-textarea>
               </v-col>
               <v-col cols="12" v-if="errors && errors.reporting_manager_id">
                 <label for="" style="padding-bottom: 5px; color: red"
@@ -377,15 +376,15 @@
                   </v-col>
                   <v-col cols="12">
                     <!-- <v-btn
-                      title="Maximum file upload size is 100Kb"
-                      cols="2"
-                      @click="addDocumentInfo"
-                      small
-                      dense
-                      class="primary"
-                      style="float: right"
-                      >Add +
-                    </v-btn> -->
+                        title="Maximum file upload size is 100Kb"
+                        cols="2"
+                        @click="addDocumentInfo"
+                        small
+                        dense
+                        class="primary"
+                        style="float: right"
+                        >Add +
+                      </v-btn> -->
                     <v-icon @click="addDocumentInfo">mdi-plus-circle</v-icon>
                   </v-col>
                 </v-row>
@@ -635,16 +634,16 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <!-- <v-col>
-                <v-btn
-                  v-if="can(`leave_application_create`)"
-                  small
-                  color="primary"
-                  @click="dialogLeaveGroup = true"
-                  class="mb-2"
-                >
-                  count <v-icon>mdi-information</v-icon></v-btn
-                >
-              </v-col> -->
+                  <v-btn
+                    v-if="can(`leave_application_create`)"
+                    small
+                    color="primary"
+                    @click="dialogLeaveGroup = true"
+                    class="mb-2"
+                  >
+                    count <v-icon>mdi-information</v-icon></v-btn
+                  >
+                </v-col> -->
               <v-col>
                 <v-btn
                   :disabled="!$auth.user.employee.leave_group_id"
