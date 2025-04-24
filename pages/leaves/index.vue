@@ -102,7 +102,6 @@
                             small
                             no-title
                             scrollable
-                            :min="todayDate"
                             @input="fromMenu = false"
                           ></v-date-picker>
                         </v-menu>
