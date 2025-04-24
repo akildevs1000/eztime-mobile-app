@@ -309,15 +309,15 @@
                   </li>
                 </ul>
                 <v-row v-if="newLeaveApplication" no-gutters>
-                  <v-col cols="12" md="6" >
+                  <v-col cols="6">
+                   <div class="d-flex" style="gap:5px;">
                     <v-btn class="primary" block small @click="save"
                       >Save</v-btn
                     >
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-btn style="margin-top: 5px;" class="grey white--text" block small @click="close"
+                    <v-btn class="grey white--text" block small @click="close"
                       >Close</v-btn
                     >
+                   </div>
                   </v-col>
                 </v-row>
               </v-col>
