@@ -17,13 +17,30 @@ export default ({ app }, inject) => {
   });
 
   inject("util", {
+    getRating(count, from_date, to_date) {
+      // Convert the date strings to Date objects
+      const fromDate = new Date(from_date);
+      const toDate = new Date(to_date);
+
+      // Calculate the difference in time (in milliseconds)
+      const timeDifference = toDate - fromDate;
+
+      // Convert the time difference to days
+      const totalDaysInMonth = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)) + 1;
+
+      // Calculate the rating
+      const rating = (count / totalDaysInMonth) * 5;
+
+      // Return the rating rounded to 2 decimal places
+      return parseFloat(rating.toFixed(2));
+    },
     toTitleCase(str) {
       return str.replace(/_/g, " ").replace(/\w\S*/g, function (text) {
         return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
       });
     },
   });
-  
+
   inject("dateFormat", {
     format1: (inputdate) => {
       // Create a Date object with the date "2023-09-13"  Output Sun, Jan 01, 2023
