@@ -17,6 +17,20 @@ export default ({ app }, inject) => {
   });
 
   inject("util", {
+
+    getRemainingDays() {
+      // Get today's date at midnight
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Get the last day of the current month at midnight
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      endOfMonth.setHours(0, 0, 0, 0);
+
+      // Calculate remaining days (excluding today)
+      return Math.floor((endOfMonth - today) / (1000 * 60 * 60 * 24));
+    },
+
     getRating(count, from_date, to_date) {
       // Convert the date strings to Date objects
       const fromDate = new Date(from_date);
@@ -33,6 +47,25 @@ export default ({ app }, inject) => {
 
       // Return the rating rounded to 2 decimal places
       return parseFloat(rating.toFixed(2));
+    },
+
+    getPriorityColor(category) {
+      if (category == null) return "";
+      else {
+        if (category == "Urgent") {
+          return "color:#F44336";
+        } else if (category == "Informational") {
+          return "color:#3F51B5";
+        } else if (category == "Meeting") {
+          return "color:#FF5722";
+        } else if (category == "Priority") {
+          return "color:#4CAF50";
+        } else if (category == "Informational") {
+          return "color:#607D8B";
+        } else if (category == "Low Priority") {
+          return "color:#000000";
+        }
+      }
     },
     toTitleCase(str) {
       return str.replace(/_/g, " ").replace(/\w\S*/g, function (text) {

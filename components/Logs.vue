@@ -1,14 +1,15 @@
 <template>
-  <v-card>
+    <span>
+        <v-row no-gutters>
+      <v-col cols="9"></v-col>
+      <v-col cols="3" class="pa-0 ma-0">
+        <div class="text-right mr-5">
+          <Calender @filter-attr="filterAttr" />
+        </div>
+      </v-col>
+    </v-row>
     <v-card-text>
       <v-row>
-        <v-col class="d-flex align-center justify-space-between">
-          <div class="text-h6 px-2">Attendance Logs</div>
-          <div class="px-2">
-            <Calender @filter-attr="filterAttr" />
-          </div>
-        </v-col>
-
         <v-col cols="12">
           <v-data-table
             :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
@@ -24,7 +25,6 @@
             class="elevation-1"
             :server-items-length="totalRowsCount"
             fixed-header
-            :height="tableHeight"
             :disable-sort="true"
           >
             <template v-slot:item.sno="{ item, index }">
@@ -108,7 +108,7 @@
         </v-col>
       </v-row>
     </v-card-text>
-  </v-card>
+    </span>
 </template>
 
 <script>

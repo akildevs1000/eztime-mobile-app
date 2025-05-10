@@ -16,92 +16,96 @@
         <v-col style="margin-right: 10px">
           <v-row no-gutters>
             <v-col cols="12" style="margin-top: 10px">
-                  <v-card outlined>
-                    <v-card-text style="color: black">
-                      <v-row>
-                        <v-col cols="5">
-                          <div class="d-flex align-start">
-                            <v-avatar size="60">
-                              <img
-                                v-if="base64Image"
-                                ref="profileImage"
-                                :src="base64Image"
-                                alt="Profile"
-                              />
-                            </v-avatar>
-                            <div class="ml-5">
-                              <div
-                                class="primary--text body-1 py-0"
-                                style="
-                                  max-width: 150px;
-                                  white-space: nowrap;
-                                  overflow: hidden;
-                                  text-overflow: ellipsis;
-                                "
-                              >
-                                <b> {{ employee?.name }}</b>
-                              </div>
+              <v-card elevation="3" style="border-radius: 5px">
+                <v-alert dense flat dark class="primary">Profile</v-alert>
+                <v-card-text style="color: black">
+                  <v-row>
+                    <v-col cols="5">
+                      <div class="d-flex align-start">
+                        <v-avatar size="60">
+                          <img
+                            v-if="base64Image"
+                            ref="profileImage"
+                            :src="base64Image"
+                            alt="Profile"
+                          />
+                        </v-avatar>
+                        <div class="ml-5">
+                          <div
+                            class="primary--text body-1 py-0"
+                            style="
+                              max-width: 150px;
+                              white-space: nowrap;
+                              overflow: hidden;
+                              text-overflow: ellipsis;
+                            "
+                          >
+                            <b> {{ employee?.name }}</b>
+                          </div>
 
-                              <div style="margin-top: 3px">
-                                ID: {{ employee?.employee_id }}
-                              </div>
-                              <div style="margin-top: 3px">
-                                {{ employee?.designation || "---" }}
-                              </div>
-                              <div style="margin-top: 3px">
-                                {{ employee?.branch || "---" }}
-                              </div>
-                              <div style="margin-top: 3px">
-                                {{ employee?.company }}
-                              </div>
-                            </div>
+                          <div style="margin-top: 3px">
+                            ID: {{ employee?.employee_id }}
                           </div>
-                        </v-col>
-                        <v-col cols="4" class="text-center">
-                          <div class="text-left">
-                            <div class="white--text">sdf</div>
-                            <div style="margin-top: 3px">
-                              Email:{{ employee?.email || "---" }}
-                            </div>
-                            <div style="margin-top: 3px">
-                              Ph:
-                              {{ employee?.whatsapp_number }}
-                            </div>
-                            <div style="margin-top: 3px">
-                              Nationality:
-                              {{ employee?.home_country || "---" }}
-                            </div>
-                            <div style="margin-top: 3px">
-                              Manager:
-                              {{ employee?.reporting_manager }}
-                            </div>
+                          <div style="margin-top: 3px">
+                            {{ employee?.designation || "---" }}
                           </div>
-                        </v-col>
-                        <v-col cols="3" class="text-center">
-                          <div class="body-2">
-                            <v-rating
-                              dense
-                              hide-details
-                              :value="item.rating"
-                              background-color="green lighten-3"
-                              color="green"
-                              half-increments
-                            ></v-rating>
+                          <div style="margin-top: 3px">
+                            {{ employee?.branch || "---" }}
                           </div>
-                          <div class="white--text body-2">hideme</div>
-                          <div>
-                            <strong>Since</strong>
-                            <h4 class="text-center text-primary">
-                              {{ employee?.joining_date }}
-                            </h4>
+                          <div style="margin-top: 3px">
+                            {{ employee?.company }}
                           </div>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="4" class="text-center">
+                      <div class="text-left">
+                        <div class="white--text">sdf</div>
+                        <div style="margin-top: 3px">
+                          Email:{{ employee?.email || "---" }}
+                        </div>
+                        <div style="margin-top: 3px">
+                          Ph:
+                          {{ employee?.whatsapp_number }}
+                        </div>
+                        <div style="margin-top: 3px">
+                          Nationality:
+                          {{ employee?.home_country || "---" }}
+                        </div>
+                        <div style="margin-top: 3px">
+                          Manager:
+                          {{ employee?.reporting_manager }}
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="3" class="text-center">
+                      <div class="body-2">
+                        <v-rating
+                          dense
+                          hide-details
+                          :value="item.rating"
+                          background-color="green lighten-3"
+                          color="green"
+                          half-increments
+                        ></v-rating>
+                      </div>
+                      <div class="white--text body-2">hideme</div>
+                      <div>
+                        <strong>Since</strong>
+                        <h4 class="text-center text-primary">
+                          {{ employee?.joining_date }}
+                        </h4>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
             <v-col cols="12" style="margin-top: 10px">
-              <v-card outlined>
+              <v-card elevation="3" style="border-radius: 5px">
+                <v-alert dense flat dark class="primary"
+                  >Overall Performance</v-alert
+                >
                 <v-card-text>
                   <div style="display: flex">
                     <div style="min-width: 340px" class="body-2 text-left">
@@ -233,104 +237,22 @@
             </v-col>
 
             <v-col cols="12" style="margin-top: 10px">
-              <v-card outlined style="max-height: 270px; min-height: 270px">
-                <v-card-text class="py-5">
-                  <div class="body-2"><b>(Last 6 Months)</b></div>
-                  <table dense flat style="width: 100%" class="mt-5">
-                    <tbody>
-                      <tr>
-                        <td
-                          class="text-center"
-                          style="border-bottom: 1px solid #eaeaeaea"
-                        >
-                          Month
-                        </td>
-                        <td
-                          class="text-center"
-                          style="border-bottom: 1px solid #eaeaeaea"
-                        >
-                          Total Hrs
-                        </td>
-                        <td
-                          class="text-center"
-                          style="border-bottom: 1px solid #eaeaeaea"
-                        >
-                          Late In
-                        </td>
-                        <td
-                          class="text-center"
-                          style="border-bottom: 1px solid #eaeaeaea"
-                        >
-                          Early Out
-                        </td>
-                        <td
-                          class="text-center"
-                          style="border-bottom: 1px solid #eaeaeaea"
-                        >
-                          OverTime
-                        </td>
-                      </tr>
-                      <tr
-                        v-for="(item, monthLabel) in hoursReportData"
-                        :key="monthLabel"
-                      >
-                        <td
-                          class="text-center"
-                          style="
-                            font-size: 11px;
-                            border-bottom: 1px solid #eaeaeaea;
-                          "
-                        >
-                          {{ monthLabel }}
-                        </td>
-                        <td
-                          class="text-center"
-                          style="
-                            font-size: 11px;
-                            border-bottom: 1px solid #eaeaeaea;
-                          "
-                        >
-                          {{ item?.total_performed?.hours || "---" }}
-                        </td>
-                        <td
-                          class="text-center"
-                          style="
-                            font-size: 11px;
-                            border-bottom: 1px solid #eaeaeaea;
-                          "
-                        >
-                          {{ item?.late_coming?.hours || "---" }}
-                        </td>
-                        <td
-                          class="text-center"
-                          style="
-                            font-size: 11px;
-                            border-bottom: 1px solid #eaeaeaea;
-                          "
-                        >
-                          {{ item?.early_going?.hours || "---" }}
-                        </td>
-                        <td
-                          class="text-center"
-                          style="
-                            font-size: 11px;
-                            border-bottom: 1px solid #eaeaeaea;
-                          "
-                        >
-                          {{ item?.overtime?.hours || "---" }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <v-card elevation="3" style="border-radius: 5px">
+                <v-alert dense flat dark class="primary"
+                  >Attendance Logs</v-alert
+                >
+                <v-card-text>
+                  <Logs />
                 </v-card-text>
               </v-card>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="4" style="margin-top: 10px">
-          <v-row no-gutters>
+          <v-row>
             <v-col cols="12">
-              <v-card outlined>
+              <v-card elevation="3" style="border-radius: 5px">
+                <v-alert dense flat dark class="primary">Attendance</v-alert>
                 <v-card-text>
                   <v-date-picker
                     hide-details
@@ -429,159 +351,11 @@
                 </v-card-text>
               </v-card>
             </v-col>
-            <v-col v-if="!leaveCardDisplay" cols="12" style="margin-top: 10px">
-              <v-card outlined>
+            <v-col>
+              <v-card elevation="3" style="border-radius: 5px">
+                <v-alert dense flat dark class="primary">Announcements</v-alert>
                 <v-card-text>
-                  <v-date-picker
-                    hide-details
-                    v-if="selectedDate"
-                    full-width
-                    no-title
-                    dense
-                    :events="Object.keys(events)"
-                    :event-color="getEventColors"
-                    v-model="selectedDate"
-                    :max="maxDate"
-                  >
-                    <template v-slot:default>
-                      <table style="width: 100%; table-layout: fixed">
-                        <tr>
-                          <td style="width: 20px; min-width: 10px">
-                            <div
-                              class="green"
-                              style="
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                display: inline-block;
-                              "
-                            ></div>
-                          </td>
-                          <td style="white-space: nowrap">
-                            <div class="pt-3">
-                              <strong style="font-size: 16px">{{
-                                eventStats["P"] || 0
-                              }}</strong>
-                            </div>
-                            <div>Present</div>
-                          </td>
-                          <td style="width: 20px; min-width: 10px">
-                            <div
-                              class="red"
-                              style="
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                display: inline-block;
-                              "
-                            ></div>
-                          </td>
-                          <td style="white-space: nowrap">
-                            <div class="pt-3">
-                              <strong style="font-size: 16px">{{
-                                eventStats["A"] || 0
-                              }}</strong>
-                            </div>
-                            <div>Absent</div>
-                          </td>
-                          <td style="width: 20px; min-width: 10px">
-                            <div
-                              class="primary"
-                              style="
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                display: inline-block;
-                              "
-                            ></div>
-                          </td>
-                          <td style="white-space: nowrap">
-                            <div class="pt-3">
-                              <strong style="font-size: 16px">{{
-                                eventStats["O"] || 0
-                              }}</strong>
-                            </div>
-                            <div>WeekOff</div>
-                          </td>
-                          <td style="width: 20px; min-width: 10px">
-                            <div
-                              class="orange"
-                              style="
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                display: inline-block;
-                              "
-                            ></div>
-                          </td>
-                          <td style="white-space: nowrap">
-                            <div class="pt-3">
-                              <strong style="font-size: 16px">{{
-                                eventStats["OTHERS_COUNT"] || 0
-                              }}</strong>
-                            </div>
-                            <div>Other</div>
-                          </td>
-                        </tr>
-                      </table>
-                    </template>
-                  </v-date-picker>
-                </v-card-text>
-              </v-card>
-            </v-col>
-            <v-col v-if="leaveCardDisplay" cols="12" style="margin-top: 10px">
-              <v-card outlined style="min-height: 370px">
-                <v-card-text>
-                  <div class="body-2">
-                    <b>Leave Quota</b>
-                  </div>
-
-                  <div style="flex: 0.7; min-width: 30%">
-                    <apexchart
-                      v-if="isMounted && leaveChartSeries[0].data.length"
-                      type="bar"
-                      :options="leaveChartOptions"
-                      :series="leaveChartSeries"
-                    ></apexchart>
-                  </div>
-
-                  <div
-                    v-if="leaveQuota"
-                    class="d-flex justify-space-between text-center"
-                  >
-                    <div>
-                      <div class="">Total</div>
-                      <div class="">
-                        <strong style="font-size: 16px; color: black">{{
-                          leaveQuota?.total_leave_days || 0
-                        }}</strong>
-                      </div>
-                    </div>
-                    <div>
-                      <div class="">Balance</div>
-                      <div class="">
-                        <strong style="font-size: 16px; color: black">{{
-                          leaveQuota?.balance || 0
-                        }}</strong>
-                      </div>
-                    </div>
-                    <div>
-                      <div class="">Approved</div>
-                      <div class="">
-                        <strong style="font-size: 16px; color: black">{{
-                          leaveQuota?.approved || 0
-                        }}</strong>
-                      </div>
-                    </div>
-                    <div>
-                      <div class="">Rejected</div>
-                      <div class="">
-                        <strong style="font-size: 16px; color: black">{{
-                          leaveQuota?.rejected || 0
-                        }}</strong>
-                      </div>
-                    </div>
-                  </div>
+                  <Announcement />
                 </v-card-text>
               </v-card>
             </v-col>
@@ -725,43 +499,32 @@ export default {
     };
   },
   async mounted() {
-    console.log({ item: this.item, employee: this.employee });
-
-    const { company_id } = this.item;
-    const { employee_id, employee_id_for_payroll, profile_picture } =
-      this.employee;
-
     await this.getLastSixMonthReport({
-      company_id,
-      employee_id: employee_id,
+      company_id: this.$auth.user.company_id,
+      employee_id: this.$auth.user.employee.system_user_id,
     });
 
     await this.getPreviousMonthPerformanceReport({
-      company_id,
-      employee_id: employee_id,
+      company_id: this.$auth.user.company_id,
+      employee_id: this.$auth.user.employee.system_user_id,
     });
 
     await this.geCurrentMonthPerformanceReport({
-      company_id,
-      employee_id: employee_id,
+      company_id: this.$auth.user.company_id,
+      employee_id: this.$auth.user.employee.system_user_id,
     });
 
     await this.getCurrentMonthHoursReport({
-      company_id,
-      employee_id: employee_id,
+      company_id: this.$auth.user.company_id,
+      employee_id: this.$auth.user.employee.system_user_id,
     });
 
     await this.getLastSixMonthSalaryReport({
-      company_id,
-      employee_id: employee_id_for_payroll,
+      company_id: this.$auth.user.company_id,
+      employee_id: this.$auth.user.employee.system_user_id,
     });
 
-    await this.getPreviousMonthSalaryReport({
-      company_id,
-      employee_id: employee_id_for_payroll,
-    });
-
-    await this.getEncodedImage(profile_picture);
+    await this.getEncodedImage(this.$auth?.user?.employee?.profile_picture);
 
     await this.getLeaveQuota();
 
@@ -841,28 +604,7 @@ export default {
 
       this.payslipsData = data;
     },
-    async getPreviousMonthSalaryReport(payload) {
-      let endpoint = "previous-month-salary-report";
 
-      try {
-        let { data } = await this.$axios.post(endpoint, payload);
-
-        console.log("🚀 ~ getPreviousMonthSalaryReport ~ data:", data);
-        if (!data) {
-          this.donutSeries = [0, 0, 0];
-          return;
-        }
-        this.donutSeries = [
-          data.salary_and_earnings_value || 1,
-          data.ot_value || 0,
-          data.total_deductions_value || 0,
-        ];
-        this.chartOptionsDonut.colors = ["#4CAF50", "#00e676", "#FFA500"];
-      } catch (error) {
-        this.donutSeries = [1, 0, 0];
-        this.chartOptionsDonut.colors = ["grey"];
-      }
-    },
     async getLeaveQuota() {
       if (!this.item.leave_group_id) {
         return false;

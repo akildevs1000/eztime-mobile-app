@@ -1,34 +1,41 @@
 <template>
   <div>
+    <style>
+      /* .v-slide-group__content {
+    height: 30px !important;
+  }
+  
+  .v-slide-group__wrapper {
+    height: 34px !important;
+  } */
+      .slidegroup1 .v-slide-group {
+        height: 34px !important;
+      }
+    </style>
+
     <!-- <Back class="primary white--text" /> -->
     <v-card elevation="0" class="mt-2">
-      <v-toolbar dense flat>
-        <h5 class="headline black--text">Attendance Reports</h5>
-      </v-toolbar>
-
-      <v-card-text class="py-3">
+      <v-alert dense flat>
         <v-row>
-          <v-col cols="8">
-            <Calender
-              style="width: 100%; max-width: 200px; float: right"
-              @filter-attr="filterAttr"
-              :defaultFilterType="1"
-              :height="'28px '"
-            />
-          </v-col>
-          <v-col cols="4" style="padding-top: 6px; text-align: right">
-            <v-btn
-              @click="commonMethod()"
-              dense
-              small
-              color="primary"
-              primary
-              fill
-              >Submit
-            </v-btn>
+          <v-col> Attendance Reports </v-col>
+          <v-col cols="3" class="text-right">
+            <div style="display: flex; justify-content: right">
+              <div class="mx-2" style="height:10px;">
+                <Calender @filter-attr="filterAttr" />
+              </div>
+              <v-btn
+                @click="commonMethod()"
+                dense
+                small
+                color="primary"
+                primary
+                fill
+                >Submit
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
-      </v-card-text>
+      </v-alert>
     </v-card>
 
     <v-card class="mb-5" elevation="0">
@@ -603,15 +610,3 @@ export default {
   },
 };
 </script>
-<style>
-/* .v-slide-group__content {
-    height: 30px !important;
-  }
-  
-  .v-slide-group__wrapper {
-    height: 34px !important;
-  } */
-.slidegroup1 .v-slide-group {
-  height: 34px !important;
-}
-</style>

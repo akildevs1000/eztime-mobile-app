@@ -78,13 +78,6 @@ overflow: hidden;
 text-overflow: ellipsis;
 position: relative;
 }
-.breakthewords {
-  display: inline-block !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  position: relative;
-  }
 .custom-chip1 .v-chip__close {
 position: absolute;
 top: 5px;
