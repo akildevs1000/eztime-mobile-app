@@ -1,114 +1,117 @@
 <template>
-    <span>
-        <v-row no-gutters>
-      <v-col cols="9"></v-col>
-      <v-col cols="3" class="pa-0 ma-0">
+  <span>
+    <style scoped>
+      .v-data-table-header th {
+        background-color: #272f42 !important;
+        color: white !important;
+      }
+    </style>
+
+    <v-row class="pa-2">
+      <v-col cols="9">Activity Timeline</v-col>
+      <v-col cols="3">
         <div class="text-right mr-5">
           <Calender @filter-attr="filterAttr" />
         </div>
       </v-col>
-    </v-row>
-    <v-card-text>
-      <v-row>
-        <v-col cols="12">
-          <v-data-table
-            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-            dense
-            :headers="headers_table"
-            :items="data"
-            model-value="data.id"
-            :loading="loading"
-            :options.sync="options"
-            :footer-props="{
-              itemsPerPageOptions: [10, 50, 100, 500, 1000],
-            }"
-            class="elevation-1"
-            :server-items-length="totalRowsCount"
-            fixed-header
-            :disable-sort="true"
-          >
-            <template v-slot:item.sno="{ item, index }">
-              {{ index + 1 }}
-            </template>
-            <template v-slot:item.UserID="{ item }">
-              <strong> {{ item.UserID ? item.UserID : "---" }}</strong>
-              <br />
-              {{
-                item.employee && item.employee.employee_id
-                  ? item.employee.employee_id
-                  : "---"
-              }}
-            </template>
-            <template v-slot:item.employee.first_name="{ item, index }">
-              <v-row no-gutters>
-                <v-col
+      <v-col cols="12">
+        <v-data-table
+          color="purple"
+          :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+          dense
+          :headers="headers_table"
+          :items="data"
+          model-value="data.id"
+          :loading="loading"
+          :options.sync="options"
+          :footer-props="{
+            itemsPerPageOptions: [10, 50, 100, 500, 1000],
+          }"
+          class="accent"
+          style="background: none !important"
+          :server-items-length="totalRowsCount"
+          fixed-header
+          :disable-sort="true"
+        >
+          <template v-slot:item.sno="{ item, index }">
+            {{ index + 1 }}
+          </template>
+          <template v-slot:item.UserID="{ item }">
+            <strong> {{ item.UserID ? item.UserID : "---" }}</strong>
+            <br />
+            {{
+              item.employee && item.employee.employee_id
+                ? item.employee.employee_id
+                : "---"
+            }}
+          </template>
+          <template v-slot:item.employee.first_name="{ item, index }">
+            <v-row no-gutters>
+              <v-col
+                style="
+                  padding: 5px;
+                  padding-left: 0px;
+                  width: 50px;
+                  max-width: 50px;
+                "
+              >
+                <v-img
                   style="
-                    padding: 5px;
-                    padding-left: 0px;
+                    border-radius: 50%;
+                    height: auto;
                     width: 50px;
                     max-width: 50px;
                   "
+                  :src="
+                    item.employee && item.employee.profile_picture
+                      ? item.employee.profile_picture
+                      : '/no-profile-image.jpg'
+                  "
                 >
-                  <v-img
-                    style="
-                      border-radius: 50%;
-                      height: auto;
-                      width: 50px;
-                      max-width: 50px;
-                    "
-                    :src="
-                      item.employee && item.employee.profile_picture
-                        ? item.employee.profile_picture
-                        : '/no-profile-image.jpg'
-                    "
-                  >
-                  </v-img>
-                </v-col>
-                <v-col style="padding: 10px">
-                  <strong>
-                    {{ item.employee ? item.employee.first_name : "---" }}
-                    {{
-                      item.employee ? item.employee.last_name : "---"
-                    }}</strong
-                  >
-                  <div>
-                    {{
-                      item.employee && item.employee.designation
-                        ? caps(item.employee.designation.name)
-                        : "---"
-                    }}
-                  </div>
-                </v-col>
-              </v-row>
-            </template>
-            <template v-slot:item.department.name.id="{ item }">
-              <strong>{{
-                item.employee && item.employee.department
-                  ? caps(item.employee.department.name)
+                </v-img>
+              </v-col>
+              <v-col style="padding: 10px">
+                <strong>
+                  {{ item.employee ? item.employee.first_name : "---" }}
+                  {{ item.employee ? item.employee.last_name : "---" }}</strong
+                >
+                <div>
+                  {{
+                    item.employee && item.employee.designation
+                      ? caps(item.employee.designation.name)
+                      : "---"
+                  }}
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+          <template v-slot:item.department.name.id="{ item }">
+            <strong>{{
+              item.employee && item.employee.department
+                ? caps(item.employee.department.name)
+                : "---"
+            }}</strong>
+            <div>
+              {{
+                item.employee && item.employee.sub_department
+                  ? caps(item.employee.sub_department.name)
                   : "---"
-              }}</strong>
-              <div>
-                {{
-                  item.employee && item.employee.sub_department
-                    ? caps(item.employee.sub_department.name)
-                    : "---"
-                }}
-              </div>
-            </template>
-            <template v-slot:item.LogTime="{ item }">
-              {{ item.LogTime }}
-            </template>
-            <template v-slot:item.device.name="{ item }">
-              {{ item.device ? caps(item.device.name) : "---" }}
-            </template>
-            <template v-slot:item.gps_location="{ item }">
-              {{ item.gps_location || "---" }}
-            </template>
-          </v-data-table>
-        </v-col>
-      </v-row>
-    </v-card-text>
-    </span>
+              }}
+            </div>
+          </template>
+          <template v-slot:item.LogTime="{ item }">
+            {{ item.LogTime }}
+          </template>
+          <template v-slot:item.device.name="{ item }">
+            {{ item.device ? caps(item.device.name) : "---" }}
+          </template>
+          <template v-slot:item.gps_location="{ item }">
+            {{ item.gps_location || "---" }}
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+  </span>
 </template>
 
 <script>

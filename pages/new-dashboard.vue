@@ -6,8 +6,7 @@
 export default {
   data() {
     return {
-      loading:true,
-      from_date: "2025-01-01", // Default testing date
+      loading: true,
       item: {
         employee: {
           leave_group_id: 1,
@@ -31,28 +30,29 @@ export default {
         p_count: 20,
         a_count: 2,
         o_count: 1,
-        // other data required for getOtherCount
+        other_count: 1,
       },
     };
   },
   computed: {
     dashboardItem() {
+      let item = this.item;
       return {
         leave_group_id: this.item?.employee?.leave_group_id,
         company_id: this.$auth?.user?.company_id || 1001,
-        p_count: this.getPresentCount(this.item),
-        a_count: this.getAbsentCount(this.item),
-        o_count: this.item?.o_count || 0,
-        other_count: this.getOtherCount(this.item),
+        p_count: item?.p_count || 0,
+        a_count: item?.a_count || 0,
+        o_count: item?.o_count || 0,
+        other_count: item?.other_count || 0,
         rating: this.$util.getRating(
-          this.item.p_count,
-          this.from_date,
+          item.p_count,
+          new Date(new Date().getFullYear(), new Date().getMonth(), 1),
           new Date()
         ),
       };
     },
     employeeData() {
-      const emp = this.item?.employee || {};
+      const emp = this.$auth.user.employee || {};
       return {
         name: `${emp?.title || ""} ${emp?.full_name || ""}`,
         profile_picture: emp?.profile_picture || "",
@@ -74,46 +74,18 @@ export default {
     await this.getDataFromApi();
   },
   methods: {
-    getPresentCount(item) {
-      return item?.p_count || 0;
-    },
-    getAbsentCount(item) {
-      return item?.a_count || 0;
-    },
-    getOtherCount(item) {
-      return (item?.o_count || 0) + 1; // Adjust logic based on real use case
-    },
-
     async getDataFromApi() {
-      const now = new Date();
-
-      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
       this.$axios
-        .post(`performance-report`, {
-          employee_id: [this.$auth.user.employee.system_user_id],
-          department_ids: [],
+        .post(`performance-report-show`, {
+          system_user_id: this.$auth.user.employee.system_user_id,
           branch_id: null,
-          from_date: this.formatDate(firstDay),
-          to_date: this.formatDate(lastDay),
-          page: 1,
-          per_page: 10,
           company_id: this.$auth.user.company_id,
           report_type: "monthly",
         })
         .then(({ data }) => {
-          this.item = data.data[0];
-
+          this.item = data;
           this.loading = false;
         });
-    },
-
-    formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
     },
   },
 };

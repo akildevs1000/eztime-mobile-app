@@ -1,27 +1,6 @@
 <template>
-  <v-app dark style="background:#f4f5fa;">
-    <!-- <v-navigation-drawer
-      dark
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-      class="theme--dark background"
-      style="width: 215px"
-    > -->
-
-    <v-navigation-drawer
-      :expand-on-hover="miniVariant"
-      dark
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-      class="theme--dark background"
-      style="width: 215px"
-    >
+  <v-app dark style="background: #1a202e">
+    <v-navigation-drawer dark v-model="drawer" app class="background">
       <v-list>
         <template v-for="(item, i) in loadMenus">
           <v-list-item
@@ -42,13 +21,28 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar class="bg-color" :clipped-left="clipped" fixed app>
+    <v-app-bar
+      class="background"
+      style="border-bottom: 1px solid #272f42 !important"
+      flat
+      app
+    >
       <v-app-bar-nav-icon v-if="!miniVariant" @click.stop="drawer = !drawer" />
       <span class="text-overflow">
         <img title="My Time Cloud " :src="`/logo22.png`" style="width: 86px" />
       </span>
       <v-spacer />
+      <v-btn icon @click="$vuetify.theme.dark = !$vuetify.theme.dark">
+        <v-icon>
+          {{
+            $vuetify.theme.dark
+              ? "mdi-white-balance-sunny"
+              : "mdi-moon-waning-crescent"
+          }}
+        </v-icon>
+      </v-btn>
       <v-icon class="mx-2" v-if="!unreads.length" color="grey">mdi-bell</v-icon>
+
       <v-menu v-else offset-y v-model="menuOpen">
         <template v-slot:activator="{ on }">
           <v-badge
@@ -129,28 +123,12 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-      <!-- <v-btn icon @click="logout">
-        <v-icon>mdi-logout</v-icon>
-      </v-btn> -->
     </v-app-bar>
-    <v-main class="pb-0">
-      <v-container
-        style="background-color: #f4f5fa !important"
-        class="deafult-layout"
-      >
+    <v-main>
+      <v-container fluid class="pa-7">
         <Nuxt />
       </v-container>
     </v-main>
-    <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light> mdi-repeat </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer> -->
   </v-app>
 </template>
 
@@ -224,27 +202,6 @@ export default {
           color: "#9aa9b9",
           show_mobile_app: true,
         },
-        // {
-        //   icon: "mdi-apps",
-        //   title: "Option 2",
-        //   to: "/index2",
-        //   color: "#9aa9b9",
-        //   show_mobile_app: true,
-        // },
-        // {
-        //   icon: "mdi-apps",
-        //   title: "Option 3",
-        //   to: "/index3",
-        //   color: "#9aa9b9",
-        //   show_mobile_app: true,
-        // },
-        // {
-        //   icon: "mdi-apps",
-        //   title: "Option 4",
-        //   to: "/index4",
-        //   color: "#9aa9b9",
-        //   show_mobile_app: true,
-        // },
         {
           icon: "mdi-apps",
           title: "Dashboard",
@@ -399,11 +356,11 @@ export default {
 
     async getUnReads() {
       try {
-        const { id,employee } = await this.$auth.user;
+        const { id, employee } = await this.$auth.user;
 
         const { data } = await this.$axios.get(`unread`, {
           params: {
-            company_id:employee.company_id,
+            company_id: employee.company_id,
             user_id: id,
           },
         });
@@ -417,6 +374,3 @@ export default {
   },
 };
 </script>
-<style src="@/assets/common.css"></style>
-<style src="@/assets/mobile.css"></style>
-<style src="@/assets/desktop.css"></style>

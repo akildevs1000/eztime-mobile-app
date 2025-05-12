@@ -1,11 +1,11 @@
 <template>
   <div class="mobileBGColor111 bg-body">
     <v-dialog persistent v-model="dialogWhatsapp" width="600px">
-      <v-card>
+      <v-card :dark="false">
         <v-card-title
           dense
           class="white--text"
-          style="background-color: #6946dd; color: #fff !important"
+          style="background-color: #6946dd; !important"
         >
           Whatsapp Verification
           <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
         <v-card-text>
           <div class="row g-0">
             <div class="col-lg-12">
-              <div class="card-body p-md-5 mx-md-4">
+              <div class="p-md-5 mx-md-4">
                 <v-row class="pb-5">
                   <v-col md="12" cols="12" class="text-center">
                     <h2>MyTime2Cloud</h2>
@@ -58,7 +58,7 @@
                     :loading="loading"
                     @click="checkOTP(otp)"
                     class="btn btn-block fa-lg mt-1 mb-3"
-                    style="background-color: #6946dd; color: #fff"
+                    style="background-color: #6946dd"
                   >
                     Verify OTP
                   </v-btn>
@@ -99,7 +99,7 @@
     <v-row class="" style="height: 100%">
       <v-col xs="12" sm="12" md="12" lg="5" style="padding: 0px">
         <div
-          class="card-body p-md-5 mx-md111111-4"
+          class="p-md-5"
           style="
             padding: 3rem !important;
             max-width: 500px;
@@ -120,7 +120,7 @@
                 src="/logo22.png"
               ></v-img>
             </div>
-            <h3 class="pb-7 pt-15">
+            <h3 class="pb-7 pt-15 black--text">
               Welcome To
               <span style="font-size: 20px"> Mytime2Cloud </span>
             </h3>
@@ -135,6 +135,7 @@
             >
               <div class="form-outline">
                 <v-text-field
+                  light
                   role="presentation"
                   label="Email"
                   v-model="credentials.email"
@@ -154,6 +155,7 @@
 
               <div class="form-outline">
                 <v-text-field
+                  light
                   role="presentation"
                   label="Password"
                   dense
@@ -200,9 +202,11 @@
               </div>
             </v-form>
           </div>
-          <div class="text-center">Don't Have an Account?. Contact Admin</div>
+          <div class="text-center black--text">
+            Don't Have an Account?. Contact Admin
+          </div>
 
-          <v-row class="text-center" style="font-size: 13px">
+          <v-row class="text-center black--text" style="font-size: 13px">
             <v-col class="pa-5">
               For Technical Support :
               <a
@@ -270,20 +274,20 @@
               <h3>Technical Support</h3>
 
               <a
-                style="font-weight: 300"
+                style="font-weight: 300; color: white"
                 target="_blank"
                 href="https://wa.me/971529048025?text=Hello MyTime2Cloud. I need your support."
                 ><v-icon color="white">mdi-whatsapp</v-icon></a
               >
 
               <a
-                style="color: #fff; text-decoration: none; font-weight: 300"
+                style="text-decoration: none; font-weight: 300; color: white"
                 href="tel:+971529048025"
                 >+971 52 904 8025</a
               >
               <br />
               <a
-                style="text-decoration: none; color: #fff; font-weight: 300"
+                style="text-decoration: none; font-weight: 300;color: white"
                 href="mailto:support@mytime2cloud.com"
                 >support@mytime2cloud.com</a
               >
@@ -507,7 +511,6 @@ html {
 .about-content {
   padding-left: 30%;
   padding-top: 1%;
-  color: #fff;
 
   padding-right: 15%;
 }
@@ -530,7 +533,6 @@ html {
   }
 
   .bgimage2 {
-    background-color: #fff;
     background-image: url("../static/login/bgimage.png");
     background-size: cover;
   }
