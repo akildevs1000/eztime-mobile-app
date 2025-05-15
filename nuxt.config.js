@@ -94,9 +94,8 @@ export default {
       dark: true,
       themes: {
         light: {
-          //primary: "#5fafa3", //green
-          primary: "#6946dd", //violoet
-          accent: "#d8363a",
+          primary: "#6946dd",
+          accent: "#fff",
           secondary: "#242424",
           background: "#34444c",
           info: colors.teal.lighten1,
@@ -107,8 +106,6 @@ export default {
           violet: "#6946dd",
           popup_background: "#ecf0f4",
         },
-      },
-      themes: {
         dark: {
           primary: colors.blue.darken2,
           accent: "#272f42",
@@ -122,6 +119,7 @@ export default {
       },
     },
   },
+
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},

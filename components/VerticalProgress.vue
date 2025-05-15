@@ -1,11 +1,8 @@
 <template>
-  <span>
+  <v-container class="py-0">
     <v-row>
       <v-col cols="12">
-        <div>Sales</div>
-        <div class="text-caption" style="color: #a0aec0">
-          Calculated in last 7 days
-        </div>
+        <div>Current Week Schedule</div>
       </v-col>
       <v-col cols="12" class="mb-5">
         <div
@@ -64,7 +61,7 @@
         </div>
       </v-col>
     </v-row>
-  </span>
+  </v-container>
 </template>
 
 <script>

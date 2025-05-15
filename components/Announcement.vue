@@ -280,7 +280,7 @@ export default {
 
       const { page, itemsPerPage } = this.options;
       const company_id = this.$auth.user.company_id;
-      const per_page = 100; //itemsPerPage;
+      const per_page = 10000; //itemsPerPage;
 
       if (filter_column != "") {
         options.params[filter_column] = filter_value;

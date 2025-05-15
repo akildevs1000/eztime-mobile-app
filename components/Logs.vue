@@ -1,22 +1,31 @@
 <template>
   <span>
     <style scoped>
-      .v-data-table-header th {
+      .custom-light-header-for-datatable th {
+        background-color: #fff !important;
+        color: grey !important;
+        border-bottom: 1px solid grey !important;
+      }
+      .custom-dark-header-for-datatable th {
         background-color: #272f42 !important;
         color: white !important;
       }
     </style>
 
     <v-row class="pa-2">
-      <v-col cols="9">Activity Timeline</v-col>
-      <v-col cols="3">
+      <v-col cols="9">Logs</v-col>
+      <!-- <v-col cols="3">
         <div class="text-right mr-5">
           <Calender @filter-attr="filterAttr" />
         </div>
-      </v-col>
+      </v-col> -->
       <v-col cols="12">
         <v-data-table
-          color="purple"
+          :class="
+            $isDark()
+              ? 'accent custom-dark-header-for-datatable'
+              : 'light-background custom-light-header-for-datatable'
+          "
           :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
           dense
           :headers="headers_table"
@@ -27,8 +36,6 @@
           :footer-props="{
             itemsPerPageOptions: [10, 50, 100, 500, 1000],
           }"
-          class="accent"
-          style="background: none !important"
           :server-items-length="totalRowsCount"
           fixed-header
           :disable-sort="true"
@@ -36,31 +43,22 @@
           <template v-slot:item.sno="{ item, index }">
             {{ index + 1 }}
           </template>
-          <template v-slot:item.UserID="{ item }">
-            <strong> {{ item.UserID ? item.UserID : "---" }}</strong>
-            <br />
-            {{
-              item.employee && item.employee.employee_id
-                ? item.employee.employee_id
-                : "---"
-            }}
-          </template>
-          <template v-slot:item.employee.first_name="{ item, index }">
+          <template v-slot:item.employee="{ item, index }">
             <v-row no-gutters>
               <v-col
                 style="
                   padding: 5px;
                   padding-left: 0px;
-                  width: 50px;
-                  max-width: 50px;
+                  width: 40px;
+                  max-width: 40px;
                 "
               >
                 <v-img
                   style="
                     border-radius: 50%;
                     height: auto;
-                    width: 50px;
-                    max-width: 50px;
+                    width: 40px;
+                    max-width: 40px;
                   "
                   :src="
                     item.employee && item.employee.profile_picture
@@ -71,39 +69,34 @@
                 </v-img>
               </v-col>
               <v-col style="padding: 10px">
-                <strong>
-                  {{ item.employee ? item.employee.first_name : "---" }}
-                  {{ item.employee ? item.employee.last_name : "---" }}</strong
-                >
-                <div>
-                  {{
-                    item.employee && item.employee.designation
-                      ? caps(item.employee.designation.name)
-                      : "---"
-                  }}
+                <span class="ml-2" small>
+                  {{ item.employee.first_name ?? "---" }}
+                </span>
+                <div class="secondary-value ml-2">
+                  {{ item.employee?.designation?.name }}
                 </div>
               </v-col>
             </v-row>
           </template>
-          <template v-slot:item.department.name.id="{ item }">
-            <strong>{{
-              item.employee && item.employee.department
-                ? caps(item.employee.department.name)
-                : "---"
-            }}</strong>
-            <div>
-              {{
-                item.employee && item.employee.sub_department
-                  ? caps(item.employee.sub_department.name)
-                  : "---"
-              }}
-            </div>
-          </template>
-          <template v-slot:item.LogTime="{ item }">
-            {{ item.LogTime }}
-          </template>
           <template v-slot:item.device.name="{ item }">
             {{ item.device ? caps(item.device.name) : "---" }}
+          </template>
+          <template v-slot:item.mode="{ item }">
+            <v-icon
+              :color="$isDark() ? 'white' : 'black'"
+              v-if="item.DeviceID?.includes(`Mobile`)"
+              >mdi-cellphone</v-icon
+            >
+            <span v-else>
+              <v-avatar
+                v-for="(icon, index) in getRelatedIcons(item.mode)"
+                :key="index"
+                class="mx-1"
+                tile
+                size="20"
+                ><img style="width: 100%" :src="icon"
+              /></v-avatar>
+            </span>
           </template>
           <template v-slot:item.gps_location="{ item }">
             {{ item.gps_location || "---" }}
@@ -115,6 +108,18 @@
 </template>
 
 <script>
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-based
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+const today = new Date();
+
+const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
 // import DateRangePicker from "../components/Snippets/Filters/DateRangePicker.vue";
 import Calender from "../components/Calender.vue";
 export default {
@@ -151,9 +156,9 @@ export default {
     Model: "Log",
     endpoint: "attendance_logs",
 
-    from_date: null,
+    from_date: new Date().toISOString().split("T")[0],
     from_menu: false,
-    to_date: null,
+    to_date: new Date().toISOString().split("T")[0],
     to_menu: false,
 
     payload: {},
@@ -165,29 +170,6 @@ export default {
 
     loading: false,
     time_menu: false,
-    headers: [
-      {
-        text: "#",
-        align: "left",
-        sortable: false,
-        key: "LogTime", //sorting
-        value: "sno", //edit purpose
-      },
-      {
-        text: "UserID",
-        align: "center",
-        sortable: false,
-        value: "UserID",
-      },
-      { text: "DeviceID", align: "center", sortable: false, value: "DeviceID" },
-      // {
-      //   text: "Device Name",
-      //   align: "center",
-      //   sortable: false,
-      //   value: "device.name",
-      // },
-      { text: "LogTime", align: "center", sortable: false, value: "LogTime" },
-    ],
     ids: [],
 
     data: [],
@@ -205,21 +187,29 @@ export default {
     snackbar: false,
     headers_table: [
       {
-        text: "#",
-        align: "left",
-        sortable: false,
-        key: "LogTime", //sorting
-        value: "sno", //edit purpose
-      },
-      {
-        text: "DateTime",
+        text: "Info",
         align: "left",
         sortable: false,
         key: "date_range",
-        value: "LogTime",
+        value: "employee",
         fieldType: "date_range_picker",
       },
-
+      {
+        text: "Date",
+        align: "left",
+        sortable: false,
+        key: "date_range",
+        value: "date",
+        fieldType: "date_range_picker",
+      },
+      {
+        text: "Time",
+        align: "left",
+        sortable: false,
+        key: "date_range",
+        value: "time",
+        fieldType: "date_range_picker",
+      },
       {
         text: "Device Name",
         align: "left",
@@ -230,16 +220,28 @@ export default {
         filterSpecial: true,
       },
       {
-        text: "Gps Location",
+        text: "Mode",
         align: "left",
         sortable: true,
-        key: "gps_location",
-        value: "gps_location",
+        key: "mode",
+        value: "mode",
         filterable: true,
         filterSpecial: true,
       },
+      // {
+      //   text: "Gps Location",
+      //   align: "left",
+      //   sortable: true,
+      //   key: "gps_location",
+      //   value: "gps_location",
+      //   filterable: true,
+      //   filterSpecial: true,
+      // },
     ],
-    payload: {},
+    payload: {
+      from_date: formatDate(firstDay),
+      to_date: formatDate(lastDay),
+    },
   }),
 
   mounted() {
@@ -261,6 +263,63 @@ export default {
     },
   },
   methods: {
+    getRelatedIcons(mode) {
+      let iconPath = "/icons/employee-access/";
+      let colorMode = this.$isDark() ? "w" : "b"; // b = black, w = white
+      const icons = {
+        Card: [iconPath + "3-" + colorMode + ".png"],
+        Fing: [iconPath + "4-" + colorMode + ".png"],
+        Face: [iconPath + "1-" + colorMode + ".png"],
+        "Fing + Card": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "3-" + colorMode + ".png",
+        ],
+        "Face + Fing": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "4-" + colorMode + ".png",
+        ],
+        "Face + Card": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "3-" + colorMode + ".png",
+        ],
+        "Card + Pin": [
+          iconPath + "3-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Face + Pin": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Fing + Pin": [
+          iconPath + "4-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Fing + Card + Pin": [
+          iconPath + "4-" + colorMode + ".png",
+          iconPath + "3-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Face + Card + Pin": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "3-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Face + Fing + Pin": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "4-" + colorMode + ".png",
+          iconPath + "2-" + colorMode + ".png",
+        ],
+        "Face + Fing + Card": [
+          iconPath + "1-" + colorMode + ".png",
+          iconPath + "4-" + colorMode + ".png",
+          iconPath + "3-" + colorMode + ".png",
+        ],
+        Manual: [], // assuming no icons for Manual
+        Repeated: [], // assuming no icons for Repeated
+      };
+
+      return icons[mode] || [iconPath + "2-" + colorMode + ".png"];
+    },
     filterAttr(data) {
       this.payload.from_date = data.from;
       this.payload.to_date = data.to;

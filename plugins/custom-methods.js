@@ -1,6 +1,9 @@
 import QRCode from 'qrcode';
 
-export default ({ app }, inject) => {
+export default ({ app,store }, inject) => {
+
+  // Inject it globally so it can be accessed as $isDark in all pages/components
+  inject('isDark', () => store.state.theme.isDark);
 
   inject('qrcode', {
     generate: (text, options) => {

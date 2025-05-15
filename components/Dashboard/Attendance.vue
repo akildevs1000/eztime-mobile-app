@@ -1,103 +1,185 @@
 <template>
-  <v-row>
+  <v-row class="pa-3">
     <v-col>
-      <v-card elevation="5" class="accent">
-        <v-row justify="space-between" align="center">
-          <v-col cols="12" class="px-10">
-            <div class="text-h5">OverAll Attendance</div>
-          </v-col>
-          <v-col cols="4" class="text-center">
-            <div class="caption mt-1">
-              <v-icon size="20" color="success">mdi-check</v-icon> Present
-            </div>
-            <div class="text-h6 font-weight-bold">
-              <v-progress-circular
-                :size="20"
-                :value="80"
-                color="success"
-              ></v-progress-circular>
-              13
-            </div>
-          </v-col>
-          <v-col cols="4" class="text-center">
-            <div class="caption mt-1">
-              <v-icon size="20" color="orange">mdi-calendar</v-icon> Leave
-            </div>
-            <div class="text-h6 font-weight-bold">
-              <v-progress-circular
-                :size="20"
-                :value="80"
-                color="orange"
-              ></v-progress-circular>
-              10
-            </div>
-          </v-col>
-          <v-col cols="4" class="text-center">
-            <div class="caption mt-1">
-              <v-icon size="20" color="red">mdi-close</v-icon>
-              Absent
-            </div>
-            <div class="text-h6 font-weight-bold">
-              <v-progress-circular
-                :size="20"
-                :value="80"
-                color="red"
-              ></v-progress-circular>
-              72.6
-            </div>
-          </v-col>
-        </v-row>
+      <style scoped>
+        .apexcharts-tooltip {
+          background-color: #f4f4f4 !important;
+          color: #000000 !important;
+          border-radius: 6px !important;
+          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+      </style>
 
-        <v-container fluid class="pa-5">
-          <apexchart
-            type="bar"
-            height="350"
-            :options="barChartOptions"
-            :series="barChartSeries"
-            style="width: 100%"
-          />
-        </v-container>
-      </v-card>
+      <v-row v-if="attendanceStats" justify="space-between" align="center">
+        <v-col cols="12" class="px-10">
+          <div
+            class="text-h5"
+            :class="isDarkMode ? 'white--text' : 'black--text'"
+          >
+            OverAll Attendance
+          </div>
+        </v-col>
+
+        <v-col cols="4" class="text-center">
+          <div class="caption mt-1">
+            <v-icon size="20" color="success">mdi-check</v-icon>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              Present
+            </span>
+          </div>
+          <div class="text-h6 font-weight-bold">
+            <v-progress-circular
+              :size="20"
+              :value="attendanceStats['P']"
+              color="success"
+            ></v-progress-circular>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              {{ attendanceStats["P"] }}
+            </span>
+          </div>
+        </v-col>
+
+        <v-col cols="4" class="text-center">
+          <div class="caption mt-1">
+            <v-icon size="20" color="orange">mdi-calendar</v-icon>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              Leave
+            </span>
+          </div>
+          <div class="text-h6 font-weight-bold">
+            <v-progress-circular
+              :size="20"
+              :value="attendanceStats['L']"
+              color="orange"
+            ></v-progress-circular>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              {{ attendanceStats["L"] }}
+            </span>
+          </div>
+        </v-col>
+
+        <v-col cols="4" class="text-center">
+          <div class="caption mt-1">
+            <v-icon size="20" color="red">mdi-close</v-icon>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              Absent
+            </span>
+          </div>
+          <div class="text-h6 font-weight-bold">
+            <v-progress-circular
+              :size="20"
+              :value="attendanceStats['A']"
+              color="red"
+            ></v-progress-circular>
+            <span :class="isDarkMode ? 'white--text' : 'black--text'">
+              {{ attendanceStats["A"] }}
+            </span>
+          </div>
+        </v-col>
+      </v-row>
+
+      <v-container fluid class="pa-5">
+        <apexchart
+          :key="chartKey"
+          v-if="!loading"
+          type="bar"
+          height="280"
+          :options="barChartOptions"
+          :series="barChartSeries"
+          style="width: 100%"
+        />
+      </v-container>
     </v-col>
   </v-row>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      attendanceStats: [],
+      attendances: [],
+      barChartSeries: [],
+      loading: true,
+      chartKey: 1,
+      barChartOptions: {
+        chart: {
+          type: "bar",
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: "15%",
+            borderRadius: 0,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        xaxis: {
+          categories: [],
+          labels: {
+            style: {
+              colors: "#000000", // default light mode
+              fontSize: "12px",
+            },
+          },
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: "#000000", // default light mode
+              fontSize: "12px",
+            },
+          },
+        },
+        colors: ["#6946dd"],
+      },
+    };
+  },
 
-<script setup>
-const barChartOptions = {
-  chart: {
-    type: "bar",
-    toolbar: { show: false },
-  },
-  plotOptions: {
-    bar: {
-      columnWidth: "15%",
-      borderRadius: 0,
+  computed: {
+    isDarkMode() {
+      return this.$isDark();
     },
   },
-  dataLabels: {
-    enabled: false,
-  },
-  xaxis: {
-    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
-    labels: {
-      style: {
-        colors: "#ffffff", // White x-axis labels
-        fontSize: "12px",
-      },
+
+  watch: {
+    isDarkMode() {
+      this.updateChartColors();
     },
   },
-  yaxis: {
-    labels: {
-      style: {
-        colors: "#ffffff", // White y-axis labels
-        fontSize: "12px",
-      },
+
+  methods: {
+    updateChartColors() {
+      const color = this.isDarkMode ? "#ffffff" : "#000000";
+      this.barChartOptions.xaxis.labels.style.colors = color;
+      this.barChartOptions.yaxis.labels.style.colors = color;
+      this.chartKey++; // force re-render
     },
   },
-  colors: ["#6946dd"],
+
+  async mounted() {
+    try {
+      const response = await this.$axios.$get(
+        "/employee-attendance-summary?company_id=43&employee_id=7"
+      );
+      this.attendances = response.attendances;
+      this.barChartSeries = response.barChartSeries;
+      this.barChartOptions.xaxis.categories = response.labels;
+
+      this.updateChartColors();
+      this.loading = false;
+    } catch (error) {
+      console.error("Failed to load attendance summary:", error);
+    }
+
+    let url = `current-month-performance-report`;
+    let payload = {
+      company_id: 43,
+      employee_id: 7,
+    };
+    let { data } = await this.$axios.post(url, payload);
+    this.attendanceStats = data.stats;
+  },
 };
-
-const barChartSeries = [
-  { name: "Users", data: [10, 15, 20, 22, 25, 28, 30, 33, 20] },
-];
 </script>

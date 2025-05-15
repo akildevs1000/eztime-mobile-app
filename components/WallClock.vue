@@ -1,7 +1,11 @@
 <template>
   <div>
-    <v-sheet> {{ currentDate }}</v-sheet>
-    <v-sheet> {{ currentTime }} </v-sheet>
+    <v-sheet :class="$isDark() ? 'accent' : 'light-background'">
+      {{ currentDate }}</v-sheet
+    >
+    <v-sheet :class="$isDark() ? 'accent' : 'light-background'">
+      {{ currentTime }}
+    </v-sheet>
   </div>
 </template>
 

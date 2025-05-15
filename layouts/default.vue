@@ -1,135 +1,158 @@
 <template>
-  <v-app dark style="background: #1a202e">
-    <v-navigation-drawer dark v-model="drawer" app class="background">
-      <v-list>
-        <template v-for="(item, i) in loadMenus">
-          <v-list-item
-            v-if="item.show_mobile_app != miniVariant"
-            :key="i"
-            :to="item.to"
-            :style="'color:' + item.color"
-            router
-            exact
-          >
-            <v-list-item-action>
-              <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }} </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
-    <v-app-bar
-      class="background"
-      style="border-bottom: 1px solid #272f42 !important"
-      flat
-      app
-    >
-      <v-app-bar-nav-icon v-if="!miniVariant" @click.stop="drawer = !drawer" />
-      <span class="text-overflow">
-        <img title="My Time Cloud " :src="`/logo22.png`" style="width: 86px" />
-      </span>
-      <v-spacer />
-      <v-btn icon @click="$vuetify.theme.dark = !$vuetify.theme.dark">
-        <v-icon>
-          {{
-            $vuetify.theme.dark
-              ? "mdi-white-balance-sunny"
-              : "mdi-moon-waning-crescent"
-          }}
-        </v-icon>
-      </v-btn>
-      <v-icon class="mx-2" v-if="!unreads.length" color="grey">mdi-bell</v-icon>
+  <span>
+    <style>
+      .v-dialog.v-dialog--active {
+        box-shadow: none !important;
+      }
+      .dark-background {
+        background: #1a202e !important; /* Dark mode background */
+        color: #fff !important;
+      }
 
-      <v-menu v-else offset-y v-model="menuOpen">
-        <template v-slot:activator="{ on }">
-          <v-badge
-            class="mx-1"
-            overlap
-            color="red"
-            :content="notificationCount"
-          >
-            <v-icon v-on="on" color="primary">mdi-bell</v-icon>
-          </v-badge>
-        </template>
-        <v-list dense>
-          <v-list-item-group>
+      .light-background {
+        background: #fff !important; /* Light mode background */
+        color: #000000 !important;
+      }
+    </style>
+    <v-app :class="$isDark() ? 'dark-background' : 'light-background'">
+      <v-navigation-drawer dark v-model="drawer" app class="background">
+        <v-list>
+          <template v-for="(item, i) in loadMenus">
             <v-list-item
-              v-for="({ id, redirect_url, data }, index) in unreads"
-              :key="index"
+              v-if="item.show_mobile_app != miniVariant"
+              :key="i"
+              :to="item.to"
+              :style="'color:' + item.color"
+              router
+              exact
             >
-              <!-- <v-list-item-icon>
+              <v-list-item-action>
+                <v-icon :style="'color:' + item.color">{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }} </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-navigation-drawer>
+      <v-app-bar
+        :class="$isDark() ? 'dark-background' : 'light-background'"
+        dense
+        app
+      >
+        <v-app-bar-nav-icon
+          v-if="!miniVariant"
+          @click.stop="drawer = !drawer"
+        />
+        <span class="text-overflow d-flex align-center">
+          <v-btn icon @click.stop="drawer = !drawer">
+            <v-icon :color="$isDark() ? 'white' : 'black'">mdi-menu</v-icon>
+          </v-btn>
+          <img title="My Time Cloud" :src="`/logo22.png`" style="width: 86px" />
+        </span>
+
+        <v-spacer />
+        <v-btn icon @click="toggleTheme">
+          <v-icon :color="$isDark() ? 'white' : 'black'">
+            {{
+              $isDark() ? "mdi-white-balance-sunny" : "mdi-moon-waning-crescent"
+            }}
+          </v-icon>
+        </v-btn>
+        <v-icon class="mx-2" v-if="!unreads.length" color="grey"
+          >mdi-bell</v-icon
+        >
+
+        <v-menu v-else offset-y v-model="menuOpen">
+          <template v-slot:activator="{ on }">
+            <v-badge
+              class="mx-1"
+              overlap
+              color="red"
+              :content="notificationCount"
+            >
+              <v-icon v-on="on" color="primary">mdi-bell</v-icon>
+            </v-badge>
+          </template>
+          <v-list dense>
+            <v-list-item-group>
+              <v-list-item
+                v-for="({ id, redirect_url, data }, index) in unreads"
+                :key="index"
+              >
+                <!-- <v-list-item-icon>
                 <v-icon color="primary">mdi-bell</v-icon>
               </v-list-item-icon> -->
-              <v-list-item-content>
-                <v-list-item-title
-                  @click="updateNotificationStatus(id, redirect_url)"
-                  color="primary"
-                  >{{ data }}</v-list-item-title
-                >
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-menu>
+                <v-list-item-content>
+                  <v-list-item-title
+                    @click="updateNotificationStatus(id, redirect_url)"
+                    color="primary"
+                    >{{ data }}</v-list-item-title
+                  >
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
 
-      <v-menu
-        class="avatar-menu"
-        nudge-bottom="50"
-        transition="scale-transition"
-        origin="center center"
-        bottom
-        right
-        min-width="20"
-        nudge-right="0"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon color="red" v-bind="attrs" v-on="on">
-            <v-avatar size="35" style="border: 1px solid #6946dd">
-              <v-img :src="profile_picture" />
-            </v-avatar>
-          </v-btn>
-        </template>
+        <v-menu
+          class="avatar-menu"
+          nudge-bottom="50"
+          transition="scale-transition"
+          origin="center center"
+          bottom
+          right
+          min-width="20"
+          nudge-right="0"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon color="red" v-bind="attrs" v-on="on">
+              <v-avatar size="35" style="border: 1px solid #6946dd">
+                <v-img :src="profile_picture" />
+              </v-avatar>
+            </v-btn>
+          </template>
 
-        <v-list class="avatar-menu">
-          <v-list-item-group color="primary">
-            <v-list-item
-              v-if="
-                $auth.user.user_type == 'branch' && this.$store.state.isDesktop
-              "
-              @click="changeLoginType"
-            >
-              <v-list-item-icon>
-                <v-icon>mdi-account-multiple-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="black--text">
-                  Login Into Branch
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="logout">
-              <v-list-item-icon>
-                <v-icon>mdi-logout</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title class="black--text"
-                  >Logout</v-list-item-title
-                >
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-    <v-main>
-      <v-container fluid class="pa-7">
-        <Nuxt />
-      </v-container>
-    </v-main>
-  </v-app>
+          <v-list class="avatar-menu">
+            <v-list-item-group color="primary">
+              <v-list-item
+                v-if="
+                  $auth.user.user_type == 'branch' &&
+                  this.$store.state.isDesktop
+                "
+                @click="changeLoginType"
+              >
+                <v-list-item-icon>
+                  <v-icon>mdi-account-multiple-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title class="black--text">
+                    Login Into Branch
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item @click="logout">
+                <v-list-item-icon>
+                  <v-icon>mdi-logout</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title class="black--text"
+                    >Logout</v-list-item-title
+                  >
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+      </v-app-bar>
+      <v-main>
+        <v-container fluid class="pa-7">
+          <Nuxt />
+        </v-container>
+      </v-main>
+    </v-app>
+  </span>
 </template>
 
 <script>
@@ -187,12 +210,14 @@ export default {
       this.miniVariant = false;
     }
     this.$store.commit("isDesktop", this.miniVariant);
+
+    this.$store.dispatch("theme/loadTheme");
+    this.$vuetify.theme.dark = this.$isDark();
   },
   computed: {
     locationData() {
       return this.$store.state.locationData;
     },
-
     loadMenus() {
       return [
         {
@@ -298,6 +323,9 @@ export default {
     },
   },
   methods: {
+    toggleTheme() {
+      this.$store.dispatch("theme/toggleTheme");
+    },
     can(per) {
       return this.$auth.user.permissions.includes(per) || per === "/"
         ? true
