@@ -1,5 +1,10 @@
 <template>
   <v-date-picker
+    :class="
+      $isDark()
+        ? 'accent white--text dark-mode'
+        : 'light-background black--text'
+    "
     elevation="2"
     :landscape="true"
     dense

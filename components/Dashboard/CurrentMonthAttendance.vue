@@ -1,33 +1,10 @@
 <template>
   <v-row class="pa-3">
     <v-col>
-      <style scoped>
-        .v-picker__body.v-picker__body.theme--dark {
-          background: none !important;
-        }
-
-        .v-btn__content {
-          color: black !important;
-        }
-
-        .v-date-picker-header__value .accent--text button {
-          color: black !important;
-        }
-
-        /* Dark mode overrides */
-        .dark-mode .v-btn__content {
-          color: white !important;
-        }
-
-        .dark-mode .v-date-picker-header__value .accent--text button {
-          color: white !important;
-        }
-      </style>
-
       <v-date-picker
         class="custom-date-picker"
         :class="
-          isDarkMode
+          $isDark()
             ? 'accent white--text dark-mode'
             : 'light-background black--text'
         "
@@ -138,16 +115,6 @@ export default {
       eventsForCurrentMonth: null,
       eventStatsForCurrentMonth: null,
     };
-  },
-
-  computed: {
-    isDarkMode() {
-      return this.$isDark();
-    },
-  },
-
-  watch: {
-    isDarkMode() {},
   },
 
   methods: {

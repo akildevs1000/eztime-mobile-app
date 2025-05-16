@@ -1,119 +1,131 @@
 <template>
-   <SnippetsCard class="px-5">
+  <SnippetsCard class="px-5">
     <template #body>
       <div>
-    <v-row justify="center">
-      <v-dialog v-model="changeRequestDialog" max-width="500px">
-        <v-card>
-          <v-card-title dark class="popup_background">
-            <span dense> {{ Model }}s </span>
-            <v-spacer></v-spacer>
-            <v-icon @click="changeRequestDialog = false" outlined>
-              mdi mdi-close-circle
-            </v-icon>
-          </v-card-title>
-          <v-card-text>
-            <ChangeRequest
-              @reload="getChangeRequests()"
-              @close-change-request-form="() => (changeRequestDialog = false)"
-            />
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </v-row>
-    <v-row>
-      <v-col cols="6">
-        Change Requests
-        <v-btn
-          title="Reload"
-          dense
-          class="ma-0 px-0"
-          x-small
-          :ripple="false"
-          @click="getChangeRequests"
-          text
-        >
-          <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="6" class="text-right">
-        <v-btn
-          small
-          class="primary"
-          title="Change Request"
-          @click="changeRequestDialog = true"
-        >
-          + New
-        </v-btn>
-      </v-col>
-      <v-col>
-        <v-data-table
-          :class="
-            $isDark()
-              ? 'accent custom-dark-header-for-datatable'
-              : 'light-background custom-light-header-for-datatable'
-          "
-          v-if="$store.state.isDesktop"
-          :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-          item-key="id"
-          :headers="headers"
-          :items="data"
-          :loading="loading"
-          :footer-props="{
-            itemsPerPageOptions: [10, 50, 100, 500, 1000],
-          }"
-          :options.sync="options"
-          :server-items-length="totalRowsCount"
-        >
-          <template v-slot:item.sno="{ item, index }">
-            {{
-              currentPage
-                ? (currentPage - 1) * perPage +
-                  (cumulativeIndex + data.indexOf(item))
-                : ""
-            }}
-          </template>
-          <template v-slot:item.from_date="{ item }">
-            {{ item.from_date }} to {{ item.to_date }}
-          </template>
+        <v-row justify="center">
+          <v-dialog
+            v-model="changeRequestDialog"
+            max-width="500px"
+            :light="!$isDark()"
+            class="red"
+          >
+            <Close left="490" @click="changeRequestDialog = false" />
 
-          <template v-slot:item.remarks="{ item }">
-            {{ item.remarks }}
-          </template>
-          <template v-slot:item.status="{ item }">
-            <div :style="'color:' + getRelatedColor(item)">
-              {{ item.status == "P" ? "Pending" : "Approved" }}
-            </div>
-          </template>
-        </v-data-table>
-        <v-alert
-          v-else="$store.state.isDesktop"
-          v-for="(item, index) in data"
-          :key="index"
-          border="left"
-          colored-border
-          :color="getRelatedColor(item)"
-          elevation="2"
-        >
-          <div>
-            Request Type:
-            <b>{{ item.request_type }} </b>
-          </div>
-          <div>
-            <b
-              >{{ item.from_date }} to
-              {{ item.to_date }}
-            </b>
-          </div>
-          <div>Remarks: {{ item.remarks }}</div>
-          <div>Requested At: {{ item.requested_at }}</div>
-        </v-alert>
-      </v-col>
-    </v-row>
-  </div>
+            <SnippetsCard>
+              <template #body>
+                <v-card-title>
+                  <span dense> {{ Model }} </span>
+                </v-card-title>
+                <v-card-text>
+                  <ChangeRequest
+                    @reload="getChangeRequests()"
+                    @close-change-request-form="
+                      () => (changeRequestDialog = false)
+                    "
+                  />
+                </v-card-text>
+              </template>
+            </SnippetsCard>
+          </v-dialog>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            Change Requests
+            <v-btn
+              title="Reload"
+              dense
+              class="ma-0 px-0"
+              x-small
+              :ripple="false"
+              @click="getChangeRequests"
+              text
+            >
+              <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn
+              :class="[
+                $isDark() ? 'dark-mode-btn' : 'light-mode-btn',
+                'primary',
+              ]"
+              small
+              title="Change Request"
+              @click="changeRequestDialog = true"
+            >
+              + New
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-responsive class="d-block d-md-none">
+              <v-alert
+                v-for="(item, index) in data"
+                :key="index"
+                border="left"
+                colored-border
+                :color="getRelatedColor(item)"
+                elevation="2"
+              >
+                <div>
+                  Request Type:
+                  <b>{{ item.request_type }} </b>
+                </div>
+                <div>
+                  <b
+                    >{{ item.from_date }} to
+                    {{ item.to_date }}
+                  </b>
+                </div>
+                <div>Remarks: {{ item.remarks }}</div>
+                <div>Requested At: {{ item.requested_at }}</div>
+              </v-alert>
+            </v-responsive>
+
+            <!-- Hide on mobile devices -->
+            <v-responsive class="d-none d-md-block">
+              <v-data-table
+                :class="
+                  $isDark()
+                    ? 'accent custom-dark-header-for-datatable'
+                    : 'light-background custom-light-header-for-datatable'
+                "
+                item-key="id"
+                :headers="headers"
+                :items="data"
+                :loading="loading"
+                :footer-props="{
+                  itemsPerPageOptions: [10, 50, 100, 500, 1000],
+                }"
+                :options.sync="options"
+                :server-items-length="totalRowsCount"
+              >
+                <template v-slot:item.sno="{ item, index }">
+                  {{
+                    currentPage
+                      ? (currentPage - 1) * perPage +
+                        (cumulativeIndex + data.indexOf(item))
+                      : ""
+                  }}
+                </template>
+                <template v-slot:item.from_date="{ item }">
+                  {{ item.from_date }} to {{ item.to_date }}
+                </template>
+
+                <template v-slot:item.remarks="{ item }">
+                  {{ item.remarks }}
+                </template>
+                <template v-slot:item.status="{ item }">
+                  <div :style="'color:' + getRelatedColor(item)">
+                    {{ item.status == "P" ? "Pending" : "Approved" }}
+                  </div>
+                </template>
+              </v-data-table>
+            </v-responsive>
+          </v-col>
+        </v-row>
+      </div>
     </template>
-    </SnippetsCard>
-  
+  </SnippetsCard>
 </template>
 
 <script>
@@ -183,11 +195,14 @@ export default {
   },
   methods: {
     getRelatedColor(item) {
+      let isDark = this.$isDark();
+
       let colors = {
-        P: "purple",
-        R: "red",
-        A: "green",
+        P: isDark ? "#5ad3ff" : "purple", // Lighter purple for dark mode
+        R: isDark ? "#ff6f61" : "red", // Vibrant red for dark mode
+        A: isDark ? "#2dcd4b" : "green", // Bright green for dark mode
       };
+
       return colors[item.status];
     },
     getChangeRequests() {

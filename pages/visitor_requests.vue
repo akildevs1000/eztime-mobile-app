@@ -34,7 +34,6 @@
                 ? 'accent custom-dark-header-for-datatable'
                 : 'light-background custom-light-header-for-datatable'
             "
-            v-if="$store.state.isDesktop"
             :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             dense
             :headers="headers_table"

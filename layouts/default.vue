@@ -26,9 +26,38 @@
         background-color: #272f42 !important;
         color: white !important;
       }
+
+      .v-picker__body.v-picker__body.theme--dark {
+        background: none !important;
+      }
+
+      .v-btn__content {
+        color: black !important;
+      }
+
+      .v-date-picker-header__value .accent--text button {
+        color: black !important;
+      }
+
+      /* Dark mode overrides */
+      .dark-mode .v-btn__content {
+        color: white !important;
+      }
+
+      .dark-mode .v-date-picker-header__value .accent--text button {
+        color: white !important;
+      }
       /* .theme--dark {
         background:#1a202e !important;
       } */
+
+      .dark-mode-btn .v-btn__content {
+                color: white !important;
+              }
+
+              .light-mode-btn .v-btn__content {
+                color: white !important;
+              }
     </style>
     <v-app :class="$isDark() ? 'dark-background' : 'light-background'">
       <v-navigation-drawer dark v-model="drawer" app class="background">
