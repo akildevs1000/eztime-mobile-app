@@ -59,6 +59,8 @@
           <v-col>
             <v-responsive class="d-block d-md-none">
               <v-alert
+                class="alert"
+                :light="!$isDark()"
                 v-for="(item, index) in data"
                 :key="index"
                 border="left"

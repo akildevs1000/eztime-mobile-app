@@ -1,6 +1,9 @@
 <template>
   <span>
     <style>
+      * {
+        font-size: 13px;
+      }
       .v-dialog.v-dialog--active {
         box-shadow: none !important;
       }
@@ -49,6 +52,10 @@
       }
 
       .v-sheet.theme--dark.logout {
+        background: #1a202e !important;
+      }
+
+      .v-sheet.theme--dark.alert {
         background: #1a202e !important;
       }
 
