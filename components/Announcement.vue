@@ -1,5 +1,10 @@
 <template>
   <v-data-table
+    :class="
+      $isDark()
+        ? 'accent custom-dark-header-for-datatable'
+        : 'light-background custom-light-header-for-datatable'
+    "
     calculate-widths
     v-model="ids"
     item-key="id"

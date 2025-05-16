@@ -1,7 +1,7 @@
 <template>
   <v-row v-if="leaveQuotta" no-gutters>
     <v-col>
-      <v-container class="pt-1">
+      <v-container >
         <v-row class="pa-3">
           <v-col cols="12">
             <div>Leaves</div>

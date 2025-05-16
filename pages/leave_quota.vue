@@ -1,73 +1,79 @@
 <template>
-  <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
-    <v-row>
-      <v-col md="12">
-        <v-card>
-          <v-toolbar class="rounded-md" color="popup_background" dense flat>
-            <v-col cols="12">
-              <v-toolbar-title
-                ><span
-                  >Leave Group : {{ leave_group_name }}</span
-                ></v-toolbar-title
-              >
-            </v-col>
-          </v-toolbar>
-
-          <v-data-table
-            item-key="id"
-            :headers="headersGroupInfo"
-            :items="DialogLeaveGroupData"
-            :loading="loading"
-            :hide-default-footer="true"
-            class="elevation-1 alternate-rows"
+  <SnippetsCard class="px-5">
+    <template #body>
+      <div>
+        <div class="text-center ma-2">
+          <v-snackbar
+            v-model="snackbar"
+            top="top"
+            color="secondary"
+            elevation="24"
           >
-            <template v-slot:item.sno="{ item, index }">
-              {{
-                currentPage
-                  ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + DialogLeaveGroupData.indexOf(item))
-                  : "-"
-              }}
-            </template>
+            {{ response }}
+          </v-snackbar>
+        </div>
+        <v-row>
+          <v-col cols="12"> Leave Group : {{ leave_group_name }} </v-col>
+          <v-col cols="12">
+            <v-data-table
+              :class="
+                $isDark()
+                  ? 'accent custom-dark-header-for-datatable'
+                  : 'light-background custom-light-header-for-datatable'
+              "
+              item-key="id"
+              :headers="headersGroupInfo"
+              :items="DialogLeaveGroupData"
+              :loading="loading"
+              :hide-default-footer="true"
+            >
+              <template v-slot:item.sno="{ item, index }">
+                {{
+                  currentPage
+                    ? (currentPage - 1) * perPage +
+                      (cumulativeIndex + DialogLeaveGroupData.indexOf(item))
+                    : "-"
+                }}
+              </template>
 
-            <template v-slot:item.leave_type="{ item }" center>
-              {{ item.leave_type.name }} ({{ item.leave_type.short_name }})
-            </template>
-            <template v-slot:item.total="{ item }">
-              <div
-                color="green"
-                text-color="white"
-                class="leave-quota"
-                style="color: green"
-              >
-                {{ item.leave_type_count }}
-              </div>
-            </template>
-            <template v-slot:item.approved="{ item }">
-              <span color="primary" class="leave-quota" style="color: primary">
-                {{ item.employee_used }}
-              </span>
-            </template>
-            <template v-slot:item.available="{ item }">
-              <span
-                color="green"
-                text-color="white"
-                class="leave-quota"
-                style="color: orangered"
-              >
-                {{ item.leave_type_count - item.employee_used }}
-              </span>
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
-    </v-row>
-  </div>
+              <template v-slot:item.leave_type="{ item }" center>
+                {{ item.leave_type.name }} ({{ item.leave_type.short_name }})
+              </template>
+              <template v-slot:item.total="{ item }">
+                <div
+                  color="green"
+                  text-color="white"
+                  class="leave-quota"
+                  style="color: green"
+                >
+                  {{ item.leave_type_count }}
+                </div>
+              </template>
+              <template v-slot:item.approved="{ item }">
+                <span
+                  color="primary"
+                  class="leave-quota"
+                  style="color: primary"
+                >
+                  {{ item.employee_used }}
+                </span>
+              </template>
+              <template v-slot:item.available="{ item }">
+                <span
+                  color="green"
+                  text-color="white"
+                  class="leave-quota"
+                  style="color: orangered"
+                >
+                  {{ item.leave_type_count - item.employee_used }}
+                </span>
+              </template>
+            </v-data-table>
+          </v-col>
+        </v-row>
+      </div>
+    </template>
+  </SnippetsCard>
 </template>
 <script>
 export default {

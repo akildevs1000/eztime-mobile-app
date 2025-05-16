@@ -1,5 +1,11 @@
 <template>
   <div>
+    <style scoped>
+      .v-slide-group__content {
+        height: 30px !important;
+      }
+    </style>
+
     <div class="text-center">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -12,11 +18,9 @@
         </template>
       </v-snackbar>
     </div>
-    <v-card class="mb-5" elevation="0">
-      <v-toolbar class="backgrounds" dense flat>
-        <v-toolbar-title> </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <div style="display: none1">
+    <v-row>
+      <!-- <v-col class="text-right">
+        <div class="px-3">
           <v-btn
             style="padding: 0px; min-width: 25px"
             class="ma-0"
@@ -26,8 +30,7 @@
             title="PRINT"
             @click="process_file(report_type)"
           >
-            <img src="/icons/icon_print.png" class="iconsize" />
-            <!-- <v-icon dark white>mdi-printer-outline</v-icon> -->
+            <v-icon>mdi-printer</v-icon>
           </v-btn>
 
           <v-btn
@@ -38,7 +41,7 @@
             title="DOWNLOAD"
             @click="process_file(report_type + '_download_pdf')"
           >
-            <img src="/icons/icon_pdf.png" class="iconsize" />
+            <v-icon>mdi-download</v-icon>
           </v-btn>
 
           <v-btn
@@ -49,306 +52,291 @@
             title="CSV"
             @click="process_file(report_type + '_download_csv')"
           >
-            <img src="/icons/icon_excel.png" class="iconsize" />
+            <v-icon>mdi-file</v-icon>
           </v-btn>
         </div>
-
-        <!-- <v-spacer></v-spacer>
-        <v-menu bottom right>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn dark-2 icon v-bind="attrs" v-on="on">
-              <v-icon color="violet">mdi-dots-vertical</v-icon>
-            </v-btn>
+      </v-col> -->
+      <v-col cols="12">
+        <v-data-table
+          :class="
+            $isDark()
+              ? 'accent custom-dark-header-for-datatable'
+              : 'light-background custom-light-header-for-datatable'
+          "
+          :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+          dense
+          :headers="headers"
+          :items="data"
+          :loading="loading"
+          :options.sync="options"
+          :footer-props="{
+            itemsPerPageOptions: [10, 50, 100, 500, 1000],
+          }"
+          model-value="data.id"
+          :server-items-length="totalRowsCount"
+          fixed-header
+          :height="tableHeight"
+        >
+          <template v-slot:item.sno="{ item }">
+            {{
+              currentPage
+                ? (currentPage - 1) * perPage +
+                  (cumulativeIndex + data.indexOf(item))
+                : cumulativeIndex + data.indexOf(item)
+            }}
           </template>
-          <v-list width="100" dense>
-            <v-list-item @click="process_file(report_type)">
-              <v-list-item-title style="cursor: pointer">
-                <img src="/icons/icon_print.png" class="iconsize" />
-                Print
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="process_file(report_type + '_download_pdf')">
-              <v-list-item-title style="cursor: pointer">
-                <img src="/icons/icon_pdf.png" class="iconsize" />
-                PDF
-              </v-list-item-title>
-            </v-list-item>
-
-            <v-list-item @click="process_file(report_type + '_download_csv')">
-              <v-list-item-title style="cursor: pointer">
-                <img src="/icons/icon_excel.png" class="iconsize" />
-                EXCEL
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu> -->
-      </v-toolbar>
-
-      <v-data-table
-        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-        dense
-        :headers="headers"
-        :items="data"
-        :loading="loading"
-        :options.sync="options"
-        :footer-props="{
-          itemsPerPageOptions: [10, 50, 100, 500, 1000],
-        }"
-        class="elevation-1 alternate-rows"
-        model-value="data.id"
-        :server-items-length="totalRowsCount"
-        fixed-header
-        :height="tableHeight"
-      >
-        <template v-slot:item.sno="{ item }">
-          {{
-            currentPage
-              ? (currentPage - 1) * perPage +
-                (cumulativeIndex + data.indexOf(item))
-              : cumulativeIndex + data.indexOf(item)
-          }}
-        </template>
-        <template v-slot:item.employee_name="{ item }" style="padding: 0px">
-          <v-row no-gutters :title="'Dep: ' + item.employee.department.name">
-            <v-col
-              md="2"
-              style="
-                padding: 3px;
-                padding-left: 0px;
-                width: 30px;
-                max-width: 30px;
-              "
-            >
-              <v-img
+          <template v-slot:item.employee_name="{ item }" style="padding: 0px">
+            <v-row no-gutters :title="'Dep: ' + item.employee.department.name">
+              <v-col
+                md="2"
                 style="
-                  border-radius: 50%;
-                  height: auto;
+                  padding: 3px;
+                  padding-left: 0px;
                   width: 30px;
                   max-width: 30px;
                 "
-                :src="
-                  item.employee.profile_picture
-                    ? item.employee.profile_picture
-                    : '/no-profile-image.jpg'
+              >
+                <v-img
+                  style="
+                    border-radius: 50%;
+                    height: auto;
+                    width: 30px;
+                    max-width: 30px;
+                  "
+                  :src="
+                    item.employee.profile_picture
+                      ? item.employee.profile_picture
+                      : '/no-profile-image.jpg'
+                  "
+                >
+                </v-img>
+              </v-col>
+              <v-col style="padding: 3px" md="8">
+                <strong>
+                  {{
+                    item.employee.first_name ? item.employee.first_name : "---"
+                  }}
+                  {{
+                    item.employee.last_name ? item.employee.last_name : "---"
+                  }}</strong
+                >
+                <div class="secondary-value">
+                  {{ item.employee.employee_id }}
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+          <template v-slot:item.status="{ item }">
+            <v-tooltip top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                {{ setStatusLabel(item.status) }}
+                <v-btn
+                  v-if="item.is_manual_entry"
+                  color="primary"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  (ME)
+                </v-btn>
+              </template>
+              <div>Reason: {{ item.last_reason?.reason }}</div>
+              <div>Added By: {{ item.last_reason?.user?.email }}</div>
+              <div>Created At: {{ item.last_reason?.created_at }}</div>
+            </v-tooltip>
+          </template>
+
+          <template v-slot:item.shift="{ item }">
+            <div>
+              {{ item.shift && item.shift.on_duty_time }} -
+              {{ item.shift && item.shift.off_duty_time }}
+            </div>
+            <div class="secondary-value">
+              {{ (item.shift && item.shift.name) || "---" }}
+            </div>
+          </template>
+
+          <template v-slot:item.date="{ item }">
+            <div>{{ item.date }}</div>
+            <div class="secondary-value">
+              {{ item.day }}
+            </div>
+          </template>
+          <template v-slot:item.in="{ item }">
+            <div>{{ item.in }}</div>
+            <div class="secondary-value">
+              <div
+                v-if="
+                  item.device_in &&
+                  item.device_in.name &&
+                  item.device_in.name != '---'
                 "
               >
-              </v-img>
-            </v-col>
-            <v-col style="padding: 3px" md="8">
-              <strong>
-                {{
-                  item.employee.first_name ? item.employee.first_name : "---"
-                }}
-                {{
-                  item.employee.last_name ? item.employee.last_name : "---"
-                }}</strong
-              >
-              <div class="secondary-value">
-                {{ item.employee.employee_id }}
+                {{ item.device_in.name }}
               </div>
-            </v-col>
-          </v-row>
-        </template>
-        <template v-slot:item.status="{ item }">
-          <v-tooltip top color="primary">
-            <template v-slot:activator="{ on, attrs }">
-              {{ setStatusLabel(item.status) }}
-              <v-btn
-                v-if="item.is_manual_entry"
-                color="primary"
-                text
-                v-bind="attrs"
-                v-on="on"
+              <div v-else-if="item.device_id_in != '---'">
+                {{ item.device_id_in }}
+              </div>
+              <div v-else>---</div>
+            </div>
+          </template>
+          <template v-slot:item.out="{ item }">
+            <div>{{ item.out }}</div>
+            <div class="secondary-value">
+              <div
+                v-if="
+                  item.device_out &&
+                  item.device_out.name &&
+                  item.device_out.name != '---'
+                "
               >
-                (ME)
-              </v-btn>
-            </template>
-            <div>Reason: {{ item.last_reason?.reason }}</div>
-            <div>Added By: {{ item.last_reason?.user?.email }}</div>
-            <div>Created At: {{ item.last_reason?.created_at }}</div>
-          </v-tooltip>
-        </template>
+                {{ item.device_out.name }}
+              </div>
+              <div v-else-if="item.device_id_out != '---'">
+                {{ item.device_id_out }}
+              </div>
+              <div v-else>---</div>
 
-        <template v-slot:item.shift="{ item }">
-          <div>
-            {{ item.shift && item.shift.on_duty_time }} -
-            {{ item.shift && item.shift.off_duty_time }}
-          </div>
-          <div class="secondary-value">
-            {{ (item.shift && item.shift.name) || "---" }}
-          </div>
-        </template>
+              <!-- {{ item.device_id_out == "Manual" ? "Manual" : "---" }} -->
+            </div>
+          </template>
+          <template v-slot:item.in1="{ item }">
+            <div>{{ item.in1 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in1 && item.device_in1) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out1="{ item }">
+            <div>{{ item.out1 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out1 && item.device_out1) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in2="{ item }">
+            <div>{{ item.in2 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in2 && item.device_in2) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out2="{ item }">
+            <div>{{ item.out2 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out2 && item.device_out2) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in3="{ item }">
+            <div>{{ item.in3 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in3 && item.device_in3) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out3="{ item }">
+            <div>{{ item.out3 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out3 && item.device_out3) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in4="{ item }">
+            <div>{{ item.in4 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in4 && item.device_in4) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out4="{ item }">
+            <div>{{ item.out4 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out4 && item.device_out4) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in5="{ item }">
+            <div>{{ item.in5 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in5 && item.device_in5) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out5="{ item }">
+            <div>{{ item.out5 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out5 && item.device_out5) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in6="{ item }">
+            <div>{{ item.in6 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in6 && item.device_in6) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out6="{ item }">
+            <div>{{ item.out6 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out6 && item.device_out6) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.in7="{ item }">
+            <div>{{ item.in7 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_in7 && item.device_in7) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.out7="{ item }">
+            <div>{{ item.out7 }}</div>
+            <div class="secondary-value">
+              {{ (item.device_out7 && item.device_out7) || "---" }}
+            </div>
+          </template>
+          <template v-slot:item.device_in="{ item }">
+            <v-tooltip v-if="item && item.device_in" top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <div class="primary--text" v-bind="attrs" v-on="on">
+                  {{ (item.device_in && item.device_in.short_name) || "---" }}
+                </div>
+              </template>
+              <div v-for="(iterable, index) in item.device_in" :key="index">
+                <span v-if="index !== 'id'">
+                  {{ caps(index) }}: {{ iterable || "---" }}</span
+                >
+              </div>
+            </v-tooltip>
+            <span v-else>---</span>
+          </template>
 
-        <template v-slot:item.date="{ item }">
-          <div>{{ item.date }}</div>
-          <div class="secondary-value">
-            {{ item.day }}
-          </div>
-        </template>
-        <template v-slot:item.in="{ item }">
-          <div>{{ item.in }}</div>
-          <div class="secondary-value">
-            <div
-              v-if="
-                item.device_in &&
-                item.device_in.name &&
-                item.device_in.name != '---'
-              "
+          <template v-slot:item.device_out="{ item }">
+            <v-tooltip v-if="item && item.device_out" top color="primary">
+              <template v-slot:activator="{ on, attrs }">
+                <div class="primary--text" v-bind="attrs" v-on="on">
+                  {{ (item.device_out && item.device_out.short_name) || "---" }}
+                </div>
+              </template>
+              <div v-for="(iterable, index) in item.device_out" :key="index">
+                <span v-if="index !== 'id'">
+                  {{ caps(index) }}: {{ iterable || "---" }}</span
+                >
+              </div>
+            </v-tooltip>
+            <span v-else>---</span>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              @click="editItem(item)"
+              x-small
+              color="primary"
+              class="mr-2"
             >
-              {{ item.device_in.name }}
-            </div>
-            <div v-else-if="item.device_id_in != '---'">
-              {{ item.device_id_in }}
-            </div>
-            <div v-else>---</div>
-          </div>
-        </template>
-        <template v-slot:item.out="{ item }">
-          <div>{{ item.out }}</div>
-          <div class="secondary-value">
-            <div
-              v-if="
-                item.device_out &&
-                item.device_out.name &&
-                item.device_out.name != '---'
-              "
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              @click="viewItem(item)"
+              x-small
+              color="primary"
+              class="mr-2"
             >
-              {{ item.device_out.name }}
-            </div>
-            <div v-else-if="item.device_id_out != '---'">
-              {{ item.device_id_out }}
-            </div>
-            <div v-else>---</div>
-
-            <!-- {{ item.device_id_out == "Manual" ? "Manual" : "---" }} -->
-          </div>
-        </template>
-        <template v-slot:item.in1="{ item }">
-          <div>{{ item.in1 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in1 && item.device_in1) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out1="{ item }">
-          <div>{{ item.out1 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out1 && item.device_out1) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in2="{ item }">
-          <div>{{ item.in2 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in2 && item.device_in2) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out2="{ item }">
-          <div>{{ item.out2 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out2 && item.device_out2) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in3="{ item }">
-          <div>{{ item.in3 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in3 && item.device_in3) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out3="{ item }">
-          <div>{{ item.out3 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out3 && item.device_out3) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in4="{ item }">
-          <div>{{ item.in4 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in4 && item.device_in4) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out4="{ item }">
-          <div>{{ item.out4 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out4 && item.device_out4) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in5="{ item }">
-          <div>{{ item.in5 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in5 && item.device_in5) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out5="{ item }">
-          <div>{{ item.out5 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out5 && item.device_out5) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in6="{ item }">
-          <div>{{ item.in6 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in6 && item.device_in6) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out6="{ item }">
-          <div>{{ item.out6 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out6 && item.device_out6) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.in7="{ item }">
-          <div>{{ item.in7 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_in7 && item.device_in7) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.out7="{ item }">
-          <div>{{ item.out7 }}</div>
-          <div class="secondary-value">
-            {{ (item.device_out7 && item.device_out7) || "---" }}
-          </div>
-        </template>
-        <template v-slot:item.device_in="{ item }">
-          <v-tooltip v-if="item && item.device_in" top color="primary">
-            <template v-slot:activator="{ on, attrs }">
-              <div class="primary--text" v-bind="attrs" v-on="on">
-                {{ (item.device_in && item.device_in.short_name) || "---" }}
-              </div>
-            </template>
-            <div v-for="(iterable, index) in item.device_in" :key="index">
-              <span v-if="index !== 'id'">
-                {{ caps(index) }}: {{ iterable || "---" }}</span
-              >
-            </div>
-          </v-tooltip>
-          <span v-else>---</span>
-        </template>
-
-        <template v-slot:item.device_out="{ item }">
-          <v-tooltip v-if="item && item.device_out" top color="primary">
-            <template v-slot:activator="{ on, attrs }">
-              <div class="primary--text" v-bind="attrs" v-on="on">
-                {{ (item.device_out && item.device_out.short_name) || "---" }}
-              </div>
-            </template>
-            <div v-for="(iterable, index) in item.device_out" :key="index">
-              <span v-if="index !== 'id'">
-                {{ caps(index) }}: {{ iterable || "---" }}</span
-              >
-            </div>
-          </v-tooltip>
-          <span v-else>---</span>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <v-icon @click="editItem(item)" x-small color="primary" class="mr-2">
-            mdi-pencil
-          </v-icon>
-          <v-icon @click="viewItem(item)" x-small color="primary" class="mr-2">
-            mdi-eye
-          </v-icon>
-        </template>
-      </v-data-table>
-    </v-card>
+              mdi-eye
+            </v-icon>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
 
     <v-row justify="center">
       <v-dialog persistent v-model="generateLogsDialog" max-width="700px">
@@ -1289,8 +1277,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.v-slide-group__content {
-  height: 30px !important;
-}
-</style>

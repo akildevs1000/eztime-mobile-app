@@ -2,8 +2,8 @@
   <v-row class="pa-3">
     <v-col>
       <style scoped>
-        .v-picker__body.v-picker__body {
-          background: none;
+        .v-picker__body.v-picker__body.theme--dark {
+          background: none !important;
         }
 
         .v-btn__content {
@@ -27,7 +27,9 @@
       <v-date-picker
         class="custom-date-picker"
         :class="
-          isDarkMode ? 'accent white--text dark-mode' : 'light-background black--text'
+          isDarkMode
+            ? 'accent white--text dark-mode'
+            : 'light-background black--text'
         "
         dark
         flat

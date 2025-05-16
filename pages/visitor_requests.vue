@@ -1,323 +1,213 @@
 <template>
-  <div>
-    <v-card elevation="1" class="mt-2" style="min-height: 500px">
-      <v-toolbar
-        v-if="$store.state.isDesktop"
-        class="mb-2 popup_background"
-        dense
-        flat
-      >
-        <v-toolbar-title>
-          <span style="color: black" class="page-title-display">
-            Visitor Requests</span
-          ></v-toolbar-title
-        >
-        <v-btn
-          dense
-          class="ma-0 px-0"
-          x-small
-          :ripple="false"
-          text
-          title="Filter"
-        >
-          <v-icon @click="toggleFilter" class="mx-1 ml-2"
-            >mdi mdi-filter</v-icon
+  <SnippetsCard class="px-5">
+    <template #body>
+      <v-row>
+        <v-col cols="12" md="10">
+          Visitor Requests
+          <!-- <v-btn
+            dense
+            class="ma-0 px-0"
+            x-small
+            :ripple="false"
+            text
+            title="Filter"
           >
-        </v-btn>
-        <v-spacer></v-spacer>
-        <Calender
-          class="pa-1"
-          @filter-attr="filterAttr"
-          :defaultFilterType="1"
-          :height="'40px'"
-          :default_date_from="from_date"
-          :default_date_to="to_date"
-        />
-        <!-- <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }"> -->
-        <!-- <v-btn
-              title="Reload"
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              @click="getData"
-              text
+            <v-icon @click="toggleFilter" class="mx-1 ml-2"
+              >mdi mdi-filter</v-icon
             >
-              <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-            </v-btn> -->
-      </v-toolbar>
-      <v-container class="pb-5" v-else>
-        <Calender
-          class="pa-1"
-          @filter-attr="filterAttr"
-          :defaultFilterType="1"
-          :height="'40px'"
-          width="100%"
-          :default_date_from="from_date"
-          :default_date_to="to_date"
-        />
-      </v-container>
-      <v-data-table
-        v-if="$store.state.isDesktop"
-        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-        dense
-        :headers="headers_table"
-        :items="data"
-        model-value="data.id"
-        :loading="loading"
-        :options.sync="options"
-        :footer-props="{
-          itemsPerPageOptions: [10, 50, 100, 500, 1000],
-        }"
-        class="elevation-1 alternate-rows"
-        :server-items-length="totalRowsCount"
-      >
-        <template v-slot:header="{ props: { headers } }">
-          <tr v-if="isFilter">
-            <td v-for="header in headers" :key="header.text">
-              <v-container>
-                <v-text-field
-                  clearable
-                  :hide-details="true"
-                  v-if="header.filterable && !header.filterSpecial"
-                  v-model="filters[header.value]"
-                  id="header.value"
-                  @input="applyFilters(header.value, $event)"
-                  outlined
-                  dense
-                  autocomplete="off"
-                ></v-text-field>
-
-                <v-select
-                  clearable
-                  :hide-details="true"
-                  @change="applyFilters('status', $event)"
-                  item-value="id"
-                  item-text="name"
-                  v-model="filters[header.value]"
-                  outlined
-                  dense
-                  v-else-if="
-                    header.filterable &&
-                    header.filterSpecial &&
-                    header.value == 'purpose_id'
-                  "
-                  :items="[{ id: '', name: 'All Purposes' }, ...purposeList]"
-                ></v-select>
-
-                <div
-                  v-else-if="
-                    header.filterable &&
-                    header.filterSpecial &&
-                    header.value == 'visit_from'
-                  "
-                  style="margin-top: -17px"
-                >
-                  <Calender
-                    @filter-attr="filterAttr"
-                    :defaultFilterType="1"
-                    :height="'40px'"
-                    :default_date_from="from_date"
-                    :default_date_to="to_date"
-                  />
-                </div>
-              </v-container>
-            </td>
-          </tr>
-        </template>
-        <template v-slot:item.sno="{ item, index }">
-          {{
-            currentPage
-              ? (currentPage - 1) * perPage +
-                (cumulativeIndex + data.indexOf(item))
-              : "-"
-          }}
-        </template>
-
-        <template v-slot:item.pic="{ item }">
-          <v-img
-            style="
-              border-radius: 2%;
-              width: 100px;
-              max-width: 95%;
-              min-height: 100px;
-              height: auto;
-              border: 1px solid #ddd;
+          </v-btn> -->
+        </v-col>
+        <v-col cols="12" md="2" class="text-right">
+          <Calender
+            class="pa-1"
+            @filter-attr="filterAttr"
+            :defaultFilterType="1"
+            :height="'40px'"
+            :default_date_from="from_date"
+            :default_date_to="to_date"
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-data-table
+            :class="
+              $isDark()
+                ? 'accent custom-dark-header-for-datatable'
+                : 'light-background custom-light-header-for-datatable'
             "
-            :src="item.logo ? item.logo : '/no-profile-image.jpg'"
+            v-if="$store.state.isDesktop"
+            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+            dense
+            :headers="headers_table"
+            :items="data"
+            model-value="data.id"
+            :loading="loading"
+            :options.sync="options"
+            :footer-props="{
+              itemsPerPageOptions: [10, 50, 100, 500, 1000],
+            }"
+            :server-items-length="totalRowsCount"
           >
-          </v-img>
-        </template>
-        <template v-slot:item.first_name="{ item }">
-          {{ item.full_name }}
-        </template>
+            <template v-slot:header="{ props: { headers } }">
+              <tr v-if="isFilter">
+                <td v-for="header in headers" :key="header.text">
+                  <v-container>
+                    <v-text-field
+                      clearable
+                      :hide-details="true"
+                      v-if="header.filterable && !header.filterSpecial"
+                      v-model="filters[header.value]"
+                      id="header.value"
+                      @input="applyFilters(header.value, $event)"
+                      outlined
+                      dense
+                      autocomplete="off"
+                    ></v-text-field>
 
-        <template v-slot:item.purpose_id="{ item }">
-          {{ item.purpose.name }}
-        </template>
-        <template v-slot:item.visit_from="{ item }">
-          {{ item.from_date_display }}
-          <span v-if="item.to_date_display != item.from_date_display">
-            to {{ item.to_date_display }}</span
-          >
-        </template>
-        <template v-slot:item.time_in="{ item }">
-          {{ item.time_in_display }} - {{ item.time_out_display }}
-        </template>
+                    <v-select
+                      clearable
+                      :hide-details="true"
+                      @change="applyFilters('status', $event)"
+                      item-value="id"
+                      item-text="name"
+                      v-model="filters[header.value]"
+                      outlined
+                      dense
+                      v-else-if="
+                        header.filterable &&
+                        header.filterSpecial &&
+                        header.value == 'purpose_id'
+                      "
+                      :items="[
+                        { id: '', name: 'All Purposes' },
+                        ...purposeList,
+                      ]"
+                    ></v-select>
 
-        <template v-slot:item.phone_number="{ item }">
-          {{ item.phone_number }}
-          <br />
-          <span class="secondary-value"> {{ item.email }}</span>
-        </template>
-        <template v-slot:item.visitor_company_name="{ item }"
-          >{{ item.visitor_company_name }}
-        </template>
-        <template v-slot:item.id="{ item }">
-          <span v-if="item.id_type == 1">Emirates ID</span>
-          <span v-else-if="item.id_type == 2">National ID</span> <br />
-
-          <span class="secondary-value"> {{ item.id_number }}</span>
-        </template>
-
-        <template v-slot:item.status_id="{ item }">
-          <span :style="'color:' + getRelatedColor(item)">{{
-            item.status
-          }}</span>
-        </template>
-        <template v-slot:item.options="{ item }">
-          <v-menu bottom left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
+                    <div
+                      v-else-if="
+                        header.filterable &&
+                        header.filterSpecial &&
+                        header.value == 'visit_from'
+                      "
+                      style="margin-top: -17px"
+                    >
+                      <Calender
+                        @filter-attr="filterAttr"
+                        :defaultFilterType="1"
+                        :height="'40px'"
+                        :default_date_from="from_date"
+                        :default_date_to="to_date"
+                      />
+                    </div>
+                  </v-container>
+                </td>
+              </tr>
             </template>
-            <v-list width="120" dense>
-              <v-list-item @click="updateStatus(item.id, 2)">
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="green" small> mdi-check </v-icon>
-                  Approve
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="updateStatus(item.id, 3)">
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="red" small> mdi-cancel</v-icon>
-                  Reject
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
-      <v-alert
-        class="py-0 ma-0"
-        v-else
-        style="font-size: 12px"
-        v-for="(item, index) in data"
-        :key="index"
-        border="left"
-        colored-border
-        :color="getRelatedColor(item)"
-        elevation="2"
-      >
-        <v-row  class="100%" no-gutters>
-          <v-col cols="3">
-            <v-img
-              style="
-                margin-top: 10px;
-                width: 67px;
-                border-radius: 2%;
-                border: 1px solid #ddd;
-              "
-              :src="item.logo ? item.logo : '/no-profile-image.jpg'"
-            >
-            </v-img>
-          </v-col>
-          <v-col cols="8">
-            <span class="primary--text">
-              <b>{{ item.full_name }} </b></span
-            >
+            <template v-slot:item.sno="{ item, index }">
+              {{
+                currentPage
+                  ? (currentPage - 1) * perPage +
+                    (cumulativeIndex + data.indexOf(item))
+                  : "-"
+              }}
+            </template>
 
-            <div>
-              <v-icon size="12">mdi-calendar-range</v-icon>
-              <span>{{ item.from_date_display }}</span>
+            <template v-slot:item.pic="{ item }">
+              <v-img
+                style="
+                  border-radius: 2%;
+                  width: 100px;
+                  max-width: 95%;
+                  min-height: 100px;
+                  height: auto;
+                  border: 1px solid #ddd;
+                "
+                :src="item.logo ? item.logo : '/no-profile-image.jpg'"
+              >
+              </v-img>
+            </template>
+            <template v-slot:item.first_name="{ item }">
+              {{ item.full_name }}
+            </template>
+
+            <template v-slot:item.purpose_id="{ item }">
+              {{ item.purpose.name }}
+            </template>
+            <template v-slot:item.visit_from="{ item }">
+              {{ item.from_date_display }}
               <span v-if="item.to_date_display != item.from_date_display">
                 to {{ item.to_date_display }}</span
               >
-            </div>
-            <div>
-              <v-icon size="12">mdi-clock-outline</v-icon>
-              <span>{{ item.time_in_display }} - {{ item.time_out_display }}</span>
-            </div>
-            <div>
-              <v-icon size="12">mdi-briefcase-account-outline</v-icon>
-              <span> {{ item.purpose.name }}</span>
-            </div>
-            <div>
-              <v-icon size="12">mdi-cellphone</v-icon>
-              <span> {{ item.phone_number }}</span>
-            </div>
-            <div v-if="item.email">
-              <v-icon size="12">mdi-email</v-icon>
-              <span> {{ item.email }}</span>
-            </div>
-          </v-col>
+            </template>
+            <template v-slot:item.time_in="{ item }">
+              {{ item.time_in_display }} - {{ item.time_out_display }}
+            </template>
 
-          <v-col cols="1" class="pa-1">
-            <v-menu right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list width="120" dense>
-                <v-list-item @click="updateStatus(item.id, 2)">
-                  <v-list-item-title style="cursor: pointer">
-                    <v-icon color="green" small> mdi-check </v-icon>
-                    Approve
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="updateStatus(item.id, 3)">
-                  <v-list-item-title style="cursor: pointer">
-                    <v-icon color="red" small> mdi-cancel</v-icon>
-                    Reject
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-col>
-        </v-row>
-      </v-alert>
+            <template v-slot:item.phone_number="{ item }">
+              {{ item.phone_number }}
+              <br />
+              <span class="secondary-value"> {{ item.email }}</span>
+            </template>
+            <template v-slot:item.visitor_company_name="{ item }"
+              >{{ item.visitor_company_name }}
+            </template>
+            <template v-slot:item.id="{ item }">
+              <span v-if="item.id_type == 1">Emirates ID</span>
+              <span v-else-if="item.id_type == 2">National ID</span> <br />
 
-      <div v-if="data.length == 0 && !$store.state.isDesktop" class="pa-5">
-        No data available
+              <span class="secondary-value"> {{ item.id_number }}</span>
+            </template>
+
+            <template v-slot:item.status_id="{ item }">
+              <span :style="'color:' + getRelatedColor(item)">{{
+                item.status
+              }}</span>
+            </template>
+            <template v-slot:item.options="{ item }">
+              <v-menu bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list width="120" dense>
+                  <v-list-item @click="updateStatus(item.id, 2)">
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="green" small> mdi-check </v-icon>
+                      Approve
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="updateStatus(item.id, 3)">
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="red" small> mdi-cancel</v-icon>
+                      Reject
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+      <div class="text-center">
+        <v-dialog v-model="dialog" width="500">
+          <v-card style="background: none">
+            <v-card-text>
+              <p class="text-center">
+                <v-img
+                  :src="response_image"
+                  alt="Avatar"
+                  height="125px"
+                  width="125px"
+                  style="display: inline-block"
+                ></v-img>
+              </p>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </div>
-    </v-card>
-
-    <div class="text-center">
-      <v-dialog v-model="dialog" width="500">
-        <v-card style="background: none">
-          <v-toolbar style="background: none" flat dense>
-            <v-spacer></v-spacer>
-            <!-- <v-icon @click="dialog = false">mdi-close</v-icon> -->
-          </v-toolbar>
-
-          <v-card-text>
-            <p class="text-center">
-              <v-img
-                :src="response_image"
-                alt="Avatar"
-                height="125px"
-                width="125px"
-                style="display: inline-block"
-              ></v-img>
-            </p>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
-  </div>
+    </template>
+  </SnippetsCard>
 </template>
 
 <script>
@@ -544,7 +434,7 @@ export default {
         },
       };
       this.$axios.get(this.endpoint, options).then(({ data }) => {
-        this.data = data.data.filter(e => e.host);
+        this.data = data.data.filter((e) => e.host);
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
@@ -555,8 +445,3 @@ export default {
   components: { Calender },
 };
 </script>
-<style>
-.v-dialog.v-dialog--active {
-  box-shadow: none !important;
-}
-</style>

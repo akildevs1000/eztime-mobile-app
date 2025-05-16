@@ -1,609 +1,632 @@
 <template>
-  <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
-    <style scoped>
-      .v-date-picker-table .v-btn--active {
-        background: white !important;
-        color: black !important;
-      }
-
-      .v-date-picker-table .v-btn--active::before {
-        opacity: 0 !important;
-      }
-
-      .v-date-picker-table {
-        height: 192px !important;
-      }
-
-      .v-date-picker-table--date .v-btn {
-        height: 25px !important;
-        width: 25px !important;
-        font-size: 10px !important;
-      }
-      .v-date-picker-table--date th {
-        padding: 0 !important;
-      }
-    </style>
-
-    <v-dialog persistent v-model="dialogLeaveGroup" width="400px">
-      <Close left="375" @click="dialogLeaveGroup = false" />
-      <v-card>
-        <v-card-title dense class="primary white--text background">
-          Statistics
-        </v-card-title>
-        <v-card-text>
-          <v-data-table
-            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-            v-model="ids"
-            item-key="id"
-            :headers="headersGroupInfo"
-            :items="DialogLeavesList"
-            :hide-default-footer="true"
-            class="elevation-1"
+  <SnippetsCard class="px-5">
+    <template #body>
+      <div>
+        <div class="text-center ma-2">
+          <v-snackbar
+            v-model="snackbar"
+            top="top"
+            color="secondary"
+            elevation="24"
           >
-            <template v-slot:item.leave_type="{ item }" center>
-              {{ item.leave_type.name }} ({{ item.leave_type.short_name }})
-            </template>
-            <template v-slot:item.total="{ item }">
-              <v-chip color="black" text-color="white">
-                {{ item.leave_type_count }}</v-chip
+            {{ response }}
+          </v-snackbar>
+        </div>
+        <style scoped>
+          .v-date-picker-table .v-btn--active {
+            background: white !important;
+            color: black !important;
+          }
+
+          .v-date-picker-table .v-btn--active::before {
+            opacity: 0 !important;
+          }
+
+          .v-date-picker-table {
+            height: 192px !important;
+          }
+
+          .v-date-picker-table--date .v-btn {
+            height: 25px !important;
+            width: 25px !important;
+            font-size: 10px !important;
+          }
+          .v-date-picker-table--date th {
+            padding: 0 !important;
+          }
+        </style>
+
+        <v-dialog persistent v-model="dialogLeaveGroup" width="400px">
+          <Close left="375" @click="dialogLeaveGroup = false" />
+          <v-card>
+            <v-card-title dense class="primary white--text background">
+              Statistics
+            </v-card-title>
+            <v-card-text>
+              <v-data-table
+                :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+                v-model="ids"
+                item-key="id"
+                :headers="headersGroupInfo"
+                :items="DialogLeavesList"
+                :hide-default-footer="true"
+                class="elevation-1"
               >
-            </template>
-            <template v-slot:item.approved="{ item }">
-              <v-chip color="primary"> {{ item.employee_used }}</v-chip>
-            </template>
-            <template v-slot:item.available="{ item }">
-              <v-chip class="ma-2" color="green" text-color="white">
-                {{ item.leave_type_count - item.employee_used }}</v-chip
-              >
-            </template>
-          </v-data-table>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-    <v-dialog :key="leaveDialogKey" persistent v-model="dialog" width="800px">
-      <Close left="790" @click="close" />
-      <v-card>
-        <v-alert flat dense class="primary white--text">
-          <span>{{ formTitle }} </span>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" md="7">
+                <template v-slot:item.leave_type="{ item }" center>
+                  {{ item.leave_type.name }} ({{ item.leave_type.short_name }})
+                </template>
+                <template v-slot:item.total="{ item }">
+                  <v-chip color="black" text-color="white">
+                    {{ item.leave_type_count }}</v-chip
+                  >
+                </template>
+                <template v-slot:item.approved="{ item }">
+                  <v-chip color="primary"> {{ item.employee_used }}</v-chip>
+                </template>
+                <template v-slot:item.available="{ item }">
+                  <v-chip class="ma-2" color="green" text-color="white">
+                    {{ item.leave_type_count - item.employee_used }}</v-chip
+                  >
+                </template>
+              </v-data-table>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+          :key="leaveDialogKey"
+          persistent
+          v-model="dialog"
+          width="800px"
+        >
+          <Close left="790" @click="close" />
+          <v-card>
+            <v-alert flat dense class="primary white--text">
+              <span>{{ formTitle }} </span>
+            </v-alert>
+            <v-card-text>
+              <v-container>
                 <v-row>
-                  <v-col cols="8">
-                    <v-row dense align="center">
-                      <v-col cols="12">
-                        <v-menu
-                          v-model="fromMenu"
-                          :close-on-content-click="false"
-                          transition="scale-transition"
-                          offset-y
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              outlined
-                              dense
-                              hide-details
-                              v-model="fromDateFormatted"
-                              label="From Date"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="editedItem.start_date"
-                            small
-                            no-title
-                            scrollable
-                            @input="fromMenu = false"
-                          ></v-date-picker>
-                        </v-menu>
+                  <v-col cols="12" md="7">
+                    <v-row>
+                      <v-col cols="8">
+                        <v-row dense align="center">
+                          <v-col cols="12">
+                            <v-menu
+                              v-model="fromMenu"
+                              :close-on-content-click="false"
+                              transition="scale-transition"
+                              offset-y
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  outlined
+                                  dense
+                                  hide-details
+                                  v-model="fromDateFormatted"
+                                  label="From Date"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                v-model="editedItem.start_date"
+                                small
+                                no-title
+                                scrollable
+                                @input="fromMenu = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
+                          <v-col cols="12" class="text-right">
+                            <v-menu
+                              v-model="toMenu"
+                              :close-on-content-click="false"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="290px"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  outlined
+                                  dense
+                                  hide-details
+                                  v-model="toDateFormatted"
+                                  label="To Date"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                small
+                                v-model="editedItem.end_date"
+                                :min="editedItem.start_date"
+                                no-title
+                                scrollable
+                                @input="toMenu = false"
+                              ></v-date-picker>
+                            </v-menu>
+                          </v-col>
+                        </v-row>
                       </v-col>
-                      <v-col cols="12" class="text-right">
-                        <v-menu
-                          v-model="toMenu"
-                          :close-on-content-click="false"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="290px"
+                      <v-col cols="4">
+                        <v-card
+                          outlined
+                          style="
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            min-height: 88px;
+                          "
                         >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              outlined
-                              dense
-                              hide-details
-                              v-model="toDateFormatted"
-                              label="To Date"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
+                          <b>{{ dayDifference }} Days</b>
+                        </v-card>
+                      </v-col>
+                      <v-col md="12" sm="12" cols="12">
+                        <v-select
+                          label="Alternate Employee"
+                          :items="relatedDepartmentEmployees"
+                          item-text="full_name"
+                          item-value="employee_id"
+                          placeholder="Select Alternate Employee"
+                          v-model="alternate_employee"
+                          hide-details
+                          dense
+                          outlined
+                          return-object
+                        ></v-select>
+
+                        <v-card v-if="alternate_employee" outlined class="mt-4">
+                          <v-alert dense flat class="grey lighten-3"
+                            ><small>Alertnate Employee Info</small></v-alert
+                          >
+                          <v-row align="center" class="px-7 pb-5">
+                            <v-col
+                              cols="12"
+                              md="3"
+                              class="text-center text-sm-left"
+                            >
+                              <v-avatar size="80">
+                                <img
+                                  :src="alternate_employee?.profile_picture"
+                                  alt="Profile Picture"
+                                />
+                              </v-avatar>
+                            </v-col>
+                            <v-col cols="12" md="9">
+                              <div class="d-flex justify-space-between pt-2">
+                                <div style="font-size: 12px">Full Name:</div>
+                                <div style="font-size: 12px">
+                                  {{ alternate_employee.full_name }}
+                                </div>
+                              </div>
+                              <v-divider></v-divider>
+                              <div class="d-flex justify-space-between">
+                                <div style="font-size: 12px">Employee Id:</div>
+                                <div style="font-size: 12px">
+                                  {{ alternate_employee.employee_id }}
+                                </div>
+                              </div>
+                              <v-divider></v-divider>
+                              <div class="d-flex justify-space-between">
+                                <div style="font-size: 12px">Dept:</div>
+                                <div style="font-size: 12px">
+                                  {{ alternate_employee.department }}
+                                </div>
+                              </div>
+                              <v-divider></v-divider>
+                              <div class="d-flex justify-space-between">
+                                <div style="font-size: 12px">Desg:</div>
+                                <div style="font-size: 12px">
+                                  {{ alternate_employee.designation }}
+                                </div>
+                              </div>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-col>
+                      <v-col md="12" sm="12" cols="12">
+                        <v-select
+                          label="Select Leave Type"
+                          @change="verifyAvailableCount"
+                          :items="leaveTypes"
+                          item-text="leave_type.name"
+                          item-value="leave_type.id"
+                          placeholder="Select Leave Type"
+                          v-model="editedItem.leave_type_id"
+                          hide-details
+                          dense
+                          outlined
+                        ></v-select>
+                      </v-col>
+                      <v-col md="12" sm="12" cols="12">
+                        <v-text-field
+                          label="Available Leaves"
+                          hide-details
+                          dense
+                          outlined
+                          v-model="leave_available_count"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col md="12" sm="12" cols="12">
+                        <v-textarea
+                          rows="3"
+                          label="Note"
+                          dense
+                          outlined
+                          v-model="editedItem.reason"
+                          placeholder="Reason/Notes"
+                          hide-details
+                        ></v-textarea>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        v-if="errors && errors.reporting_manager_id"
+                      >
+                        <label for="" style="padding-bottom: 5px; color: red"
+                          >Reporting Manager ID is not assigned. Contact Admin
+                        </label>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-btn
+                          title="Maximum file upload size is 100Kb"
+                          cols="2"
+                          @click="dialogUploadDocuments = true"
+                          small
+                          dense
+                          color="primary"
+                          outlined
+                          block
+                          rounded
+                          >Upload Document
+                        </v-btn>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        v-if="
+                          Document.items.length &&
+                          (isDocumentTempSaved ||
+                            action == 'Edit' ||
+                            action == 'View')
+                        "
+                      >
+                        <v-card outlined>
+                          <v-simple-table dense class="w-100">
+                            <thead>
+                              <tr>
+                                <th class="text-left">Title</th>
+                                <th class="text-left">File</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                v-for="(d, index) in Document.items"
+                                :key="index"
+                              >
+                                <td class="text-left">
+                                  {{ d.title }}
+                                </td>
+                                <td class="text-left">
+                                  <a :href="d.previewUrl" target="_blank">
+                                    View file
+                                    <v-icon small>mdi-open-in-new</v-icon>
+                                  </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </v-simple-table>
+                        </v-card>
+                      </v-col>
+                    </v-row>
+                    <ul class="my-5">
+                      <li
+                        dense
+                        flat
+                        v-if="Object.keys(errors)[0]"
+                        class="error--text"
+                      >
+                        {{ errors[Object.keys(errors)[0]][0] }}
+                      </li>
+                    </ul>
+                    <v-row v-if="newLeaveApplication" no-gutters>
+                      <v-col cols="6">
+                        <div class="d-flex" style="gap: 5px">
+                          <v-btn class="primary" block small @click="save"
+                            >Save</v-btn
+                          >
+                          <v-btn
+                            class="grey white--text"
+                            block
                             small
-                            v-model="editedItem.end_date"
-                            :min="editedItem.start_date"
-                            no-title
-                            scrollable
-                            @input="toMenu = false"
-                          ></v-date-picker>
-                        </v-menu>
+                            @click="close"
+                            >Close</v-btn
+                          >
+                        </div>
                       </v-col>
                     </v-row>
                   </v-col>
-                  <v-col cols="4">
-                    <v-card
-                      outlined
-                      style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        min-height: 88px;
-                      "
-                    >
-                      <b>{{ dayDifference }} Days</b>
-                    </v-card>
+                  <v-col cols="12" md="5">
+                    <LeaveCalendarView />
+                    <LeaveOtherEmployees />
                   </v-col>
-                  <v-col md="12" sm="12" cols="12">
-                    <v-select
-                      label="Alternate Employee"
-                      :items="relatedDepartmentEmployees"
-                      item-text="full_name"
-                      item-value="employee_id"
-                      placeholder="Select Alternate Employee"
-                      v-model="alternate_employee"
-                      hide-details
-                      dense
-                      outlined
-                      return-object
-                    ></v-select>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+        <v-dialog
+          persistent
+          v-model="dialogUploadDocuments"
+          width="800px"
+          height="400px"
+        >
+          <Close left="790" @click="dialogUploadDocuments = false" />
 
-                    <v-card v-if="alternate_employee" outlined class="mt-4">
-                      <v-alert dense flat class="grey lighten-3"
-                        ><small>Alertnate Employee Info</small></v-alert
-                      >
-                      <v-row align="center" class="px-7 pb-5">
-                        <v-col cols="12" md="3" class="text-center text-sm-left">
-                          <v-avatar size="80">
-                            <img
-                              :src="alternate_employee?.profile_picture"
-                              alt="Profile Picture"
-                            />
-                          </v-avatar>
-                        </v-col>
-                        <v-col cols="12" md="9">
-                          <div class="d-flex justify-space-between pt-2">
-                            <div style="font-size: 12px">Full Name:</div>
-                            <div style="font-size: 12px">
-                              {{ alternate_employee.full_name }}
-                            </div>
-                          </div>
-                          <v-divider></v-divider>
-                          <div class="d-flex justify-space-between">
-                            <div style="font-size: 12px">Employee Id:</div>
-                            <div style="font-size: 12px">
-                              {{ alternate_employee.employee_id }}
-                            </div>
-                          </div>
-                          <v-divider></v-divider>
-                          <div class="d-flex justify-space-between">
-                            <div style="font-size: 12px">Dept:</div>
-                            <div style="font-size: 12px">
-                              {{ alternate_employee.department }}
-                            </div>
-                          </div>
-                          <v-divider></v-divider>
-                          <div class="d-flex justify-space-between">
-                            <div style="font-size: 12px">Desg:</div>
-                            <div style="font-size: 12px">
-                              {{ alternate_employee.designation }}
-                            </div>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                  </v-col>
-                  <v-col md="12" sm="12" cols="12">
-                    <v-select
-                      label="Select Leave Type"
-                      @change="verifyAvailableCount"
-                      :items="leaveTypes"
-                      item-text="leave_type.name"
-                      item-value="leave_type.id"
-                      placeholder="Select Leave Type"
-                      v-model="editedItem.leave_type_id"
-                      hide-details
-                      dense
-                      outlined
-                    ></v-select>
-                  </v-col>
-                  <v-col md="12" sm="12" cols="12">
-                    <v-text-field
-                      label="Available Leaves"
-                      hide-details
-                      dense
-                      outlined
-                      v-model="leave_available_count"
-                      readonly
-                    ></v-text-field>
-                  </v-col>
-                  <v-col md="12" sm="12" cols="12">
-                    <v-textarea
-                      rows="3"
-                      label="Note"
-                      dense
-                      outlined
-                      v-model="editedItem.reason"
-                      placeholder="Reason/Notes"
-                      hide-details
-                    ></v-textarea>
-                  </v-col>
-                  <v-col cols="12" v-if="errors && errors.reporting_manager_id">
-                    <label for="" style="padding-bottom: 5px; color: red"
-                      >Reporting Manager ID is not assigned. Contact Admin
-                    </label>
+          <v-card>
+            <v-alert flat dense class="primary white--text">
+              Documents
+              <v-spacer></v-spacer>
+            </v-alert>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12">
+                    <v-row v-for="(d, index) in Document.items" :key="index">
+                      <v-col>
+                        <v-text-field
+                          hide-details
+                          label="Title"
+                          small
+                          dense
+                          outlined
+                          v-model="d.title"
+                          placeholder="Title"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-file-input
+                          hide-details
+                          label="Upload Document"
+                          prepend-icon=""
+                          @change="handleFileChange($event, index)"
+                          small
+                          dense
+                          outlined
+                          v-model="d.file"
+                          style="padding: 0px; margin: 0px"
+                        >
+                          <template v-slot:selection="{ text }">
+                            <v-chip
+                              v-if="text"
+                              small
+                              label
+                              class="ma-1 text-truncate custom-chip1"
+                              style="width: 85px; padding: 0px; margin: 0px"
+                              overflow="hidden"
+                            >
+                              {{ text }}
+                            </v-chip>
+                          </template>
+                        </v-file-input>
+
+                        <span
+                          v-if="
+                            errorsFileUpload[index] &&
+                            errorsFileUpload[index].value
+                          "
+                          class="text-danger mt-5"
+                        >
+                          {{ errorsFileUpload[index].value[0] }}
+                        </span>
+                      </v-col>
+                      <v-col cols="1">
+                        <v-icon
+                          class="error--text mt-1"
+                          @click="removeItem(index)"
+                          >mdi-close</v-icon
+                        >
+                      </v-col>
+                    </v-row>
                   </v-col>
                   <v-col cols="12">
+                    <v-icon @click="addDocumentInfo">mdi-plus-circle</v-icon>
+                  </v-col>
+                  <v-col class="text-right">
                     <v-btn
-                      title="Maximum file upload size is 100Kb"
-                      cols="2"
-                      @click="dialogUploadDocuments = true"
+                      class="grey white--text"
                       small
-                      dense
-                      color="primary"
-                      outlined
-                      block
-                      rounded
-                      >Upload Document
+                      @click="closeDialogUploadDocuments"
+                    >
+                      Cancel
                     </v-btn>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    v-if="
-                      Document.items.length &&
-                      (isDocumentTempSaved ||
-                        action == 'Edit' ||
-                        action == 'View')
-                    "
-                  >
-                    <v-card outlined>
-                      <v-simple-table dense class="w-100">
-                        <thead>
-                          <tr>
-                            <th class="text-left">Title</th>
-                            <th class="text-left">File</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="(d, index) in Document.items" :key="index">
-                            <td class="text-left">
-                              {{ d.title }}
-                            </td>
-                            <td class="text-left">
-                              <a :href="d.previewUrl" target="_blank">
-                                View file
-                                <v-icon small>mdi-open-in-new</v-icon>
-                              </a>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </v-simple-table>
-                    </v-card>
+                    <v-btn class="primary" small @click="SaveDocumentsDialog"
+                      >Save---------</v-btn
+                    >
                   </v-col>
                 </v-row>
-                <ul class="my-5">
-                  <li
-                    dense
-                    flat
-                    v-if="Object.keys(errors)[0]"
-                    class="error--text"
-                  >
-                    {{ errors[Object.keys(errors)[0]][0] }}
-                  </li>
-                </ul>
-                <v-row v-if="newLeaveApplication" no-gutters>
-                  <v-col cols="6">
-                   <div class="d-flex" style="gap:5px;">
-                    <v-btn class="primary" block small @click="save"
-                      >Save</v-btn
-                    >
-                    <v-btn class="grey white--text" block small @click="close"
-                      >Close</v-btn
-                    >
-                   </div>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12" md="5">
-                <LeaveCalendarView />
-                <LeaveOtherEmployees />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-    <v-dialog
-      persistent
-      v-model="dialogUploadDocuments"
-      width="800px"
-      height="400px"
-    >
-      <Close left="790" @click="dialogUploadDocuments = false" />
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+        <v-row>
+          <v-col cols="6">
+            Leave Group:
 
-      <v-card>
-        <v-alert flat dense class="primary white--text">
-          Documents
-          <v-spacer></v-spacer>
-        </v-alert>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-row v-for="(d, index) in Document.items" :key="index">
-                  <v-col>
+            {{
+              (DialogLeaveGroupInfo[0] && DialogLeaveGroupInfo[0].group_name) ||
+              "---"
+            }}
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn
+              :disabled="!$auth.user.employee.leave_group_id"
+              small
+              color="primary"
+              @click="openNewDialog"
+              class="mb-2"
+              >New +</v-btn
+            >
+          </v-col>
+          <v-col>
+            <v-data-table
+              :class="
+                $isDark()
+                  ? 'accent custom-dark-header-for-datatable'
+                  : 'light-background custom-light-header-for-datatable'
+              "
+              :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+              v-model="ids"
+              item-key="id"
+              :headers="headers"
+              :items="data"
+              :loading="loading"
+              :options.sync="options"
+              :footer-props="{
+                itemsPerPageOptions: [10, 50, 100, 500, 1000],
+              }"
+            >
+              <template v-slot:header="{ props: { headers } }">
+                <tr v-if="isFilter">
+                  <td v-for="header in headers" :key="header.text">
                     <v-text-field
-                      hide-details
-                      label="Title"
-                      small
-                      dense
+                      clearable
+                      :hide-details="true"
+                      v-if="header.filterable && header.text != 'Status'"
+                      v-model="filters[header.value]"
+                      id="header.value"
+                      @input="applyFilters(header.value, $event)"
                       outlined
-                      v-model="d.title"
-                      placeholder="Title"
+                      dense
+                      autocomplete="off"
                     ></v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-file-input
-                      hide-details
-                      label="Upload Document"
-                      prepend-icon=""
-                      @change="handleFileChange($event, index)"
-                      small
-                      dense
+
+                    <v-select
+                      :hide-details="true"
+                      @change="applyFilters('status', $event)"
+                      item-value="value"
+                      item-text="title"
+                      v-model="filters[header.value]"
                       outlined
-                      v-model="d.file"
-                      style="padding: 0px; margin: 0px"
-                    >
-                      <template v-slot:selection="{ text }">
-                        <v-chip
-                          v-if="text"
-                          small
-                          label
-                          class="ma-1 text-truncate custom-chip1"
-                          style="width: 85px; padding: 0px; margin: 0px"
-                          overflow="hidden"
-                        >
-                          {{ text }}
-                        </v-chip>
-                      </template>
-                    </v-file-input>
+                      dense
+                      v-else-if="header.filterable && header.text == 'Status'"
+                      :items="[
+                        { value: '', title: 'All' },
+                        { value: 'approved', title: 'Approved' },
+                        {
+                          value: 'rejected',
+                          title: 'Rejected',
+                        },
+                        { value: 'pending', title: 'Pending' },
+                      ]"
+                    ></v-select>
+                  </td>
+                </tr>
+              </template>
+              <template v-slot:item.alternate_employee="{ item }">
+                {{
+                  item?.alternate_employee?.first_name ||
+                  "No Alternate Employee"
+                }}
+                {{ item?.alternate_employee?.last_name }}
+              </template>
+              <template v-slot:item.group_name="{ item }">
+                {{
+                  item.employee.leave_group &&
+                  item.employee.leave_group.group_name
+                }}
+              </template>
 
-                    <span
-                      v-if="
-                        errorsFileUpload[index] && errorsFileUpload[index].value
-                      "
-                      class="text-danger mt-5"
-                    >
-                      {{ errorsFileUpload[index].value[0] }}
-                    </span>
-                  </v-col>
-                  <v-col cols="1">
-                    <v-icon class="error--text mt-1" @click="removeItem(index)"
-                      >mdi-close</v-icon
-                    >
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12">
-                <v-icon @click="addDocumentInfo">mdi-plus-circle</v-icon>
-              </v-col>
-              <v-col class="text-right">
-                <v-btn
-                  class="grey white--text"
+              <template v-slot:item.leave_type_name="{ item }">
+                {{ item.leave_type.name }}
+              </template>
+              <template v-slot:item.start_date="{ item }">
+                {{ item.start_date }}
+              </template>
+              <template v-slot:item.end_date="{ item }">
+                {{ item.end_date }}
+              </template>
+              <template v-slot:item.reason="{ item }">
+                {{ item.reason.substr(0, 30) + "..." }}
+              </template>
+              <template v-slot:item.reporting="{ item }">
+                {{ item.reporting.first_name }} {{ item.reporting.last_name }}
+              </template>
+              <template v-slot:item.created_at="{ item }">
+                {{ getCurrentDateTime(item.created_at) }}
+              </template>
+              <template v-slot:item.status="{ item }">
+                <v-chip
+                  v-if="item.status == 1"
                   small
-                  @click="closeDialogUploadDocuments"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn class="primary" small @click="SaveDocumentsDialog"
-                  >Save---------</v-btn
-                >
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-    <v-row>
-      <v-col md="12">
-        <v-card class="mb-5">
-          <v-toolbar
-            class="rounded-md"
-            color="popup_background"
-            dense
-            flat
-            style="width: 100%"
-          >
-            <v-toolbar-title>
-              Leave Group:
-
-              {{
-                (DialogLeaveGroupInfo[0] &&
-                  DialogLeaveGroupInfo[0].group_name) ||
-                "---"
-              }}
-            </v-toolbar-title>
-
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-              <v-col>
-                <v-btn
-                  :disabled="!$auth.user.employee.leave_group_id"
-                  small
+                  class="p-2 mx-1"
                   color="primary"
-                  @click="openNewDialog"
-                  class="mb-2"
-                  >New +</v-btn
                 >
-              </v-col>
-            </v-toolbar-items>
-          </v-toolbar>
-          <v-data-table
-            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-            v-model="ids"
-            item-key="id"
-            :headers="headers"
-            :items="data"
-            :loading="loading"
-            class="elevation-1 alternate-rows"
-            :options.sync="options"
-            :footer-props="{
-              itemsPerPageOptions: [10, 50, 100, 500, 1000],
-            }"
-          >
-            <template v-slot:header="{ props: { headers } }">
-              <tr v-if="isFilter">
-                <td v-for="header in headers" :key="header.text">
-                  <v-text-field
-                    clearable
-                    :hide-details="true"
-                    v-if="header.filterable && header.text != 'Status'"
-                    v-model="filters[header.value]"
-                    id="header.value"
-                    @input="applyFilters(header.value, $event)"
-                    outlined
-                    dense
-                    autocomplete="off"
-                  ></v-text-field>
+                  Approved
+                </v-chip>
+                <v-chip
+                  v-if="item.status == 2"
+                  small
+                  class="p-2 mx-1"
+                  color="error"
+                >
+                  Rejected
+                </v-chip>
+                <v-chip
+                  v-if="item.status == 0"
+                  small
+                  class="p-2 mx-1"
+                  color="secondary"
+                >
+                  Pending
+                </v-chip>
+              </template>
 
-                  <v-select
-                    :hide-details="true"
-                    @change="applyFilters('status', $event)"
-                    item-value="value"
-                    item-text="title"
-                    v-model="filters[header.value]"
-                    outlined
-                    dense
-                    v-else-if="header.filterable && header.text == 'Status'"
-                    :items="[
-                      { value: '', title: 'All' },
-                      { value: 'approved', title: 'Approved' },
-                      {
-                        value: 'rejected',
-                        title: 'Rejected',
-                      },
-                      { value: 'pending', title: 'Pending' },
-                    ]"
-                  ></v-select>
-                </td>
-              </tr>
-            </template>
-            <template v-slot:item.alternate_employee="{ item }">
-              {{ item?.alternate_employee?.first_name }}
-              {{ item?.alternate_employee?.last_name }}
-            </template>
-            <template v-slot:item.group_name="{ item }">
-              {{
-                item.employee.leave_group &&
-                item.employee.leave_group.group_name
-              }}
-            </template>
-
-            <template v-slot:item.leave_type_name="{ item }">
-              {{ item.leave_type.name }}
-            </template>
-            <template v-slot:item.start_date="{ item }">
-              {{ item.start_date }}
-            </template>
-            <template v-slot:item.end_date="{ item }">
-              {{ item.end_date }}
-            </template>
-            <template v-slot:item.reason="{ item }">
-              {{ item.reason.substr(0, 30) + "..." }}
-            </template>
-            <template v-slot:item.reporting="{ item }">
-              {{ item.reporting.first_name }} {{ item.reporting.last_name }}
-            </template>
-            <template v-slot:item.created_at="{ item }">
-              {{ getCurrentDateTime(item.created_at) }}
-            </template>
-            <template v-slot:item.status="{ item }">
-              <v-chip
-                v-if="item.status == 1"
-                small
-                class="p-2 mx-1"
-                color="primary"
-              >
-                Approved
-              </v-chip>
-              <v-chip
-                v-if="item.status == 2"
-                small
-                class="p-2 mx-1"
-                color="error"
-              >
-                Rejected
-              </v-chip>
-              <v-chip
-                v-if="item.status == 0"
-                small
-                class="p-2 mx-1"
-                color="secondary"
-              >
-                Pending
-              </v-chip>
-            </template>
-
-            <template v-slot:item.action="{ item }">
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list width="120" dense>
-                  <v-list-item>
-                    <v-list-item-title style="cursor: pointer">
-                      <LeaveView :editedItem="item" />
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="editItem(item, 'Edit')">
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="secondary" small> mdi-pencil </v-icon>
-                      Edit
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    @click="deleteItem(item)"
-                    v-if="item.status == 0"
-                  >
-                    <v-list-item-title style="cursor: pointer">
-                      <v-icon color="error" small @click="deleteItem(item)">
-                        {{
-                          item.announcement === "customer" ? "" : "mdi-close"
-                        }}
-                      </v-icon>
-                      Delete
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </template>
-            <template v-slot:no-data>
-              <!-- <v-btn color="primary" @click="initialize">Reset</v-btn> -->
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
-    </v-row>
-  </div>
+              <template v-slot:item.action="{ item }">
+                <v-menu bottom left>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list width="120" dense>
+                    <v-list-item>
+                      <v-list-item-title style="cursor: pointer">
+                        <LeaveView :editedItem="item" />
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="editItem(item, 'Edit')">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="secondary" small> mdi-pencil </v-icon>
+                        Edit
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item
+                      @click="deleteItem(item)"
+                      v-if="item.status == 0"
+                    >
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="error" small @click="deleteItem(item)">
+                          {{
+                            item.announcement === "customer" ? "" : "mdi-close"
+                          }}
+                        </v-icon>
+                        Delete
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+              <template v-slot:no-data>
+                <!-- <v-btn color="primary" @click="initialize">Reset</v-btn> -->
+              </template>
+            </v-data-table>
+          </v-col>
+        </v-row>
+      </div>
+    </template>
+  </SnippetsCard>
 </template>
 <script>
 export default {

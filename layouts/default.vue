@@ -5,14 +5,30 @@
         box-shadow: none !important;
       }
       .dark-background {
-        background: #1a202e !important; /* Dark mode background */
+        background: #1a202e !important;
         color: #fff !important;
       }
 
       .light-background {
-        background: #fff !important; /* Light mode background */
+        background: #fff !important;
         color: #000000 !important;
       }
+
+      .v-expansion-panel {
+        background: none !important;
+      }
+      .custom-light-header-for-datatable th {
+        background-color: #fff !important;
+        color: grey !important;
+        border-bottom: 1px solid grey !important;
+      }
+      .custom-dark-header-for-datatable th {
+        background-color: #272f42 !important;
+        color: white !important;
+      }
+      /* .theme--dark {
+        background:#1a202e !important;
+      } */
     </style>
     <v-app :class="$isDark() ? 'dark-background' : 'light-background'">
       <v-navigation-drawer dark v-model="drawer" app class="background">
@@ -282,12 +298,12 @@ export default {
           to: "/schedules",
           color: "#9aa9b9",
         },
-        {
-          icon: "mdi-account-tie",
-          title: "Access Devices",
-          to: "/access_control",
-          color: "#9aa9b9",
-        },
+        // {
+        //   icon: "mdi-account-tie",
+        //   title: "Access Devices",
+        //   to: "/access_control",
+        //   color: "#9aa9b9",
+        // },
         {
           icon: "mdi-calendar-badge-outline",
           title: "Leave Quota",

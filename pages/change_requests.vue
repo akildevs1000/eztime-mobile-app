@@ -1,5 +1,7 @@
 <template>
-  <div>
+   <SnippetsCard class="px-5">
+    <template #body>
+      <div>
     <v-row justify="center">
       <v-dialog v-model="changeRequestDialog" max-width="500px">
         <v-card>
@@ -20,99 +22,98 @@
       </v-dialog>
     </v-row>
     <v-row>
+      <v-col cols="6">
+        Change Requests
+        <v-btn
+          title="Reload"
+          dense
+          class="ma-0 px-0"
+          x-small
+          :ripple="false"
+          @click="getChangeRequests"
+          text
+        >
+          <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="6" class="text-right">
+        <v-btn
+          small
+          class="primary"
+          title="Change Request"
+          @click="changeRequestDialog = true"
+        >
+          + New
+        </v-btn>
+      </v-col>
       <v-col>
-        <v-card elevation="0" class="mt-2">
-          <v-toolbar class="mb-2 white--text" color="white" dense flat>
-            <v-toolbar-title>
-              <span style="color: black">
-                Change Requests</span
-              ></v-toolbar-title
-            >
-            <!-- <v-tooltip top color="primary">
-              <template v-slot:activator="{ on, attrs }"> -->
-            <v-btn
-              title="Reload"
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              @click="getChangeRequests"
-              text
-            >
-              <v-icon class="ml-2" dark>mdi mdi-reload</v-icon>
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              title="Change Request"
-              x-small
-              :ripple="false"
-              text
-              @click="changeRequestDialog = true"
-            >
-              <v-icon class="">mdi mdi-plus-circle</v-icon>
-            </v-btn>
-          </v-toolbar>
-          <v-data-table
-            v-if="$store.state.isDesktop"
-            :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-            item-key="id"
-            :headers="headers"
-            :items="data"
-            :loading="loading"
-            :footer-props="{
-              itemsPerPageOptions: [10, 50, 100, 500, 1000],
-            }"
-            class="elevation-1 alternate-rows"
-            :options.sync="options"
-            :server-items-length="totalRowsCount"
-          >
-            <template v-slot:item.sno="{ item, index }">
-              {{
-                currentPage
-                  ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + data.indexOf(item))
-                  : ""
-              }}
-            </template>
-            <template v-slot:item.from_date="{ item }">
-              {{ item.from_date }} to {{ item.to_date }}
-            </template>
+        <v-data-table
+          :class="
+            $isDark()
+              ? 'accent custom-dark-header-for-datatable'
+              : 'light-background custom-light-header-for-datatable'
+          "
+          v-if="$store.state.isDesktop"
+          :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+          item-key="id"
+          :headers="headers"
+          :items="data"
+          :loading="loading"
+          :footer-props="{
+            itemsPerPageOptions: [10, 50, 100, 500, 1000],
+          }"
+          :options.sync="options"
+          :server-items-length="totalRowsCount"
+        >
+          <template v-slot:item.sno="{ item, index }">
+            {{
+              currentPage
+                ? (currentPage - 1) * perPage +
+                  (cumulativeIndex + data.indexOf(item))
+                : ""
+            }}
+          </template>
+          <template v-slot:item.from_date="{ item }">
+            {{ item.from_date }} to {{ item.to_date }}
+          </template>
 
-            <template v-slot:item.remarks="{ item }">
-              {{ item.remarks }}
-            </template>
-            <template v-slot:item.status="{ item }">
-              <div :style="'color:' + getRelatedColor(item)">
-                {{ item.status == "P" ? "Pending" : "Approved" }}
-              </div>
-            </template>
-          </v-data-table>
-          <v-alert
-            v-else="$store.state.isDesktop"
-            v-for="(item, index) in data"
-            :key="index"
-            border="left"
-            colored-border
-            :color="getRelatedColor(item)"
-            elevation="2"
-          >
-            <div>
-              Request Type:
-              <b>{{ item.request_type }} </b>
+          <template v-slot:item.remarks="{ item }">
+            {{ item.remarks }}
+          </template>
+          <template v-slot:item.status="{ item }">
+            <div :style="'color:' + getRelatedColor(item)">
+              {{ item.status == "P" ? "Pending" : "Approved" }}
             </div>
-            <div>
-              <b
-                >{{ item.from_date }} to
-                {{ item.to_date }}
-              </b>
-            </div>
-            <div>Remarks: {{ item.remarks }}</div>
-            <div>Requested At: {{ item.requested_at }}</div>
-          </v-alert>
-        </v-card>
+          </template>
+        </v-data-table>
+        <v-alert
+          v-else="$store.state.isDesktop"
+          v-for="(item, index) in data"
+          :key="index"
+          border="left"
+          colored-border
+          :color="getRelatedColor(item)"
+          elevation="2"
+        >
+          <div>
+            Request Type:
+            <b>{{ item.request_type }} </b>
+          </div>
+          <div>
+            <b
+              >{{ item.from_date }} to
+              {{ item.to_date }}
+            </b>
+          </div>
+          <div>Remarks: {{ item.remarks }}</div>
+          <div>Requested At: {{ item.requested_at }}</div>
+        </v-alert>
       </v-col>
     </v-row>
   </div>
+    </template>
+    </SnippetsCard>
+  
 </template>
 
 <script>
@@ -182,7 +183,6 @@ export default {
   },
   methods: {
     getRelatedColor(item) {
-      return "red";
       let colors = {
         P: "purple",
         R: "red",
@@ -204,7 +204,7 @@ export default {
           params: {
             per_page: 10,
             company_id: this.$auth.user.company_id,
-            UserID: this.$auth.user.employee.system_user_id,
+            employee_device_id: this.$auth.user.employee.system_user_id,
             page: page,
             sortBy: sortedBy,
             sortDesc: sortedDesc,

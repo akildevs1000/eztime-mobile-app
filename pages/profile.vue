@@ -1,19 +1,19 @@
 <template>
   <div v-if="employeeObject">
-    <v-row class="pt-5">
-      <v-col cols="12" class="table-second-cell-right-align">
-        <div class="mobile-panel-container">
-          <v-row>
-            <v-col
-              :cols="$store.state.isDesktop ? 5 : 12"
-              xs="12"
-              sm="12"
-              md="6"
-            >
-              <v-expansion-panels v-model="panel1" multiple>
-                <v-expansion-panel>
+    <v-row>
+            <v-col cols="12" md="6">
+              <v-expansion-panels v-model="panel1" multiple :light="!$isDark()">
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
-                    <h5><v-icon>mdi-contacts</v-icon> Contact Details</h5>
+                    <h5>
+                      <v-icon>mdi-contacts</v-icon> <span>Contact Details</span>
+                    </h5>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <table class="view-profile-table-lineheight">
@@ -109,7 +109,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5>
                       <v-icon>mdi-home-account</v-icon> Home Country - Details
@@ -224,7 +230,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-passport</v-icon> Passport Details</h5>
                   </v-expansion-panel-header>
@@ -311,7 +323,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5>
                       <v-icon>mdi-passport-biometric</v-icon> Emirates Details
@@ -387,7 +405,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-passport-biometric</v-icon> Visa</h5>
                   </v-expansion-panel-header>
@@ -487,7 +511,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-account</v-icon> Host Info</h5>
                   </v-expansion-panel-header>
@@ -510,14 +540,15 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-col>
-            <v-col
-              :cols="$store.state.isDesktop ? 5 : 12"
-              md="6"
-              sm="12"
-              xs="12"
-            >
-              <v-expansion-panels multiple v-model="panel">
-                <v-expansion-panel>
+            <v-col cols="12" md="6">
+              <v-expansion-panels multiple v-model="panel" :light="!$isDark()">
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-bank</v-icon> Bank Details</h5>
                   </v-expansion-panel-header>
@@ -617,7 +648,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5>
                       <v-icon>mdi-file-account-outline</v-icon> Documents({{
@@ -676,7 +713,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-school</v-icon> Qualification Details</h5>
                   </v-expansion-panel-header>
@@ -750,7 +793,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-cog</v-icon> Settings</h5>
                   </v-expansion-panel-header>
@@ -865,7 +914,13 @@
                     </table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
-                <v-expansion-panel>
+                <v-expansion-panel
+                  :class="
+                    $isDark()
+                      ? 'accent white--text'
+                      : 'light-background black--text'
+                  "
+                >
                   <v-expansion-panel-header>
                     <h5><v-icon>mdi-cash</v-icon> Salary Information</h5>
                   </v-expansion-panel-header>
@@ -917,9 +972,6 @@
               </v-expansion-panels>
             </v-col>
           </v-row>
-        </div>
-      </v-col>
-    </v-row>
   </div>
 </template>
 <script>

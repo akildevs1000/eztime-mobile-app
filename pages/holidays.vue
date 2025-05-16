@@ -1,36 +1,60 @@
 <template>
-  <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
+  <SnippetsCard>
+    <template #body>
+      <div class="text-center ma-2">
+        <v-snackbar
+          v-model="snackbar"
+          top="top"
+          color="secondary"
+          elevation="24"
+        >
+          {{ response }}
+        </v-snackbar>
+      </div>
+      <style scoped>
+        /* .v-sheet {
+        background: #272f42 !important;
+      } */
 
-    <v-row>
-      <v-col md="12">
-        <v-card class="mb-5">
-          <v-toolbar class="rounded-md" color="popup_background" dense flat>
-            <v-col cols="6"
-              ><v-toolbar-title><span>Holidays</span></v-toolbar-title></v-col
-            >
+        .v-sheet > * {
+          /* color: #fff !important; */
+        }
 
-            <v-col cols="6" class="mt-6">
-              <v-select
-                style="max-width: 200px; float: right"
-                @change="getDataFromApi()"
-                outlined
-                dense
-                x-small
-                v-model="filterYear"
-                :items="dataYears"
-                placeholder="Year"
-                solo
-                flat
-              ></v-select>
-            </v-col>
-          </v-toolbar>
+        .v-sheet {
+          /* background: #fff !important; */
+        }
 
+        .v-sheet > * {
+          /* color: #000000 !important; */
+        }
+      </style>
+        <v-container fluid>
+          <v-row class="">
+        <v-col>
+          <div>Holidays</div>
+        </v-col>
+        <v-col>
+          <div class="text-right mr-5">
+            <v-autocomplete
+              style="max-width: 200px; float: right"
+              @change="getDataFromApi()"
+              outlined
+              dense
+              x-small
+              v-model="filterYear"
+              :items="dataYears"
+              placeholder="Year"
+              hide-details
+            ></v-autocomplete>
+          </div>
+        </v-col>
+        <v-col cols="12">
           <v-data-table
+            :class="
+              $isDark()
+                ? 'accent custom-dark-header-for-datatable'
+                : 'light-background custom-light-header-for-datatable'
+            "
             :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
             v-model="ids"
             item-key="id"
@@ -40,7 +64,6 @@
             :footer-props="{
               itemsPerPageOptions: [10, 50, 100, 500, 1000],
             }"
-            class="elevation-1"
             :options.sync="options"
             :server-items-length="totalRowsCount"
           >
@@ -69,10 +92,11 @@
               <!-- <v-btn color="primary" @click="initialize">Reset</v-btn> -->
             </template>
           </v-data-table>
-        </v-card>
-      </v-col>
-    </v-row>
-  </div>
+        </v-col>
+      </v-row>
+        </v-container>
+    </template>
+  </SnippetsCard>
 </template>
 <script>
 export default {

@@ -1,101 +1,38 @@
 <template>
-  <div>
-    <style>
-      /* .v-slide-group__content {
-    height: 30px !important;
-  }
-  
-  .v-slide-group__wrapper {
-    height: 34px !important;
-  } */
-      .slidegroup1 .v-slide-group {
-        height: 34px !important;
-      }
-    </style>
-
-    <!-- <Back class="primary white--text" /> -->
-    <v-card elevation="0" class="mt-2">
-      <v-alert dense flat>
-        <v-row>
-          <v-col> Attendance Reports </v-col>
-          <v-col cols="3" class="text-right">
-            <div style="display: flex; justify-content: right">
-              <div class="mx-2" style="height:10px;">
-                <Calender @filter-attr="filterAttr" />
-              </div>
-              <v-btn
-                @click="commonMethod()"
-                dense
-                small
-                color="primary"
-                primary
-                fill
-                >Submit
-              </v-btn>
+  <SnippetsCard class="px-5">
+    <template #body>
+      <v-row>
+        <v-col> Attendance Reports </v-col>
+        <v-col cols="12" md="3" class="text-right">
+          <div style="display: flex; justify-content: right">
+            <div class="mx-2" style="height: 10px;width: 100%;">
+              <Calender @filter-attr="filterAttr" />
             </div>
-          </v-col>
-        </v-row>
-      </v-alert>
-    </v-card>
-
-    <v-card class="mb-5" elevation="0">
-      <v-tabs
-        class="slidegroup1"
-        v-model="tab"
-        background-color="popup_background"
-        right
-        dark
-      >
-        <v-tabs-slider
-          class="violet slidegroup1"
-          style="height: 3px"
-        ></v-tabs-slider>
-
-        <v-tab
-          :key="1"
-          style="height: 30px"
-          href="#tab-1"
-          class="black--text slidegroup1"
-        >
-          Single
-        </v-tab>
-
-        <v-tab
-          :key="2"
-          @click="commonMethod()"
-          style="height: 30px"
-          href="#tab-2"
-          class="black--text slidegroup1"
-        >
-          Double
-        </v-tab>
-
-        <v-tab
-          :key="3"
-          @click="commonMethod"
-          style="height: 30px"
-          href="#tab-3"
-          class="black--text slidegroup1"
-        >
-          Multi
-        </v-tab>
-      </v-tabs>
-
-      <v-tabs-items v-model="tab">
-        <v-tab-item value="tab-1">
+            <v-btn
+              @click="commonMethod()"
+              dense
+              small
+              color="primary"
+              primary
+              fill
+              >Submit
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col cols="12" md="12">
           <AttendanceReport
-            :key="1"
-            title="General Reports"
-            shift_type_id="1"
-            :headers="generalHeaders"
+            v-if="$auth.user.employee?.schedule_active?.shift_type_id == 2"
+            :key="3"
+            title="Multi In/Out Reports"
+            shift_type_id="2"
+            :headers="multiHeaders"
             :report_template="report_template"
             :payload1="payload11"
-            process_file_endpoint=""
-            render_endpoint="render_general_report"
+            process_file_endpoint="multi_in_out_"
+            render_endpoint="render_multi_inout_report"
           />
-        </v-tab-item>
-        <v-tab-item value="tab-2">
           <AttendanceReport
+            v-else-if="$auth.user.employee?.schedule_active?.shift_type_id == 5"
             title="Split Reports"
             shift_type_id="5"
             :headers="doubleHeaders"
@@ -106,22 +43,23 @@
             :key="2"
             ref="profile"
           />
-        </v-tab-item>
-        <v-tab-item value="tab-3">
+
           <AttendanceReport
-            :key="3"
-            title="Multi In/Out Reports"
-            shift_type_id="2"
-            :headers="multiHeaders"
+            v-else
+            :key="1"
+            title="General Reports"
+            shift_type_id="1"
+            :headers="generalHeaders"
             :report_template="report_template"
             :payload1="payload11"
-            process_file_endpoint="multi_in_out_"
-            render_endpoint="render_multi_inout_report"
+            process_file_endpoint=""
+            render_endpoint="render_general_report"
           />
-        </v-tab-item>
-      </v-tabs-items>
-    </v-card>
-  </div>
+        </v-col>
+      </v-row>
+      <!-- <Back class="primary white--text" /> -->
+    </template>
+  </SnippetsCard>
 </template>
 <script>
 import AttendanceReport from "../components/Attendance/reportComponent.vue";

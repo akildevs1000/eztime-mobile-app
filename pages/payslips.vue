@@ -1,105 +1,115 @@
 <template>
-  <div>
-    <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
-        {{ response }}
-      </v-snackbar>
-    </div>
-
-    <v-card class="mb-5 mt-2">
-      <v-toolbar class="rounded-md" color="popup_background" dense flat>
-        <v-col cols="12">
-          <v-toolbar-title>
-            <v-row class=" ">
-              <v-col md="3"> Payslips </v-col>
-
-              <v-col md="9" sm="9" class="text-right" style="font-size: 20px">
-                <!-- <v-icon size="20" fill>mdi-calendar-month</v-icon> -->
-                <v-icon
-                  size="20"
-                  @click="getDataFromApi(--year_display)"
-                  style="cursor: pointer"
-                >
-                  mdi-less-than</v-icon
-                >
-                {{ year_display }}
-                <v-icon
-                  size="20"
-                  @click="getDataFromApi(++year_display)"
-                  style="cursor: pointer"
-                >
-                  mdi-greater-than</v-icon
-                >
-              </v-col>
-            </v-row></v-toolbar-title
+  <SnippetsCard class="px-5">
+    <template #body>
+      <div>
+        <div class="text-center ma-2">
+          <v-snackbar
+            v-model="snackbar"
+            top="top"
+            color="secondary"
+            elevation="24"
           >
-        </v-col>
-      </v-toolbar>
+            {{ response }}
+          </v-snackbar>
+        </div>
+        <v-row>
+          <v-col cols="3"> Payslips </v-col>
+          <v-col md="9" sm="9" class="text-right" style="font-size: 20px">
+            <!-- <v-icon
+                size="20"
+                @click="getDataFromApi(--year_display)"
+                style="cursor: pointer"
+              >
+                mdi-less-than</v-icon
+              >
+              {{ year_display }}
+              <v-icon
+                size="20"
+                @click="getDataFromApi(++year_display)"
+                style="cursor: pointer"
+              >
+                mdi-greater-than</v-icon
+              > -->
+          </v-col>
+          <v-col cols="12">
+            <v-data-table
+              :class="
+                $isDark()
+                  ? 'accent custom-dark-header-for-datatable'
+                  : 'light-background custom-light-header-for-datatable'
+              "
+              :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
+              dense
+              v-model="selectedItems"
+              :headers="headers_table"
+              :items="data"
+              model-value="data.id"
+              :loading="loading"
+              hide-default-footer
+              disable-pagination
+            >
+              <template v-slot:item.sno="{ item, index }">
+                {{
+                  currentPage
+                    ? (currentPage - 1) * perPage +
+                      (cumulativeIndex + data.indexOf(item))
+                    : ""
+                }}
+              </template>
+              <template v-slot:item.year_month="{ item }">
+                {{ monthNames[item.payroll_month].label }}
+                {{ item.payroll_year }}
+              </template>
 
-      <v-data-table
-        :mobile-breakpoint="$store.state.isDesktop ? 0 : 2000"
-        dense
-        v-model="selectedItems"
-        :headers="headers_table"
-        :items="data"
-        model-value="data.id"
-        :loading="loading"
-        class="elevation-1"
-        hide-default-footer
-        disable-pagination
-      >
-        <template v-slot:item.sno="{ item, index }">
-          {{
-            currentPage
-              ? (currentPage - 1) * perPage +
-                (cumulativeIndex + data.indexOf(item))
-              : ""
-          }}
-        </template>
-        <template v-slot:item.year_month="{ item }">
-          {{ monthNames[item.payroll_month].label }}
-          {{ item.payroll_year }}
-        </template>
+              <template v-slot:item.basic_salary="{ item }">
+                {{ item.basic_salary }}
+              </template>
 
-        <template v-slot:item.basic_salary="{ item }">
-          {{ item.basic_salary }}
-        </template>
+              <template v-slot:item.net_salary="{ item }">
+                {{ item.net_salary }}
+              </template>
+              <template v-slot:item.payslip="{ item }">
+                <span
+                  v-if="item?.payslip_status"
+                  @click="navigateToViewPDF(item.id)"
+                  style="
+                    font-size: 25px;
+                    vertical-align: inherit;
+                    cursor: pointer;
+                  "
+                >
+                  <v-icon small class="primary--text">mdi-eye</v-icon>
+                </span>
+                <a
+                  v-if="item?.payslip_status"
+                  :href="getdownloadLink(item.employee_table_id)"
+                  style="
+                    font-size: 25px;
+                    vertical-align: inherit;
+                    cursor: pointer;
+                  "
+                >
+                  <v-icon small class="primary--text">mdi-download</v-icon>
+                </a>
+              </template>
 
-        <template v-slot:item.net_salary="{ item }">
-          {{ item.net_salary }}
-        </template>
-        <template v-slot:item.payslip="{ item }">
-          <span
-            v-if="item?.payslip_status"
-            @click="navigateToViewPDF(item.id)"
-            style="font-size: 25px; vertical-align: inherit; cursor: pointer"
-          >
-            <v-icon small class="primary--text">mdi-eye</v-icon>
-          </span>
-          <a
-            v-if="item?.payslip_status"
-            :href="getdownloadLink(item.employee_table_id)"
-            style="font-size: 25px; vertical-align: inherit; cursor: pointer"
-          >
-            <v-icon small class="primary--text">mdi-download</v-icon>
-          </a>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <v-menu bottom left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn dark-2 icon v-bind="attrs" v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list width="120" dense>
-              <v-list-item @click="editItem(item)">
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon color="secondary" small> mdi-information </v-icon>
-                  View
-                </v-list-item-title>
-              </v-list-item>
-              <!-- <v-list-item @click="res(item.id)">
+              <template v-slot:item.actions="{ item }">
+                <v-menu bottom left>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn dark-2 icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list width="120" dense>
+                    <v-list-item @click="editItem(item)">
+                      <v-list-item-title style="cursor: pointer">
+                        <v-icon color="secondary" small>
+                          mdi-information
+                        </v-icon>
+                        View
+                      </v-list-item-title>
+                    </v-list-item>
+                    <!-- <v-list-item @click="res(item.id)">
                             <v-list-item-title style="cursor:pointer">
                               <v-icon color="primary" small>
                                 mdi-eye
@@ -107,12 +117,15 @@
                               Select
                             </v-list-item-title>
                           </v-list-item> -->
-            </v-list>
-          </v-menu>
-        </template>
-      </v-data-table>
-    </v-card>
-  </div>
+                  </v-list>
+                </v-menu>
+              </template>
+            </v-data-table>
+          </v-col>
+        </v-row>
+      </div>
+    </template>
+  </SnippetsCard>
 </template>
 <script>
 export default {

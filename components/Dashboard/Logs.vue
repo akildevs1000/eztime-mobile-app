@@ -1,12 +1,12 @@
 <template>
   <span>
-    <v-row class="pa-2">
-      <v-col cols="12" md="10">Logs</v-col>
-      <v-col cols="12" md="2">
+       <v-row class="pa-2">
+      <v-col cols="9">Logs</v-col>
+      <!-- <v-col cols="3">
         <div class="text-right mr-5">
           <Calender @filter-attr="filterAttr" />
         </div>
-      </v-col>
+      </v-col> -->
       <v-col cols="12">
         <v-data-table
           :class="
@@ -108,12 +108,7 @@ const today = new Date();
 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-// import DateRangePicker from "../components/Snippets/Filters/DateRangePicker.vue";
-import Calender from "../components/Calender.vue";
 export default {
-  components: {
-    Calender,
-  },
   data: () => ({
     perPage: 10,
     currentPage: 1,
@@ -216,15 +211,15 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
-      {
-        text: "Gps Location",
-        align: "left",
-        sortable: true,
-        key: "gps_location",
-        value: "gps_location",
-        filterable: true,
-        filterSpecial: true,
-      },
+      // {
+      //   text: "Gps Location",
+      //   align: "left",
+      //   sortable: true,
+      //   key: "gps_location",
+      //   value: "gps_location",
+      //   filterable: true,
+      //   filterSpecial: true,
+      // },
     ],
     payload: {
       from_date: formatDate(firstDay),

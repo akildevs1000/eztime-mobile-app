@@ -13,22 +13,20 @@
           <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-col cols="12">
-                <v-card :class="$isDark() ? 'accent' : 'light-background'">
-                  <DashboardAttendance />
-                </v-card>
+                <SnippetsCard>
+                  <template #body>
+                    <DashboardAttendance />
+                  </template>
+                </SnippetsCard>
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col class="mt-7">
-                <v-card
-                  :class="
-                    $isDark()
-                      ? 'accent white--text'
-                      : 'light-background black--text'
-                  "
-                >
-                  <Logs />
-                </v-card>
+            <v-row no-gutters class="mt-10">
+              <v-col >
+                <SnippetsCard>
+                  <template #body>
+                    <DashboardLogs />
+                  </template>
+                </SnippetsCard>
               </v-col>
             </v-row>
           </v-col>
@@ -39,108 +37,71 @@
               <v-col cols="6">
                 <v-row no-gutters>
                   <v-col cols="12">
-                    <v-card
-                      class="fill-height"
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardAVGClockIn />
-                    </v-card>
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardAVGClockIn />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-2">
-                    <v-card
-                      class="fill-height"
-                      :class="$isDark() ? 'accent' : 'light-background'"
-                    >
-                      <DashboardAttendanceStatus />
-                    </v-card>
+                  <v-col cols="12" class="mt-10">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardAttendanceStatus />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-2">
-                    <v-card
-                      class="mb-5 fill-height"
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <VerticalProgress />
-                    </v-card>
+                  <v-col cols="12" class="mt-10">
+                    <SnippetsCard>
+                      <template #body>
+                        <VerticalProgress />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-2">
-                    <v-card
-                      class="mb-5 fill-height"
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardBestAndLeastEmployee />
-                    </v-card>
+                  <v-col cols="12" class="mt-10">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardBestAndLeastEmployee />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-5">
-                    <v-card
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardLeaveQuotta />
-                    </v-card>
+                  <v-col cols="12" class="mt-7">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardLeaveQuotta />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
                 </v-row>
               </v-col>
               <v-col cols="6">
                 <v-row no-gutters>
                   <v-col cols="12">
-                    <v-card
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardCurrentMonthAttendance />
-                    </v-card>
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardCurrentMonthAttendance />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-5">
-                    <v-card
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardUpcomingHoliday />
-                    </v-card>
+                  <v-col cols="12" class="mt-7">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardUpcomingHoliday />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-5">
-                    <v-card
-                      class="fill-height"
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardRemaingHours />
-                    </v-card>
+                  <v-col cols="12" class="mt-7">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardRemaingHours />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
-                  <v-col cols="12" class="mt-5">
-                    <v-card
-                      :class="
-                        $isDark()
-                          ? 'accent white--text'
-                          : 'light-background black--text'
-                      "
-                    >
-                      <DashboardAnnouncement />
-                    </v-card>
+                  <v-col cols="12" class="mt-10">
+                    <SnippetsCard>
+                      <template #body>
+                        <DashboardAnnouncement />
+                      </template>
+                    </SnippetsCard>
                   </v-col>
                 </v-row>
               </v-col>
