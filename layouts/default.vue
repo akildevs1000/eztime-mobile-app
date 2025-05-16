@@ -86,10 +86,6 @@
         dense
         app
       >
-        <v-app-bar-nav-icon
-          v-if="!miniVariant"
-          @click.stop="drawer = !drawer"
-        />
         <span class="text-overflow d-flex align-center">
           <v-btn icon @click.stop="drawer = !drawer">
             <v-icon :color="$isDark() ? 'white' : 'black'">mdi-menu</v-icon>
