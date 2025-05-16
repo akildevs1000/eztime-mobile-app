@@ -47,17 +47,18 @@
       .dark-mode .v-date-picker-header__value .accent--text button {
         color: white !important;
       }
-      /* .theme--dark {
-        background:#1a202e !important;
-      } */
+
+      .v-sheet.theme--dark.logout {
+        background: #1a202e !important;
+      }
 
       .dark-mode-btn .v-btn__content {
-                color: white !important;
-              }
+        color: white !important;
+      }
 
-              .light-mode-btn .v-btn__content {
-                color: white !important;
-              }
+      .light-mode-btn .v-btn__content {
+        color: white !important;
+      }
     </style>
     <v-app :class="$isDark() ? 'dark-background' : 'light-background'">
       <v-navigation-drawer dark v-model="drawer" app class="background">
@@ -155,7 +156,7 @@
             </v-btn>
           </template>
 
-          <v-list class="avatar-menu">
+          <v-list class="avatar-menu logout" :light="!$isDark()">
             <v-list-item-group color="primary">
               <v-list-item
                 v-if="
@@ -178,9 +179,7 @@
                   <v-icon>mdi-logout</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title class="black--text"
-                    >Logout</v-list-item-title
-                  >
+                  <v-list-item-title>Logout</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>

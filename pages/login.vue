@@ -1,5 +1,5 @@
 <template>
-  <div class="mobileBGColor111 bg-body">
+  <div class="bg-body white">
     <v-dialog persistent v-model="dialogWhatsapp" width="600px">
       <v-card :dark="false">
         <v-card-title
@@ -193,7 +193,7 @@
                 </span>
                 <v-btn
                   :loading="loading"
-                  @click="loginWithOTP()"
+                  @click="login"
                   class="btn primary btn-black btn-block mt-1 mb-3 p-4 btntext"
                   style="width: 100%; height: 48px"
                 >
@@ -333,7 +333,6 @@ export default {
     },
   }),
   created() {
-    this.verifyToken();
   },
   mounted() {
     if (this.$localStorage.get("email")) {
@@ -354,14 +353,7 @@ export default {
     openForgotPassword() {
       this.dialogForgotPassword = true;
     },
-    verifyToken() {
-      if (this.$route.query.email && this.$route.query.password) {
-        this.email = this.$route.query.email;
-        this.password = this.$route.query.password;
-
-        this.loginWithOTP();
-      }
-    },
+   
     hideMobileNumber(inputString) {
       // Check if the input is a valid string
       if (typeof inputString !== "string" || inputString.length < 4) {
@@ -405,54 +397,6 @@ export default {
           }
         })
         .catch((err) => console.log(err));
-    },
-
-    loginWithOTP() {
-      if (this.rememberMe) {
-        this.$localStorage.set("email", this.credentials.email);
-        this.$localStorage.set("password", this.credentials.password);
-      } else {
-        this.$localStorage.remove("email");
-        this.$localStorage.remove("password");
-      }
-
-      if (this.$refs.form.validate()) {
-        this.loading = true;
-        this.$store.commit("email", this.credentials.email);
-        this.$store.commit("password", this.credentials.password);
-
-        this.$axios
-          .post("loginwith_otp", this.credentials)
-          .then(({ data }) => {
-            if (!data.status) {
-              //alert("OTP Verification: " + data.message);
-              alert("Invalid Login Deails");
-            } else if (data.user_id) {
-              if (data.enable_whatsapp_otp == 1) {
-                this.dialogWhatsapp = true;
-                this.userId = data.user_id;
-                if (data.mobile_number) {
-                  this.maskMobileNumber = this.hideMobileNumber(
-                    data.mobile_number
-                  );
-                }
-
-                this.loading = false;
-              } else {
-                this.login();
-              }
-            } else {
-              this.snackbar = true;
-              this.snackbarMessage = "Invalid Login Details";
-              //alert("Invalid Login Deails");
-            }
-          })
-          .catch((err) => console.log(err));
-      } else {
-        this.snackbar = true;
-        this.snackbarMessage = "Invalid Emaild and Password";
-      }
-      this.loading = false;
     },
     login() {
       if (this.$refs.form.validate()) {
