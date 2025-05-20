@@ -94,6 +94,7 @@
 </template>
 <script>
 export default {
+  props: ["company_id", "system_user_id", "employee_id"],
   data() {
     return {
       attendanceStats: [],
@@ -159,9 +160,12 @@ export default {
   },
 
   async mounted() {
+    let company_id = this.company_id;
+    let system_user_id = this.system_user_id;
+    let employee_id = this.employee_id;
     try {
       const response = await this.$axios.$get(
-        "/employee-attendance-summary?company_id=43&employee_id=7"
+        `/employee-attendance-summary?company_id=${company_id}&employee_id=${system_user_id}`
       );
       this.attendances = response.attendances;
       this.barChartSeries = response.barChartSeries;
@@ -175,8 +179,8 @@ export default {
 
     let url = `current-month-performance-report`;
     let payload = {
-      company_id: 43,
-      employee_id: 7,
+      company_id,
+      employee_id: system_user_id,
     };
     let { data } = await this.$axios.post(url, payload);
     this.attendanceStats = data.stats;

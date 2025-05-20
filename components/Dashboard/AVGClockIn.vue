@@ -19,6 +19,8 @@
 
 <script>
 export default {
+  props: ["company_id", "system_user_id", "employee_id", "shift_type_id"],
+
   data() {
     return {
       avg_clock_in: "09:00",
@@ -98,7 +100,7 @@ export default {
   async mounted() {
     try {
       const response = await this.$axios.$get(
-        "/employee-avg-clock-in?company_id=43&employee_id=7&shift_type_id=2"
+        `/employee-avg-clock-in?company_id=${this.company_id}&employee_id=${this.system_user_id}&shift_type_id=${this.shift_type_id}`
       );
       this.attendances = response.avg_clock_in;
 

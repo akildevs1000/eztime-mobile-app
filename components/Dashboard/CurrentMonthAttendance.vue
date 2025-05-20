@@ -108,6 +108,9 @@
 </template>
 <script>
 export default {
+
+  props: ["company_id", "system_user_id", "employee_id"],
+
   data() {
     return {
       selectedDatesForCurrentMonth: null, // Default to today
@@ -133,8 +136,8 @@ export default {
     async geCurrentMonthPerformanceReport() {
       let url = `current-month-performance-report`;
       let payload = {
-        company_id: 43,
-        employee_id: 7,
+        company_id: this.company_id,
+        employee_id: this.system_user_id,
       };
       let { data } = await this.$axios.post(url, payload);
       this.eventsForCurrentMonth = data.events;

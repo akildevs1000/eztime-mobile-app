@@ -109,6 +109,9 @@ const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
 export default {
+
+  props: ["company_id", "system_user_id", "employee_id"],
+
   data: () => ({
     perPage: 10,
     currentPage: 1,
@@ -372,10 +375,8 @@ export default {
           sortBy: sortedBy,
           sortDesc: sortedDesc,
           per_page: itemsPerPage,
-          company_id: this.$auth.user.company_id,
-          UserID: this.$auth.user.employee.system_user_id,
-
-          ////department_ids: this.$auth.user.assignedDepartments,
+          company_id: this.company_id,
+          UserID: this.system_user_id,
           ...this.payload,
           ...this.filters,
         },
@@ -384,14 +385,6 @@ export default {
         this.payloadOptions.params[filter_column] = filter_value;
       this.loading = true;
       this.$axios.get(url, this.payloadOptions).then(({ data }) => {
-        // if (filter_column != "" && data.data.length == 0) {
-        //   this.snack = true;
-        //   this.snackColor = "error";
-        //   this.snackText = "No Results Found";
-        //   this.loading = false;
-        //   return false;
-        // }
-        //this.server_datatable_totalItems = data.total;
         this.data = data.data;
         this.total = data.total;
         this.loading = false;

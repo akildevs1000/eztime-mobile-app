@@ -1,7 +1,7 @@
 <template>
   <v-row v-if="leaveQuotta" no-gutters>
     <v-col>
-      <v-container >
+      <v-container>
         <v-row class="pa-3">
           <v-col cols="12">
             <div>Leaves</div>
@@ -265,7 +265,7 @@
             <v-row>
               <v-col cols="2">
                 <v-avatar color="grey" size="40">
-                  <v-icon size="20" >mdi-clock-outline</v-icon>
+                  <v-icon size="20">mdi-clock-outline</v-icon>
                 </v-avatar>
               </v-col>
               <v-col>
@@ -291,6 +291,8 @@
 </template>
 <script>
 export default {
+  props: ["company_id", "system_user_id", "employee_id", "leave_group_id"],
+
   data() {
     return {
       leaveQuotta: null,
@@ -311,14 +313,14 @@ export default {
     async getTodayAttendance() {
       let options = {
         params: {
-          company_id: this.$auth.user.company_id,
-          employee_id: this.$auth.user.employee.employee_id,
+          company_id: this.company_id,
+          employee_id: this.employee_id,
         },
       };
 
       this.$axios
         .get(
-          `leave_total_quota/` + this.$auth.user.employee.leave_group_id,
+          `leave_total_quota/` + this.leave_group_id,
           options
         )
         .then(({ data }) => {

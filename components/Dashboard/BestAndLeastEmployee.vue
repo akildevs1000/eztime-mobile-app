@@ -25,6 +25,9 @@
 </template>
 <script>
 export default {
+  
+  props: ["company_id"],
+
   data() {
     return {
       item: null,
@@ -46,7 +49,7 @@ export default {
 
   async mounted() {
     try {
-      this.item = await this.$axios.$get("/upcoming-holiday?company_id=43");
+      this.item = await this.$axios.$get(`/upcoming-holiday?company_id=${this.company_id}`);
       this.loading = false;
     } catch (error) {
       console.error("Failed to load attendance summary:", error);

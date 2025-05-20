@@ -14,6 +14,9 @@
 </template>
 <script>
 export default {
+
+  props: ["company_id", "system_user_id", "employee_id"],
+
   data() {
     return {
       series: [0, 0, 0],
@@ -65,8 +68,8 @@ export default {
   async mounted() {
     try {
       const { data } = await this.$axios.post(`current-month-performance-report`, {
-        company_id: 43,
-        employee_id: 7,
+        company_id: this.company_id,
+        employee_id: this.system_user_id,
       });
       const statusses = data.stats;
       this.series = [statusses["P"], statusses["L"], statusses["A"]];

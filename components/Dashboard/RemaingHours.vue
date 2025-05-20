@@ -13,6 +13,9 @@
 </template>
 <script>
 export default {
+
+  props: ["company_id", "system_user_id"],
+  
   data() {
     return {
       key: 1,
@@ -49,7 +52,7 @@ export default {
         },
       },
       gaugeSeries: [100],
-      _gaugeInterval:null,
+      _gaugeInterval: null,
     };
   },
 
@@ -63,19 +66,18 @@ export default {
     isDarkMode() {},
   },
   beforeDestroy() {
-  if (this._gaugeInterval) {
-    clearInterval(this._gaugeInterval);
-    this._gaugeInterval = null;
-  }
-}
-,
+    if (this._gaugeInterval) {
+      clearInterval(this._gaugeInterval);
+      this._gaugeInterval = null;
+    }
+  },
   methods: {
     async getTodayAttendance() {
       try {
         const { data } = await this.$axios.get(`report`, {
           params: {
-            company_id: this.$auth.user.company_id,
-            employee_id: this.$auth.user.employee.system_user_id,
+            company_id: this.company_id,
+            employee_id: this.system_user_id,
             from_date: this.getFormattedDate(),
             to_date: this.getFormattedDate(),
           },

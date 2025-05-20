@@ -1,5 +1,8 @@
 <template>
-  <div class="pa-3" style="display: flex; justify-content: space-between; justify-items: center">
+  <div
+    class="pa-3"
+    style="display: flex; justify-content: space-between; justify-items: center"
+  >
     <div>Upcoming Holiday</div>
     <div>
       <b>{{ item?.name }}</b>
@@ -9,6 +12,7 @@
 </template>
 <script>
 export default {
+  props: ["company_id"],
   data() {
     return {
       item: null,
@@ -16,21 +20,11 @@ export default {
     };
   },
 
-  computed: {
-    isDarkMode() {
-      return this.$isDark();
-    },
-  },
-
-  watch: {
-    isDarkMode() {},
-  },
-
-  methods: {},
-
   async mounted() {
     try {
-      this.item = await this.$axios.$get("/upcoming-holiday?company_id=43");
+      this.item = await this.$axios.$get(
+        `/upcoming-holiday?company_id=${this.company_id}`
+      );
       this.loading = false;
     } catch (error) {
       console.error("Failed to load attendance summary:", error);
