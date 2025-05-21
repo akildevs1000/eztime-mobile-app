@@ -23,7 +23,8 @@ export default {
 
   data() {
     return {
-      avg_clock_in: "09:00",
+      loading:true,
+      avg_clock_in: "00:00",
       chartSeries: [
         {
           name: "Clock In Time",
@@ -98,11 +99,12 @@ export default {
     };
   },
   async mounted() {
+
     try {
       const response = await this.$axios.$get(
-        `/employee-avg-clock-in?company_id=${this.company_id}&employee_id=${this.system_user_id}&shift_type_id=${this.shift_type_id}`
+        `/employee-avg-clock-in?company_id=${this.company_id}&employee_id=${this.system_user_id}`
       );
-      this.attendances = response.avg_clock_in;
+      this.avg_clock_in = response.avg_clock_in;
 
       let data = response.last_week_clock_ins;
 
