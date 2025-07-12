@@ -2,11 +2,13 @@ export default ({ $axios, store }, inject) => {
   // Add an interceptor to modify requests globally
   $axios.onRequest(async (config) => {
 
-    // for DESKTOP
-    // config.baseURL = `http://${window.location.hostname ?? "localhost"}:8002/api`;
+    config.baseURL = `http://${window.location.hostname ?? "localhost"}:8000/api`;
 
-    // for CLOUD
-    config.baseURL = `https://backend.mytime2cloud.com/api`;
+    // config.baseURL = `https://backend.mytime2cloud.com/api`;
+
+    // if (process.env.LOCAL_IP == 'localhost') {
+    //   config.baseURL = `https://mytime2cloud-backend.test/api`;
+    // }
 
     // Append the branchid parameter to all requests
     let user = store.state.auth.user;
